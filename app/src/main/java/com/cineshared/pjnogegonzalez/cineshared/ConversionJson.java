@@ -51,7 +51,7 @@ public class ConversionJson<T> {
      * @param resources Recursos
      * @return RecyclerView creado
      */
-    /*
+
     public RecyclerView onCreateView(Context context, View rootView, Resources resources) {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         int mNoOfColumns = Utility.calculateNoOfColumns(context);
@@ -65,7 +65,7 @@ public class ConversionJson<T> {
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
         return recyclerView;
     }
-    */
+
 
     /**
      * Método que realiza la llamada para obtener la lista de objetos en Json y devuelve una lista
@@ -103,6 +103,13 @@ public class ConversionJson<T> {
      */
     protected RecyclerView.Adapter onPostExecute(List<T> listaConvertir) {
         RecyclerView.Adapter adaptador = null;
+        if (listaConvertir != null) {
+            adaptador = new AdaptarBibliotecaCardView((List<Biblioteca>) listaConvertir) ;
+                // }
+
+
+        }
+
         /*
         if (listaConvertir != null) {
             if (Constantes.ACTORES.equals(tipoObjeto))
@@ -141,15 +148,15 @@ public class ConversionJson<T> {
         while (jsonReader.hasNext()) {
             // Parseamos cada elemento y lo añadimos a la lista
             T elementoConvertido = null;
-          //  if (Constantes.ACTORES.equals(tipoObjeto))
-             //   elementoConvertido = gson.fromJson(jsonReader, Actores.class);
+            if (Constantes.BIBLIOTECA.equals(tipoObjeto))
+                elementoConvertido = gson.fromJson(jsonReader, Biblioteca.class);
           //  else if (Constantes.PELICULAS.equals(tipoObjeto))
              //   elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
           //  else if (Constantes.DIRECTORES.equals(tipoObjeto))
              //   elementoConvertido = gson.fromJson(jsonReader, Directores.class);
           //  else if (Constantes.SONORAS.equals(tipoObjeto))
                 //elementoConvertido = gson.fromJson(jsonReader, BandasSonoras.class);
-            if (Constantes.USUARIOS.equals(tipoObjeto))
+           else if (Constantes.USUARIOS.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, Usuarios.class);
            // else if (Constantes.USUARIO_RESULTADO.equals(tipoObjeto))
             //    elementoConvertido = gson.fromJson(jsonReader, Resultado.class);

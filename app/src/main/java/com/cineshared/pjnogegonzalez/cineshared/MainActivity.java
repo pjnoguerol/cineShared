@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     public static final String PREFS_NAME = "Preferencias";
     private TextView usuarioLogin;
     private TextView usuarioEmail;
+    private Fragment fragment;
     private ConversionJson<Usuarios> conversionJson = new ConversionJson<>(this, Constantes.USUARIOS);
     Usuarios usuario = new Usuarios();
 
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
+        usuario = (Usuarios) getIntent().getSerializableExtra("usuarios");
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         View header = navigationView.getHeaderView(0);
@@ -206,10 +208,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        boolean fragmentTransaction = false;
+        fragment = null;
         int id = item.getItemId();
 
         if (id == R.id.nav_biblioteca) {
             // Handle the camera action
+            establecerFragmeto();
+            fragmentTransaction = true;
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -223,15 +229,33 @@ public class MainActivity extends AppCompatActivity
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if (fragmentTransaction) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+            item.setChecked(true);
+            getSupportActionBar().setTitle(item.getTitle());
+        }
+        drawer.closeDrawers();
         return true;
+    }
+    /**
+     * Método que establece un fragmento de tipo búsqueda o configuración dependiendo del parámetro
+     *
+     *
+     */
+    private void establecerFragmeto() {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constantes.USUARIOS, usuario);
+
+        fragment = new BibliotecaFragment();
+
+        fragment.setArguments(bundle);
     }
     /**
      * Inner class que parsea el usuario logueado
      */
     public class LoginJsonTask extends AsyncTask<URL, Void, Usuarios> {
 
-        private Usuarios usuario;
+        private Usuarios usuariox;
 
         /**
          * Método que llama al parseo del usuario logueado
@@ -241,7 +265,7 @@ public class MainActivity extends AppCompatActivity
          */
         @Override
         protected Usuarios doInBackground(URL... urls) {
-            return (usuario = conversionJson.doInBackground(urls).get(0));
+            return (usuariox = conversionJson.doInBackground(urls).get(0));
 
 
         }
@@ -250,19 +274,21 @@ public class MainActivity extends AppCompatActivity
          * Método que redirige al usuario a la actividad main o muestra error dependiendo del resultado
          * del login
          *
-         * @param usuario Usuario logueado
+         * @param usuarioTask Usuario logueado
          */
         @TargetApi(Build.VERSION_CODES.GINGERBREAD)
         @Override
-        protected void onPostExecute(Usuarios usuario) {
-            if (usuario != null) {
-                if (usuario.isOk()) {
+        protected void onPostExecute(Usuarios usuarioTask) {
+            if (usuarioTask != null) {
+                if (usuarioTask.isOk()) {
+                    usuario = usuarioTask;
                     Toast.makeText(MainActivity.this, Constantes.BIENVENIDO + usuario.getUsuario(), Toast.LENGTH_SHORT).show();
                     usuarioLogin.setText(usuario.getUsuario());
                     usuarioEmail.setText(usuario.getEmail());
 
+
                 } else {
-                    Toast.makeText(MainActivity.this, usuario.getError(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, usuarioTask.getError(), Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(MainActivity.this, Constantes.ERROR_JSON, Toast.LENGTH_SHORT).show();

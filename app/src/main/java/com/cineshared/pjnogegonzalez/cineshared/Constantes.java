@@ -16,6 +16,7 @@ public class Constantes {
     public static String ERROR_UPDATE = "Error actualizando el usuario: ";
 
     public static String USUARIOS = "usuarios";
+    public static String BIBLIOTECA = "biblioteca";
     // Constantes login
     public static String USUARIO = "usuario";
     public static String USUARIO_DATOS = "usuariodatos";
@@ -26,6 +27,7 @@ public class Constantes {
     public static String RUTA_IMAGEN = SERVIDOR + "/cineshared/img/";
     public static String RUTA_MUSICA = SERVIDOR + "/cineshared/music/";
     public static String RUTA_CLASE_PHP = "/cineshared/cineshared_clase.php?";
+    public static String RUTA_BIBLIOTECA = SERVIDOR + RUTA_CLASE_PHP + "biblioteca=";
     public static String RUTA_CONTACTOS = SERVIDOR + RUTA_CLASE_PHP + "contactos=";
     public static String RUTA_GENEROS = SERVIDOR + RUTA_CLASE_PHP + "generos";
     public static String RUTA_GENEROS_USUARIO = SERVIDOR + RUTA_CLASE_PHP + "generousuario=";

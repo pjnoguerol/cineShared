@@ -132,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, Constantes.BIENVENIDO + usuario.getUsuario(), Toast.LENGTH_SHORT).show();
                     guardarDatos();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra(Constantes.USUARIO, usuario);
+                    intent.putExtra(Constantes.USUARIOS, usuario);
                     startActivity(intent);
                 } else {
                     Toast.makeText(LoginActivity.this, usuario.getError(), Toast.LENGTH_SHORT).show();
