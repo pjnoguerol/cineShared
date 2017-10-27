@@ -18,18 +18,22 @@ import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.cineshared.pjnogegonzalez.cineshared.Constantes.API_KEY;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BibliotecaFragment extends Fragment {
+public class BusquedaFragment extends Fragment {
 
-    private ConversionJson<Biblioteca> conversionJson = new ConversionJson<>(getActivity(), Constantes.BIBLIOTECA);
+    private ConversionJson<FindApiBusqueda> conversionJson = new ConversionJson<>(getActivity(), Constantes.BUSQUEDA);
     private RecyclerView recyclerView;
-    private Usuarios usuario;
-    public BibliotecaFragment() {
+    private String cadenaBusqueda;
+    //private Usuarios usuario;
+    public BusquedaFragment() {
         // Required empty public constructor
     }
 
@@ -40,17 +44,21 @@ public class BibliotecaFragment extends Fragment {
         // Inflate the layout for this fragment
         Context context = inflater.getContext();
         View rootView = inflater.inflate(R.layout.recyclerview_activity, container, false);
-        //usuario = (Usuarios) getArguments().getSerializable("usuarios");
+        cadenaBusqueda = getArguments().getString("busqueda");
+
         recyclerView = conversionJson.onCreateView(context, rootView, getResources());
+
         String url = "";
-        url = Constantes.RUTA_BIBLIOTECA+"2";
+        //url = "http://www.intraco.es/cineshared/cineshared_clase.php?prueba";
+        //url = "http://www.intraco.es/cineshared/cineshared_clase.php?biblioteca=2";
+        url = Constantes.RUTA_WEB_API_BUSQUEDA+cadenaBusqueda+API_KEY;
+        //Log.w("myApp", url);
         //Toast.makeText(context, url, Toast.LENGTH_SHORT).show();
-        Log.w("MI INPUTSTREAM", url );
         try {
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             if (networkInfo != null && networkInfo.isConnected()) {
-                new PeliculasJsonTask().
+                new BusquedaJsonTask().
                         execute(new URL(url));
             } else {
                 Toast.makeText(context, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
@@ -64,9 +72,9 @@ public class BibliotecaFragment extends Fragment {
     /**
      * Inner class que parsea la Biblioteca a una CardView
      */
-    public class PeliculasJsonTask extends AsyncTask<URL, Void, List<Biblioteca>> {
+    public class BusquedaJsonTask extends AsyncTask<URL, Void, FindApiBusqueda > {
 
-        private List<Biblioteca> listaBiblioteca;
+        private FindApiBusqueda busqueda;
 
         /**
          * Método que llama al parseo de biblioteca para obtener la lista a mostrar
@@ -74,19 +82,25 @@ public class BibliotecaFragment extends Fragment {
          * @return Biblioteca
          */
         @Override
-        protected List<Biblioteca> doInBackground(URL... urls) {
-            return (listaBiblioteca = conversionJson.doInBackground(urls));
+        protected FindApiBusqueda doInBackground(URL... urls) {
+            busqueda = (conversionJson.doInBackgroundObject(urls));
+
+            return (busqueda);
         }
 
         /**
          * Método que asigna la lista de películas al adaptador para obtener un cardView
          *
-         * @param listaBiblioteca Lista de películas para el adaptador
+         * @param busqueda Lista de películas para el adaptador
          */
         @TargetApi(Build.VERSION_CODES.GINGERBREAD)
         @Override
-        protected void onPostExecute(List<Biblioteca> listaBiblioteca) {
-            recyclerView.setAdapter(conversionJson.onPostExecute(listaBiblioteca));
+        protected void onPostExecute(FindApiBusqueda busqueda) {
+            List<FindApiBusqueda> lista = new ArrayList<>();
+            lista.add(busqueda);
+
+            //FindApiBusqueda busquedalista = conversionJson.onPostExecute(busqueda);
+            recyclerView.setAdapter(conversionJson.onPostExecute(lista));
         }
     }
 

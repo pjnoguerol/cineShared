@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
@@ -13,6 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -94,6 +96,40 @@ public class ConversionJson<T> {
         }
         return listaConvertir;
     }
+    protected T doInBackgroundObject(URL... urls) {
+        T convertir=null;
+        try {
+            // Establecer la conexión
+            conexion = (HttpURLConnection) urls[0].openConnection();
+            conexion.setConnectTimeout(Constantes.CONNECTION_TIMEOUT);
+            conexion.setReadTimeout(Constantes.READ_TIMEOUT);
+            int statusCode = conexion.getResponseCode();
+            if (statusCode == 200) {
+                // Parsear la lista de objetos con formato JSON
+                //InputStream inputStream = new BufferedInputStream(conexion.getInputStream());
+                //Comprobacion de la cadena
+                Gson gson = new Gson();
+
+                JsonReader reader = new JsonReader(new InputStreamReader(conexion.getInputStream()));
+                convertir = gson.fromJson(reader, FindApiBusqueda.class);
+                if (convertir ==null)
+                {
+                    Log.w("MI Iretorno", "es NULO");
+                }
+                else
+                {
+                    Log.w("MI Iretorno",((FindApiBusqueda)convertir).getResults().get(0).getTitle()+"" );
+                }
+
+                //convertir = parsearJsonObject(inputStream);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conexion.disconnect();
+        }
+        return convertir;
+    }
 
     /**
      * Método que asigna la lista de objetos al adaptador para obtener un cardView. Dependiendo del tipo
@@ -104,11 +140,17 @@ public class ConversionJson<T> {
     protected RecyclerView.Adapter onPostExecute(List<T> listaConvertir) {
         RecyclerView.Adapter adaptador = null;
         if (listaConvertir != null) {
-            adaptador = new AdaptarBibliotecaCardView((List<Biblioteca>) listaConvertir) ;
-                // }
+            if (Constantes.BIBLIOTECA.equals(tipoObjeto))
+                adaptador = new AdaptarBibliotecaCardView((List<Biblioteca>) listaConvertir) ;
+             else if (Constantes.BUSQUEDA.equals(tipoObjeto))
+             {
+                List<FindApiBusqueda> lista = (List<FindApiBusqueda>) listaConvertir;
+                adaptador = new AdaptarBusquedaApiCardView(lista.get(0).getResults());
+            }
 
 
         }
+
 
         /*
         if (listaConvertir != null) {
@@ -131,6 +173,61 @@ public class ConversionJson<T> {
         return adaptador;
     }
 
+
+    public String readMessage(JsonReader reader) throws IOException {
+        long id = -1;
+        String text = null;
+        //User user = null;
+        List<Double> geo = null;
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            text = reader.nextName();
+            Log.w("MI Json", text );
+        }
+        reader.endObject();
+        return text;
+    }
+    public T parsearJsonObject(InputStream inputStream) throws IOException {
+        Gson gson = new Gson();
+        JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream));
+
+
+        String line;
+        String linefinal="";
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        while ((line = br.readLine()) != null) {
+            linefinal += line;
+        }
+        Log.w("MI INPUTSTREAM", linefinal );
+
+        List<T> listaConvertir = new ArrayList<>();
+        T elementoConvertido = null;
+        // Iniciar el lector y obtener la lista de resultados
+
+        //readMessage(jsonReader);
+
+            // Parseamos cada elemento y lo añadimos a la lista
+
+
+        elementoConvertido = gson.fromJson(jsonReader, FindApiBusqueda.class);
+
+
+
+
+            // else if (Constantes.USUARIO_RESULTADO.equals(tipoObjeto))
+            //    elementoConvertido = gson.fromJson(jsonReader, Resultado.class);
+            // else if (Constantes.USUARIO_GENERO.equals(tipoObjeto))
+            //  elementoConvertido = gson.fromJson(jsonReader, Generos.class);
+
+
+
+        // Finalizamos y cerramos el reader y se devuelve la lista de objetos parseados
+
+        jsonReader.close();
+        return elementoConvertido;
+    }
     /**
      * Método que recibe la lista de objetos en un Json y lo parsea a una lista
      *
@@ -154,8 +251,8 @@ public class ConversionJson<T> {
              //   elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
           //  else if (Constantes.DIRECTORES.equals(tipoObjeto))
              //   elementoConvertido = gson.fromJson(jsonReader, Directores.class);
-          //  else if (Constantes.SONORAS.equals(tipoObjeto))
-                //elementoConvertido = gson.fromJson(jsonReader, BandasSonoras.class);
+            else if (Constantes.BUSQUEDA.equals(tipoObjeto))
+                elementoConvertido = gson.fromJson(jsonReader, FindApiBusqueda.class);
            else if (Constantes.USUARIOS.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, Usuarios.class);
            // else if (Constantes.USUARIO_RESULTADO.equals(tipoObjeto))

@@ -1,12 +1,12 @@
 package com.cineshared.pjnogegonzalez.cineshared;
 
-import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,12 +18,14 @@ import java.util.List;
  * Clase AdaptarActoresCardView adapta una lista de películas a un CardView para poder visualizarlo
  * correctamente
  */
-public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibliotecaCardView.BibliotecaViewHolder> {
+public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusquedaApiCardView.BusquedaViewHolder> {
 
+    private boolean activate;
     /**
      * Inner class que contiene los datos de la película que se mostrarán en la pantalla de listado
+
      */
-    public static class BibliotecaViewHolder extends RecyclerView.ViewHolder {
+    public static class BusquedaViewHolder extends RecyclerView.ViewHolder {
         CardView cardViewPelicula;
         TextView tituloPelicula;
 
@@ -34,7 +36,7 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
          *
          * @param itemView
          */
-        BibliotecaViewHolder(View itemView) {
+        BusquedaViewHolder(View itemView) {
             super(itemView);
             cardViewPelicula = (CardView) itemView.findViewById(R.id.cardViewActorDirectorPelicula);
             tituloPelicula = (TextView) itemView.findViewById(R.id.nombreActorDirectorPelicula);
@@ -45,15 +47,23 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
     }
 
     // Biblioteca a transformar
-    List<Biblioteca> listaBiblioteca;
+    List<Peliculas> busquedaApi;
 
     /**
      * Constructor de la clase
      *
-     * @param listaPeliculas Lista de películas que se desean adaptar a un CardView
+     * @param busquedaApi de películas que se desean adaptar a un CardView
      */
-    AdaptarBibliotecaCardView(List<Biblioteca> listaPeliculas) {
-        this.listaBiblioteca = listaPeliculas;
+    AdaptarBusquedaApiCardView(List<Peliculas> busquedaApi) {
+
+        this.busquedaApi = busquedaApi;
+        //
+
+    }
+
+    public void activateButtons(boolean activate) {
+        this.activate = activate;
+        notifyDataSetChanged(); //need to call it for the child views to be re-created with buttons.
     }
 
     /**
@@ -61,53 +71,55 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
      *
      * @param recyclerView Instancia del que inicia el adaptador
      */
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
 
     /**
-     * Método que se llama para crear un BibliotecaViewHolder
      *
-     * @param viewGroup ViewGroup al que se le añadirá la nueva vista
-     * @param viewType  Tipo de vista
-     * @return ViewHolder con los datos de la nueva vista
+     * @param parent
+     * @param viewType
+     * @return
      */
     @Override
-    public BibliotecaViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.itemscardview, viewGroup, false);
-        return new BibliotecaViewHolder(view);
+    public BusquedaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.itemscardview, parent, false);
+        // set the view's size, margins, paddings and layout parameters
+
+
+        return new BusquedaViewHolder(v);
     }
 
     /**
      * Método al que se llama para mostrar la información procesada en la posición especificada, para
      * ello actualizará la información del bandaSonoraViewHolder
      *
-     * @param peliculaViewHolder Información a mostrar y actualizar
+     * @param busquedaViewHolder Información a mostrar y actualizar
      * @param posicion           Posición donde debe ser mostrada
      */
     @Override
-    public void onBindViewHolder(final BibliotecaViewHolder peliculaViewHolder, int posicion) {
+    public void onBindViewHolder(BusquedaViewHolder busquedaViewHolder, int posicion) {
         // Creamos la lista de actores para mostrarla
+
         String listadoActoresPelicula = "Actores: ";
-        //Log.w("Adapter", "Dentro adaptador biblioteca");
-        final Biblioteca biblioteca = listaBiblioteca.get(posicion);
-        peliculaViewHolder.tituloPelicula.setText(biblioteca.getNombre());
+        Peliculas pelicula = busquedaApi.get(posicion);
+
+        busquedaViewHolder.tituloPelicula.setText(pelicula.getTitle());
 
         // Al listado de actores le quitamos la última coma
 
-        Picasso.with(peliculaViewHolder.itemView.getContext()).load(
-                Constantes.RUTA_IMAGEN + biblioteca.getImagen()).into(peliculaViewHolder.imagenPelicula);
-        /*
-        peliculaViewHolder.imagenPelicula.setOnClickListener(new View.OnClickListener() {
+        Picasso.with(busquedaViewHolder.itemView.getContext()).load(
+                "https://image.tmdb.org/t/p/w500"+pelicula.getPoster_path()).into(busquedaViewHolder.imagenPelicula);
+
+
+        busquedaViewHolder.imagenPelicula.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), PeliculasActivity.class);
-                intent.putExtra(Constantes.PELICULAS, pelicula);
-                view.getContext().startActivity(intent);
+                //Intent intent = new Intent(view.getContext(), PeliculasActivity.class);
+                //intent.putExtra(Constantes.PELICULAS, pelicula);
+                //view.getContext().startActivity(intent);
             }
         });
-        */
+
     }
 
     /**
@@ -117,6 +129,7 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
      */
     @Override
     public int getItemCount() {
-        return listaBiblioteca.size();
+
+        return busquedaApi.size();
     }
 }

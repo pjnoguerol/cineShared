@@ -7,7 +7,6 @@
     <dimen name="fab_margin">16dp</dimen>
 
 
-
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="activity_margin_pequenyo">10dp</dimen>
     <dimen name="layout_margin">20dp</dimen>
