@@ -41,7 +41,12 @@ public class ConversionJson<T> {
      * @param tipoObjeto Tipo de objeto que convertimos: actores, peliculas, directores, sonoras y usuarios
      */
     public ConversionJson(Activity activity, String tipoObjeto) {
-        this.activity = activity;
+        //this.activity = activity;
+        this.tipoObjeto = tipoObjeto;
+    }
+
+    public ConversionJson(String tipoObjeto)
+    {
         this.tipoObjeto = tipoObjeto;
     }
 
@@ -147,6 +152,7 @@ public class ConversionJson<T> {
                 List<FindApiBusqueda> lista = (List<FindApiBusqueda>) listaConvertir;
                 adaptador = new AdaptarBusquedaApiCardView(lista.get(0).getResults());
             }
+
 
 
         }
@@ -255,6 +261,8 @@ public class ConversionJson<T> {
                 elementoConvertido = gson.fromJson(jsonReader, FindApiBusqueda.class);
            else if (Constantes.USUARIOS.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, Usuarios.class);
+           else if (Constantes.RESULTADO.equals((tipoObjeto)))
+               elementoConvertido = gson.fromJson(jsonReader, Resultado.class);
            // else if (Constantes.USUARIO_RESULTADO.equals(tipoObjeto))
             //    elementoConvertido = gson.fromJson(jsonReader, Resultado.class);
            // else if (Constantes.USUARIO_GENERO.equals(tipoObjeto))

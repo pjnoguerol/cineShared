@@ -18,6 +18,8 @@ public class Constantes {
     public static String USUARIOS = "usuarios";
     public static String BIBLIOTECA = "biblioteca";
     public static String BUSQUEDA = "FindApiBusqueda";
+    public static String RESULTADO = "resultado";
+
     // Constantes login
     public static String USUARIO = "usuario";
     public static String USUARIO_DATOS = "usuariodatos";
@@ -34,6 +36,7 @@ public class Constantes {
     public static String RUTA_GENEROS_USUARIO = SERVIDOR + RUTA_CLASE_PHP + "generousuario=";
     public static String RUTA_INSERTAR_USUARIO = SERVIDOR + RUTA_CLASE_PHP + "userinsert=";
     public static String RUTA_LISTA_ACTORES = SERVIDOR + RUTA_CLASE_PHP + "actorlist";
+    public static String RUTA_PELICULAS = SERVIDOR + RUTA_CLASE_PHP + "nombre=";
 
     //Constantes api
     public static String RUTA_WEB_API_BUSQUEDA = "https://api.themoviedb.org/3/search/movie?query=";
