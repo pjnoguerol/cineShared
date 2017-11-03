@@ -9,10 +9,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 public class BuscarPeliculasActivity extends AppCompatActivity {
-    Button btbusqueda;
+    public static Button btbusqueda  ;
+    public static Button btBusquedaNatural;
     EditText txtBusqueda;
+
+    Usuarios usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,14 +28,29 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         btbusqueda = (Button)findViewById(R.id.btBusqueda);
+        usuario = (Usuarios) getIntent().getSerializableExtra("usuarios");
+        btBusquedaNatural =(Button)findViewById(R.id.btBusquedaNatural);
         //btbusqueda.setVisibility(View.GONE);
         txtBusqueda = (EditText)findViewById(R.id.userBusqueda);
 
         btbusqueda.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = establecerFragmeto();
+                //Establecemos el fragmento con MODO 0 para Busqueda por API
+                Fragment fragment = establecerFragmeto(0);
                 generarFragmento(fragment);
+            }
+        });
+
+        btBusquedaNatural.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Establecemos fragmento para el MODO de BUSQUEDA NATURAL
+                //btbusqueda.setVisibility(View.VISIBLE);
+                Fragment fragment = establecerFragmeto(1);
+                generarFragmento(fragment);
+
+
             }
         });
 
@@ -36,13 +58,23 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
 
     }
     //Establecemos el fragmento para cargar
-    private Fragment establecerFragmeto() {
+    private Fragment establecerFragmeto(int modo) {
         Fragment fragment;
         Bundle bundle = new Bundle();
         //bundle.putSerializable(Constantes.USUARIOS, usuario);
-        bundle.putString("busqueda", txtBusqueda.getText().toString());
+        if (modo==0)
+        {
+            bundle.putString("busqueda", txtBusqueda.getText().toString());
+            bundle.putSerializable(Constantes.USUARIOS, usuario);
+            fragment = new BusquedaFragment();
+        }
+        else
+        {
+            bundle.putString("natural", txtBusqueda.getText().toString());
+            bundle.putSerializable(Constantes.USUARIOS, usuario);
+            fragment = new BusquedaNaturalFragment();
+        }
 
-        fragment = new BusquedaFragment();
 
 
         fragment.setArguments(bundle);

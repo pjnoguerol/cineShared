@@ -40,10 +40,10 @@ public class BibliotecaFragment extends Fragment {
         // Inflate the layout for this fragment
         Context context = inflater.getContext();
         View rootView = inflater.inflate(R.layout.recyclerview_activity, container, false);
-        //usuario = (Usuarios) getArguments().getSerializable("usuarios");
+        usuario = (Usuarios) getArguments().getSerializable("usuarios");
         recyclerView = conversionJson.onCreateView(context, rootView, getResources());
         String url = "";
-        url = Constantes.RUTA_BIBLIOTECA+"2";
+        url = Constantes.RUTA_BIBLIOTECA+usuario.getId_usua();
         //Toast.makeText(context, url, Toast.LENGTH_SHORT).show();
         Log.w("MI INPUTSTREAM", url );
         try {

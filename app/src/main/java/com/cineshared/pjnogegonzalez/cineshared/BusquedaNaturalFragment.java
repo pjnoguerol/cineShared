@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +26,14 @@ import static com.cineshared.pjnogegonzalez.cineshared.Constantes.API_KEY;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BusquedaFragment extends Fragment {
+public class BusquedaNaturalFragment extends Fragment {
 
-    private ConversionJson<FindApiBusqueda> conversionJson = new ConversionJson<>(getActivity(), Constantes.BUSQUEDA);
+    private ConversionJson<Peliculas> conversionJson = new ConversionJson<>(getActivity(), Constantes.BUSQUEDA_NATURAL);
     private RecyclerView recyclerView;
     private String cadenaBusqueda;
     private Usuarios usuario;
     //private Usuarios usuario;
-    public BusquedaFragment() {
+    public BusquedaNaturalFragment() {
         // Required empty public constructor
     }
 
@@ -45,18 +44,20 @@ public class BusquedaFragment extends Fragment {
         // Inflate the layout for this fragment
         Context context = inflater.getContext();
         View rootView = inflater.inflate(R.layout.recyclerview_activity, container, false);
-        cadenaBusqueda = getArguments().getString("busqueda");
+        cadenaBusqueda = getArguments().getString("natural");
         usuario = (Usuarios) getArguments().getSerializable(Constantes.USUARIOS);
         if (usuario!=null)
             conversionJson.setUsuario(usuario);
+        //int modo = getArguments().getInt("modo");
+
         recyclerView = conversionJson.onCreateView(context, rootView, getResources());
 
         String url = "";
         //url = "http://www.intraco.es/cineshared/cineshared_clase.php?prueba";
         //url = "http://www.intraco.es/cineshared/cineshared_clase.php?biblioteca=2";
-        url = Constantes.RUTA_WEB_API_BUSQUEDA+cadenaBusqueda+API_KEY;
+        url = Constantes.RUTA_PELICULAS_NATURAL+cadenaBusqueda;
         //Log.w("myApp", url);
-        //Toast.makeText(context, url, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "BUSCANDO DE USUARIO"+usuario.getUsuario(), Toast.LENGTH_SHORT).show();
         try {
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -75,9 +76,12 @@ public class BusquedaFragment extends Fragment {
     /**
      * Inner class que parsea la Biblioteca a una CardView
      */
-    public class BusquedaJsonTask extends AsyncTask<URL, Void, FindApiBusqueda > {
+    public class BusquedaJsonTask extends AsyncTask<URL, Void, List<Peliculas> > {
 
-        private FindApiBusqueda busqueda;
+        private List<Peliculas> listaPeliculas;
+
+
+
 
         /**
          * Método que llama al parseo de biblioteca para obtener la lista a mostrar
@@ -85,25 +89,24 @@ public class BusquedaFragment extends Fragment {
          * @return Biblioteca
          */
         @Override
-        protected FindApiBusqueda doInBackground(URL... urls) {
-            busqueda = (conversionJson.doInBackgroundObject(urls));
+        protected List<Peliculas> doInBackground(URL... urls) {
+            listaPeliculas = (conversionJson.doInBackground(urls));
 
-            return (busqueda);
+            return (listaPeliculas);
         }
 
         /**
          * Método que asigna la lista de películas al adaptador para obtener un cardView
          *
-         * @param busqueda Lista de películas para el adaptador
+         * @param listaPeliculas Lista de películas para el adaptador
          */
         @TargetApi(Build.VERSION_CODES.GINGERBREAD)
         @Override
-        protected void onPostExecute(FindApiBusqueda busqueda) {
-            List<FindApiBusqueda> lista = new ArrayList<>();
-            lista.add(busqueda);
+        protected void onPostExecute(List<Peliculas> listaPeliculas) {
 
+            //Utility.resultado(listaPeliculas.size());
             //FindApiBusqueda busquedalista = conversionJson.onPostExecute(busqueda);
-            recyclerView.setAdapter(conversionJson.onPostExecute(lista));
+            recyclerView.setAdapter(conversionJson.onPostExecute(listaPeliculas));
         }
     }
 

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -37,6 +38,10 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
     private boolean activate;
     private ConversionJson<Resultado> conversionJson;
     private Context contex;
+    private int modo;
+    private Usuarios usuario;
+    private Button numPeliculas;
+
     /**
      * Inner class que contiene los datos de la película que se mostrarán en la pantalla de listado
 
@@ -44,7 +49,7 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
     public static class BusquedaViewHolder extends RecyclerView.ViewHolder {
         CardView cardViewPelicula;
         TextView tituloPelicula;
-
+        Button numPeliculas;
         ImageView imagenPelicula;
 
         /**
@@ -58,6 +63,9 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
             tituloPelicula = (TextView) itemView.findViewById(R.id.nombreActorDirectorPelicula);
 
             imagenPelicula = (ImageView) itemView.findViewById(R.id.imagenActorDirectorPelicula);
+            numPeliculas = (Button) itemView.findViewById(R.id.btBusqueda);
+
+
         }
 
     }
@@ -70,9 +78,19 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
      *
      * @param busquedaApi de películas que se desean adaptar a un CardView
      */
-    AdaptarBusquedaApiCardView(List<Peliculas> busquedaApi) {
+    AdaptarBusquedaApiCardView(List<Peliculas> busquedaApi, int modo) {
 
         this.busquedaApi = busquedaApi;
+        this.modo = modo;
+
+        //
+
+    }
+    AdaptarBusquedaApiCardView(List<Peliculas> busquedaApi, int modo, Usuarios usuario) {
+
+        this.usuario = usuario;
+        this.busquedaApi = busquedaApi;
+        this.modo = modo;
         //
 
     }
@@ -99,10 +117,25 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
 
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.itemscardview, parent, false);
+
+
+
         // set the view's size, margins, paddings and layout parameters
 
 
         return new BusquedaViewHolder(v);
+    }
+
+    public View getView (int position, View convertView, ViewGroup parent){
+        if( convertView == null ){
+            //We must create a View:
+            //convertView = inflater.inflate(R.layout.my_list_item, parent, false);
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.content_buscar_peliculas, parent, false);
+        }
+        //Here we can do changes to the convertView, such as set a text on a TextView
+        //or an image on an ImageView.
+        return convertView;
     }
 
     /**
@@ -124,19 +157,31 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
         // Al listado de actores le quitamos la última coma
 
         Picasso.with(busquedaViewHolder.itemView.getContext()).load(
-                "https://image.tmdb.org/t/p/w500"+pelicula.getPoster_path()).into(busquedaViewHolder.imagenPelicula);
+                Constantes.IMAGENES+pelicula.getPoster_path()).into(busquedaViewHolder.imagenPelicula);
+
+
 
 
         busquedaViewHolder.imagenPelicula.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
 
+                String url2="";
+                if (modo == 1)
+                {
+                    url2 = Constantes.RUTA_ACTUALIZAR_BUSQUEDA + pelicula.getId() +"&usuario="+usuario.getId_usua();
+                }
+                else
+                {
+                    url2 = Constantes.RUTA_PELICULAS +pelicula.getTitle()+"&imagen="+pelicula.getPoster_path()+"&sinopsis="+pelicula.getOverview()+"&api_id="+pelicula.getId();
+                }
+
                 final Context context = view.getContext();
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setTitle(R.string.app_name);
-                builder.setMessage("¿Quieres agregar la pelicula "+ pelicula.getTitle()+"?");
+                builder.setMessage("¿Quieres agregar la pelicula "+ pelicula.getTitle()+"? "+ usuario.getUsuario());
 
-                final String url = Constantes.RUTA_PELICULAS +pelicula.getTitle()+"&imagen="+pelicula.getPoster_path()+"&sinopsis="+pelicula.getOverview()+"&api_id="+pelicula.getId();
+                final String url = url2;
 
                 builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -145,7 +190,7 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
                             ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
                             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                             if (networkInfo != null && networkInfo.isConnected()) {
-                                //Log.w("ERROR WEB", url);
+                                Log.w("ERROR WEB", url);
                                 new BusquedaJsonTask(context, pelicula.getTitle()).
                                         execute(new URL(url));
                             } else {
@@ -180,7 +225,15 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
     @Override
     public int getItemCount() {
 
-        return busquedaApi.size();
+        //BuscarPeliculasActivity.btbusqueda.setVisibility(View.VISIBLE);
+        int i = busquedaApi.size();
+        if (i==0)
+        {
+            BuscarPeliculasActivity.btbusqueda.setVisibility(View.VISIBLE);
+            //BuscarPeliculasActivity.btBusquedaNatural.setVisibility(View.GONE);
+        }
+
+        return i;
     }
     public class BusquedaJsonTask extends AsyncTask<URL, Void, Resultado > {
 
@@ -220,8 +273,20 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
                 if(resultado.isOk())
                 {
                     Toast.makeText(context, "Pelicula "+pelicula+" introducida correctamente" , Toast.LENGTH_SHORT).show();
+
+
+                }
+                else
+                {
+                    Toast.makeText(context, "Error "+resultado.getError() , Toast.LENGTH_SHORT).show();
+
                 }
              }
+             else
+             {
+                 Toast.makeText(context, "Error nullable en la captura del resultado " , Toast.LENGTH_SHORT).show();
+             }
+
 
             //FindApiBusqueda busquedalista = conversionJson.onPostExecute(busqueda);
             //recyclerView.setAdapter(conversionJson.onPostExecute(lista));

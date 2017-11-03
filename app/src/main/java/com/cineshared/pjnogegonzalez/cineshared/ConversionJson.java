@@ -33,6 +33,7 @@ public class ConversionJson<T> {
     private HttpURLConnection conexion;
     private Activity activity;
     private String tipoObjeto;
+    private Usuarios usuario;
 
     /**
      * Constructor de la clase con todos los parámetros
@@ -48,6 +49,14 @@ public class ConversionJson<T> {
     public ConversionJson(String tipoObjeto)
     {
         this.tipoObjeto = tipoObjeto;
+    }
+
+    public Usuarios getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuarios usuario) {
+        this.usuario = usuario;
     }
 
     /**
@@ -148,9 +157,14 @@ public class ConversionJson<T> {
             if (Constantes.BIBLIOTECA.equals(tipoObjeto))
                 adaptador = new AdaptarBibliotecaCardView((List<Biblioteca>) listaConvertir) ;
              else if (Constantes.BUSQUEDA.equals(tipoObjeto))
-             {
+            {
                 List<FindApiBusqueda> lista = (List<FindApiBusqueda>) listaConvertir;
-                adaptador = new AdaptarBusquedaApiCardView(lista.get(0).getResults());
+                adaptador = new AdaptarBusquedaApiCardView(lista.get(0).getResults(), 0, usuario);
+            }
+            else if (Constantes.BUSQUEDA_NATURAL.equals(tipoObjeto))
+            {
+                if (usuario!=null)
+                    adaptador = new AdaptarBusquedaApiCardView((List<Peliculas>) listaConvertir, 1, usuario);
             }
 
 
@@ -262,7 +276,9 @@ public class ConversionJson<T> {
            else if (Constantes.USUARIOS.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, Usuarios.class);
            else if (Constantes.RESULTADO.equals((tipoObjeto)))
-               elementoConvertido = gson.fromJson(jsonReader, Resultado.class);
+                elementoConvertido = gson.fromJson(jsonReader, Resultado.class);
+            else if (Constantes.BUSQUEDA_NATURAL.equals((tipoObjeto)))
+                elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
            // else if (Constantes.USUARIO_RESULTADO.equals(tipoObjeto))
             //    elementoConvertido = gson.fromJson(jsonReader, Resultado.class);
            // else if (Constantes.USUARIO_GENERO.equals(tipoObjeto))

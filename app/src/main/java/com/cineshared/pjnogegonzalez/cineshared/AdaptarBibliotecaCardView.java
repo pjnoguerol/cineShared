@@ -97,7 +97,7 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
         // Al listado de actores le quitamos la última coma
 
         Picasso.with(peliculaViewHolder.itemView.getContext()).load(
-                Constantes.RUTA_IMAGEN + biblioteca.getImagen()).into(peliculaViewHolder.imagenPelicula);
+                Constantes.IMAGENES+ biblioteca.getImagen()).into(peliculaViewHolder.imagenPelicula);
         /*
         peliculaViewHolder.imagenPelicula.setOnClickListener(new View.OnClickListener() {
             @Override
