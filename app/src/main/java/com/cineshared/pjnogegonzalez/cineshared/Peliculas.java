@@ -22,6 +22,24 @@ public class Peliculas implements Serializable{
     private String backdrop_path;
     private boolean adult;
     private String release_date;
+    private String usuarionombre;
+    private float distancia;
+
+    public String getUsuarionombre() {
+        return usuarionombre;
+    }
+
+    public void setUsuarionombre(String usuarionombre) {
+        this.usuarionombre = usuarionombre;
+    }
+
+    public float getDistancia() {
+        return distancia;
+    }
+
+    public void setDistancia(float distancia) {
+        this.distancia = distancia;
+    }
 
     public int getId() {
         return id;

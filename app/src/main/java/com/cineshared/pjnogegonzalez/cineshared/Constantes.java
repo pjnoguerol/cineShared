@@ -21,6 +21,7 @@ public class Constantes {
     public static String BUSQUEDA_NATURAL = "natural";
     public static String RESULTADO = "resultado";
     public static String IMAGENES = "https://image.tmdb.org/t/p/w500";
+    public static String PELICULAS = "peliculas";
 
 
     // Constantes login
@@ -54,6 +55,8 @@ public class Constantes {
     public static String RUTA_PELICULAS_BUSQUEDA = SERVIDOR + RUTA_CLASE_PHP + "busqueda=";
     public static String RUTA_PELICULAS_NATURAL = SERVIDOR + RUTA_CLASE_PHP + "buscarnatural=";
     public static String RUTA_ACTUALIZAR_BUSQUEDA = SERVIDOR + RUTA_CLASE_PHP +"actualizarpelicula=";
+    public static String RUTA_INSERTAR_COORDENADAS = SERVIDOR + RUTA_CLASE_PHP +"longitud=";
+    public static String RUTA_PELICULAS_COORDENADAS = SERVIDOR + RUTA_CLASE_PHP +"lusuariocoordenada=";
     public static int CONNECTION_TIMEOUT = 15000;
     public static int READ_TIMEOUT = 15000;
 }

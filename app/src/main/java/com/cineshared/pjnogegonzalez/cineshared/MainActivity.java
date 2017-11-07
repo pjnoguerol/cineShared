@@ -1,18 +1,28 @@
 package com.cineshared.pjnogegonzalez.cineshared;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,8 +36,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.Locale;
+
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,7 +51,11 @@ public class MainActivity extends AppCompatActivity
     private TextView usuarioLogin;
     private TextView usuarioEmail;
     private Fragment fragment;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
     private ConversionJson<Usuarios> conversionJson = new ConversionJson<>(this, Constantes.USUARIOS);
+    private ConversionJson<Resultado> conversionJson2 = new ConversionJson<>(Constantes.RESULTADO);
+    private ConversionJson<Peliculas> conversionJson3 = new ConversionJson<>(Constantes.BUSQUEDA_NATURAL);
     Usuarios usuario = new Usuarios();
 
     /**
@@ -128,6 +147,105 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
+    /**
+     *
+     */
+    private void cargarCoordenadas()
+    {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION}, 1355);
+
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        locationManager = (LocationManager)
+                this.getSystemService(this.LOCATION_SERVICE);
+        locationListener = new MyLocationListener(this);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        boolean gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        String loca=null;
+        //if (gps_enabled)
+        // loca = LocationManager.GPS_PROVIDER;
+        //else if (network_enabled)
+        //  loca = LocationManager.NETWORK_PROVIDER;
+        loca = locationManager.getBestProvider(criteria, true);
+        locationManager.requestLocationUpdates(loca, 300000, 0, locationListener);
+
+    }
+
+    private class MyLocationListener implements LocationListener {
+
+        Context con;
+        public String longitude;
+        public String latitude;
+        public MyLocationListener(Context context)
+        {
+            con = context;
+        }
+        @Override
+        public void onLocationChanged(Location loc) {
+
+            //pb.setVisibility(View.INVISIBLE);
+
+            longitude = ""+loc.getLongitude();
+            //Log.v(TAG, longitude);
+            latitude = ""+loc.getLatitude();
+            //Log.v(TAG, latitude);
+            //salida.setText(longitude+ ""+  latitude);
+
+        /*------- To get city name from coordinates -------- */
+            String cityName = null;
+            Geocoder gcd = new Geocoder(con, Locale.getDefault());
+            List<Address> addresses;
+            try {
+                addresses = gcd.getFromLocation(loc.getLatitude(),
+                        loc.getLongitude(), 1);
+                if (addresses.size() > 0) {
+                    //System.out.println(addresses.get(0).getLocality());
+                    cityName = addresses.get(0).getLocality();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            String s = longitude + "\n" + latitude + "\n\nMy Current City is: "
+                    + cityName;
+            try {
+                ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+
+                    String url = Constantes.RUTA_INSERTAR_COORDENADAS+longitude+"&latitud="+latitude+"&usuario="+usuario.getId_usua();
+                    String url2 = Constantes.RUTA_PELICULAS_COORDENADAS+usuario.getId_usua()+"&longitud="+longitude+"&latitud="+latitude+"distancia=10";
+                    Log.w("URL ENTERA" , url);
+                    new MainActivity.BusquedaJsonTask().execute(new URL(Constantes.RUTA_INSERTAR_COORDENADAS+longitude+"&latitud="+latitude+"&usuario="+usuario.getId_usua()));
+                    Log.w("COORDENADAS", longitude);
+                } else {
+                    Toast.makeText(MainActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {}
+
+        @Override
+        public void onProviderEnabled(String provider) {}
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,6 +254,7 @@ public class MainActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
+        //Aqui ponemos el boton para añadir peliculas
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +274,7 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
         usuario = (Usuarios) getIntent().getSerializableExtra("usuarios");
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         View header = navigationView.getHeaderView(0);
@@ -162,6 +282,7 @@ public class MainActivity extends AppCompatActivity
         usuarioLogin = (TextView)header.findViewById(R.id.usuarioLogin);
         usuarioEmail = (TextView)header.findViewById(R.id.usuarioEmail);
         cargarDatos();
+
         linUsua.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,6 +295,17 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.w("destruyendo", "destruyendo");
+        if (locationListener!=null)
+            locationManager.removeUpdates(locationListener);
+
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -288,6 +420,8 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, Constantes.BIENVENIDO + usuario.getUsuario(), Toast.LENGTH_SHORT).show();
                     usuarioLogin.setText(usuario.getUsuario());
                     usuarioEmail.setText(usuario.getEmail());
+                    if (usuario!=null)
+                        cargarCoordenadas();
 
 
                 } else {
@@ -298,4 +432,67 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+    public class BusquedaJsonTask extends AsyncTask<URL, Void, Resultado > {
+
+        private Resultado resultado;
+        //private Context context;
+        private String pelicula;
+
+        /*
+        public BusquedaJsonTask(Context context, String pelicula)
+        {
+            this.context = context;
+            this.pelicula = pelicula;
+        }
+        */
+
+        /**
+         * Método que llama al parseo de biblioteca para obtener la lista a mostrar
+         *
+         * @return Biblioteca
+         */
+        @Override
+        protected Resultado doInBackground(URL... urls) {
+
+            resultado = conversionJson2.doInBackground(urls).get(0);
+
+            return (resultado);
+        }
+
+        /**
+         * Método que asigna la lista de películas al adaptador para obtener un cardView
+         *
+         * @param resultado Lista de películas para el adaptador
+         */
+        @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+        @Override
+        protected void onPostExecute(Resultado resultado) {
+            if (resultado!=null)
+            {
+                if(resultado.isOk())
+                {
+                    //Toast.makeText(context, "Pelicula "+pelicula+" introducida correctamente" , Toast.LENGTH_SHORT).show();
+                    Log.w("resultado ok", "EL RESULTADO ES OK");
+
+
+                }
+                else
+                {
+                    //Toast.makeText(context, "Error "+resultado.getError() , Toast.LENGTH_SHORT).show();
+                    Log.w("resultado ok", "EL RESULTADO NO OK");
+
+                }
+            }
+            else
+            {
+                //Toast.makeText(context, "Error nullable en la captura del resultado " , Toast.LENGTH_SHORT).show();
+                Log.w("resultado ok", "EL RESULTADO ES NULLO");
+            }
+
+
+            //FindApiBusqueda busquedalista = conversionJson.onPostExecute(busqueda);
+            //recyclerView.setAdapter(conversionJson.onPostExecute(lista));
+        }
+    }
+
 }
