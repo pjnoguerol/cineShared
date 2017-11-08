@@ -29,6 +29,7 @@ public class PeliculasCoorFragment extends Fragment {
     private ConversionJson<Peliculas> conversionJson = new ConversionJson<>(getActivity(), Constantes.PELICULAS);
     private RecyclerView recyclerView;
     private Usuarios usuario;
+    private String url;
     public PeliculasCoorFragment() {
         // Required empty public constructor
     }
@@ -41,11 +42,13 @@ public class PeliculasCoorFragment extends Fragment {
         Context context = inflater.getContext();
         View rootView = inflater.inflate(R.layout.recyclerview_activity, container, false);
         usuario = (Usuarios) getArguments().getSerializable("usuarios");
+        url = getArguments().getString("web");
         recyclerView = conversionJson.onCreateView(context, rootView, getResources());
-        String url = "";
-        url = Constantes.RUTA_BIBLIOTECA+usuario.getId_usua();
+        conversionJson.setUsuario(usuario);
+        //String url = "";
+        //url = Constantes.RUTA_BIBLIOTECA+usuario.getId_usua();
         //Toast.makeText(context, url, Toast.LENGTH_SHORT).show();
-        Log.w("MI INPUTSTREAM", url );
+
         try {
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

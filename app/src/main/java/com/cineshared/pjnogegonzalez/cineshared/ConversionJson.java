@@ -166,6 +166,12 @@ public class ConversionJson<T> {
                 if (usuario!=null)
                     adaptador = new AdaptarBusquedaApiCardView((List<Peliculas>) listaConvertir, 1, usuario);
             }
+            else if ((Constantes.PELICULAS.equals(tipoObjeto)))
+            {
+                if (usuario!=null)
+
+                    adaptador = new AdaptarBusquedaApiCardView((List<Peliculas>) listaConvertir, 1, usuario);
+            }
 
 
 
@@ -278,6 +284,8 @@ public class ConversionJson<T> {
            else if (Constantes.RESULTADO.equals((tipoObjeto)))
                 elementoConvertido = gson.fromJson(jsonReader, Resultado.class);
             else if (Constantes.BUSQUEDA_NATURAL.equals((tipoObjeto)))
+                elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
+            else if (Constantes.PELICULAS.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
            // else if (Constantes.USUARIO_RESULTADO.equals(tipoObjeto))
             //    elementoConvertido = gson.fromJson(jsonReader, Resultado.class);

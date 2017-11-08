@@ -222,10 +222,12 @@ public class MainActivity extends AppCompatActivity
                 if (networkInfo != null && networkInfo.isConnected()) {
 
                     String url = Constantes.RUTA_INSERTAR_COORDENADAS+longitude+"&latitud="+latitude+"&usuario="+usuario.getId_usua();
-                    String url2 = Constantes.RUTA_PELICULAS_COORDENADAS+usuario.getId_usua()+"&longitud="+longitude+"&latitud="+latitude+"distancia=10";
-                    Log.w("URL ENTERA" , url);
+                    String url2 = Constantes.RUTA_PELICULAS_COORDENADAS+usuario.getId_usua()+"&longitud="+longitude+"&latitud="+latitude+"&distancia=10000000";
+
                     new MainActivity.BusquedaJsonTask().execute(new URL(Constantes.RUTA_INSERTAR_COORDENADAS+longitude+"&latitud="+latitude+"&usuario="+usuario.getId_usua()));
-                    Log.w("COORDENADAS", longitude);
+                    establecerFragmeto(Constantes.PELICULAS, url2);
+                    cargarFragmmento();
+
                 } else {
                     Toast.makeText(MainActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
                 }
@@ -349,7 +351,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_biblioteca) {
             // Handle the camera action
-            establecerFragmeto();
+            establecerFragmeto(Constantes.USUARIOS, "");
             fragmentTransaction = true;
         } else if (id == R.id.nav_gallery) {
 
@@ -377,13 +379,28 @@ public class MainActivity extends AppCompatActivity
      *
      *
      */
-    private void establecerFragmeto() {
+    private void establecerFragmeto(String tipo, String variable) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Constantes.USUARIOS, usuario);
+        if (Constantes.USUARIOS.equals(tipo))
+        {
+            bundle.putSerializable(Constantes.USUARIOS, usuario);
 
-        fragment = new BibliotecaFragment();
+            fragment = new BibliotecaFragment();
+        }
+        else if (Constantes.PELICULAS.equals(tipo))
+        {
+            bundle.putString("web", variable);
+            bundle.putSerializable(Constantes.USUARIOS, usuario);
+            fragment = new PeliculasCoorFragment();
+        }
+
 
         fragment.setArguments(bundle);
+    }
+
+    private void cargarFragmmento()
+    {
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
     /**
      * Inner class que parsea el usuario logueado

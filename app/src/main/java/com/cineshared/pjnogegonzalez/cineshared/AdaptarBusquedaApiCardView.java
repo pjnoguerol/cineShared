@@ -49,6 +49,7 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
     public static class BusquedaViewHolder extends RecyclerView.ViewHolder {
         CardView cardViewPelicula;
         TextView tituloPelicula;
+        TextView datosPelicula;
         Button numPeliculas;
         ImageView imagenPelicula;
 
@@ -63,6 +64,8 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
             tituloPelicula = (TextView) itemView.findViewById(R.id.nombreActorDirectorPelicula);
 
             imagenPelicula = (ImageView) itemView.findViewById(R.id.imagenActorDirectorPelicula);
+            datosPelicula = (TextView)itemView.findViewById(R.id.datos);
+
             numPeliculas = (Button) itemView.findViewById(R.id.btBusqueda);
 
 
@@ -153,6 +156,8 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
         final Peliculas pelicula = busquedaApi.get(posicion);
 
         busquedaViewHolder.tituloPelicula.setText(pelicula.getTitle());
+
+        busquedaViewHolder.datosPelicula.setText("Distancia= "+pelicula.getDistancia()+"");
 
         // Al listado de actores le quitamos la última coma
 

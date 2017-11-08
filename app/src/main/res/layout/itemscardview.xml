@@ -5,11 +5,15 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardViewActorDirectorPelicula"
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/card_margin"
-        android:elevation="3dp"
+        android:elevation="12dp"
+        card_view:cardBackgroundColor="@color/cardview_dark_background"
+        android:layout_centerHorizontal="true"
+        android:innerRadius="0dp"
+        android:shape="ring"
+        android:thicknessRatio="1.9"
         card_view:cardCornerRadius="@dimen/card_album_radius">
 
         <RelativeLayout
@@ -20,7 +24,7 @@
                 android:id="@+id/imagenActorDirectorPelicula"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/album_cover_height"
-                android:background="?attr/selectableItemBackgroundBorderless"
+
                 android:clickable="true"
                 android:scaleType="fitXY" />
 
@@ -29,12 +33,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/imagenActorDirectorPelicula"
-                android:padding="10dp"
-
-                android:textColor="@color/cardview_dark_background"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:textStyle="bold"
+                android:textColor="@color/cardview_light_background"
                 android:textSize="@dimen/album_title" />
+
+            <TextView
+                android:id="@+id/datos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nombreActorDirectorPelicula"
+                android:layout_marginLeft="5dp"
+
+                android:textColor="@color/cardview_light_background"
+                android:textSize="@dimen/datos_title" />
+
 
 
         </RelativeLayout>
+
+
+
+
     </android.support.v7.widget.CardView>
 </LinearLayout>
