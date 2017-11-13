@@ -225,8 +225,8 @@ public class MainActivity extends AppCompatActivity
                     String url2 = Constantes.RUTA_PELICULAS_COORDENADAS+usuario.getId_usua()+"&longitud="+longitude+"&latitud="+latitude+"&distancia=10000000";
 
                     new MainActivity.BusquedaJsonTask().execute(new URL(Constantes.RUTA_INSERTAR_COORDENADAS+longitude+"&latitud="+latitude+"&usuario="+usuario.getId_usua()));
-                    establecerFragmeto(Constantes.PELICULAS, url2);
-                    cargarFragmmento();
+                    //establecerFragmeto(Constantes.PELICULAS, url2);
+                    //cargarFragmmento();
 
                 } else {
                     Toast.makeText(MainActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
@@ -351,15 +351,15 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_biblioteca) {
             // Handle the camera action
-            establecerFragmeto(Constantes.USUARIOS, "");
+            establecerFragmeto(Constantes.USUARIOS);
             fragmentTransaction = true;
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_trans) {
+            establecerFragmeto(Constantes.PELICULAS);
+            fragmentTransaction = true;
 
         } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
+        }  else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity
      *
      *
      */
-    private void establecerFragmeto(String tipo, String variable) {
+    private void establecerFragmeto(String tipo) {
         Bundle bundle = new Bundle();
         if (Constantes.USUARIOS.equals(tipo))
         {
@@ -389,7 +389,7 @@ public class MainActivity extends AppCompatActivity
         }
         else if (Constantes.PELICULAS.equals(tipo))
         {
-            bundle.putString("web", variable);
+
             bundle.putSerializable(Constantes.USUARIOS, usuario);
             fragment = new PeliculasCoorFragment();
         }

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class BibliotecaFragment extends Fragment {
 
-    private ConversionJson<Biblioteca> conversionJson = new ConversionJson<>(getActivity(), Constantes.BIBLIOTECA);
+    private ConversionJson<Peliculas> conversionJson = new ConversionJson<>(getActivity(), Constantes.BIBLIOTECA);
     private RecyclerView recyclerView;
     private Usuarios usuario;
     public BibliotecaFragment() {
@@ -41,6 +41,10 @@ public class BibliotecaFragment extends Fragment {
         Context context = inflater.getContext();
         View rootView = inflater.inflate(R.layout.recyclerview_activity, container, false);
         usuario = (Usuarios) getArguments().getSerializable("usuarios");
+        if (usuario!=null)
+        {
+            conversionJson.setUsuario(usuario);
+        }
         recyclerView = conversionJson.onCreateView(context, rootView, getResources());
         String url = "";
         url = Constantes.RUTA_BIBLIOTECA+usuario.getId_usua();
@@ -64,9 +68,9 @@ public class BibliotecaFragment extends Fragment {
     /**
      * Inner class que parsea la Biblioteca a una CardView
      */
-    public class PeliculasJsonTask extends AsyncTask<URL, Void, List<Biblioteca>> {
+    public class PeliculasJsonTask extends AsyncTask<URL, Void, List<Peliculas>> {
 
-        private List<Biblioteca> listaBiblioteca;
+        private List<Peliculas> listaPelicula;
 
         /**
          * Método que llama al parseo de biblioteca para obtener la lista a mostrar
@@ -74,19 +78,19 @@ public class BibliotecaFragment extends Fragment {
          * @return Biblioteca
          */
         @Override
-        protected List<Biblioteca> doInBackground(URL... urls) {
-            return (listaBiblioteca = conversionJson.doInBackground(urls));
+        protected List<Peliculas> doInBackground(URL... urls) {
+            return (listaPelicula = conversionJson.doInBackground(urls));
         }
 
         /**
          * Método que asigna la lista de películas al adaptador para obtener un cardView
          *
-         * @param listaBiblioteca Lista de películas para el adaptador
+         * @param listaPelicula Lista de películas para el adaptador
          */
         @TargetApi(Build.VERSION_CODES.GINGERBREAD)
         @Override
-        protected void onPostExecute(List<Biblioteca> listaBiblioteca) {
-            recyclerView.setAdapter(conversionJson.onPostExecute(listaBiblioteca));
+        protected void onPostExecute(List<Peliculas> listaPelicula) {
+            recyclerView.setAdapter(conversionJson.onPostExecute(listaPelicula));
         }
     }
 

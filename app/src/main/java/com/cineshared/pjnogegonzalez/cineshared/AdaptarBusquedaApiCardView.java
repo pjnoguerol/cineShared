@@ -50,6 +50,7 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
         CardView cardViewPelicula;
         TextView tituloPelicula;
         TextView datosPelicula;
+        TextView usuarioPelicula;
         Button numPeliculas;
         ImageView imagenPelicula;
 
@@ -65,6 +66,7 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
 
             imagenPelicula = (ImageView) itemView.findViewById(R.id.imagenActorDirectorPelicula);
             datosPelicula = (TextView)itemView.findViewById(R.id.datos);
+            usuarioPelicula = (TextView)itemView.findViewById(R.id.cardUsuario);
 
             numPeliculas = (Button) itemView.findViewById(R.id.btBusqueda);
 
@@ -156,8 +158,10 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
         final Peliculas pelicula = busquedaApi.get(posicion);
 
         busquedaViewHolder.tituloPelicula.setText(pelicula.getTitle());
+        busquedaViewHolder.usuarioPelicula.setText(pelicula.getUsuarionombre());
 
-        busquedaViewHolder.datosPelicula.setText("Distancia= "+pelicula.getDistancia()+"");
+        if (pelicula.getDistancia()!=0.0)
+            busquedaViewHolder.datosPelicula.setText("Distancia= "+pelicula.getDistancia()+"");
 
         // Al listado de actores le quitamos la última coma
 
@@ -176,15 +180,19 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
                 {
                     url2 = Constantes.RUTA_ACTUALIZAR_BUSQUEDA + pelicula.getId() +"&usuario="+usuario.getId_usua();
                 }
-                else
+                else if (modo==0)
                 {
-                    url2 = Constantes.RUTA_PELICULAS +pelicula.getTitle()+"&imagen="+pelicula.getPoster_path()+"&sinopsis="+pelicula.getOverview()+"&api_id="+pelicula.getId();
+                    url2 = Constantes.RUTA_PELICULAS +pelicula.getTitle()+"&imagen="+pelicula.getPoster_path()+"&sinopsis="+pelicula.getOverview()+"&api_id="+pelicula.getId()+"&usuario="+usuario.getId_usua();
                 }
-
+                else if (modo==2)
+                {
+                    return;
+                }
+                Log.w("URL AÑADIR BI", url2);
                 final Context context = view.getContext();
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setTitle(R.string.app_name);
-                builder.setMessage("¿Quieres agregar la pelicula "+ pelicula.getTitle()+"? "+ usuario.getUsuario());
+                builder.setMessage("¿Quieres agregar la pelicula "+ pelicula.getTitle()+" a tu Biblioteca "+ usuario.getUsuario()+"?");
 
                 final String url = url2;
 

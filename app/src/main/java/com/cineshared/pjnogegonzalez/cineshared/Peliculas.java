@@ -23,6 +23,7 @@ public class Peliculas implements Serializable{
     private boolean adult;
     private String release_date;
     private String usuarionombre;
+    private int usuarioid;
     private float distancia;
 
     public String getUsuarionombre() {
@@ -151,5 +152,13 @@ public class Peliculas implements Serializable{
 
     public void setRelease_date(String release_date) {
         this.release_date = release_date;
+    }
+
+    public int getUsuarioid() {
+        return usuarioid;
+    }
+
+    public void setUsuarioid(int usuarioid) {
+        this.usuarioid = usuarioid;
     }
 }

@@ -34,6 +34,7 @@ public class ConversionJson<T> {
     private Activity activity;
     private String tipoObjeto;
     private Usuarios usuario;
+    private int mode;
 
     /**
      * Constructor de la clase con todos los parámetros
@@ -43,11 +44,13 @@ public class ConversionJson<T> {
      */
     public ConversionJson(Activity activity, String tipoObjeto) {
         //this.activity = activity;
+        this.mode = 1;
         this.tipoObjeto = tipoObjeto;
     }
 
     public ConversionJson(String tipoObjeto)
     {
+        this.mode = 1;
         this.tipoObjeto = tipoObjeto;
     }
 
@@ -57,6 +60,14 @@ public class ConversionJson<T> {
 
     public void setUsuario(Usuarios usuario) {
         this.usuario = usuario;
+    }
+
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 
     /**
@@ -71,6 +82,7 @@ public class ConversionJson<T> {
     public RecyclerView onCreateView(Context context, View rootView, Resources resources) {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         int mNoOfColumns = Utility.calculateNoOfColumns(context);
+        Log.w("numero de columnas", mNoOfColumns+"");
         //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, 2);
         //GRID LAYOUT MANAGER DINAMICO
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, mNoOfColumns);
@@ -155,7 +167,7 @@ public class ConversionJson<T> {
         RecyclerView.Adapter adaptador = null;
         if (listaConvertir != null) {
             if (Constantes.BIBLIOTECA.equals(tipoObjeto))
-                adaptador = new AdaptarBibliotecaCardView((List<Biblioteca>) listaConvertir) ;
+                adaptador = new AdaptarBibliotecaCardView((List<Peliculas>) listaConvertir) ;
              else if (Constantes.BUSQUEDA.equals(tipoObjeto))
             {
                 List<FindApiBusqueda> lista = (List<FindApiBusqueda>) listaConvertir;
@@ -170,7 +182,7 @@ public class ConversionJson<T> {
             {
                 if (usuario!=null)
 
-                    adaptador = new AdaptarBusquedaApiCardView((List<Peliculas>) listaConvertir, 1, usuario);
+                    adaptador = new AdaptarBusquedaApiCardView((List<Peliculas>) listaConvertir, mode, usuario);
             }
 
 
@@ -272,7 +284,7 @@ public class ConversionJson<T> {
             // Parseamos cada elemento y lo añadimos a la lista
             T elementoConvertido = null;
             if (Constantes.BIBLIOTECA.equals(tipoObjeto))
-                elementoConvertido = gson.fromJson(jsonReader, Biblioteca.class);
+                elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
           //  else if (Constantes.PELICULAS.equals(tipoObjeto))
              //   elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
           //  else if (Constantes.DIRECTORES.equals(tipoObjeto))

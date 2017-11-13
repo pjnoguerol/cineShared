@@ -1,11 +1,13 @@
 package com.cineshared.pjnogegonzalez.cineshared;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +20,7 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
     public static Button btbusqueda  ;
     public static Button btBusquedaNatural;
     EditText txtBusqueda;
+    private Toolbar mToolbar;
 
     Usuarios usuario;
 
@@ -32,6 +35,13 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
         btBusquedaNatural =(Button)findViewById(R.id.btBusquedaNatural);
         //btbusqueda.setVisibility(View.GONE);
         txtBusqueda = (EditText)findViewById(R.id.userBusqueda);
+
+        //Cargamos el action BAR
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Buscador");
 
         btbusqueda.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +67,23 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
 
 
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // todo: goto back activity from here
+
+                Intent intent = new Intent(BuscarPeliculasActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     //Establecemos el fragmento para cargar
     private Fragment establecerFragmeto(int modo) {
         Fragment fragment;

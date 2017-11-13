@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibliotecaCardView.BibliotecaViewHolder> {
 
+    private Usuarios usuario;
     /**
      * Inner class que contiene los datos de la película que se mostrarán en la pantalla de listado
      */
@@ -45,15 +46,19 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
     }
 
     // Biblioteca a transformar
-    List<Biblioteca> listaBiblioteca;
+    List<Peliculas> listaPeliculas;
 
     /**
      * Constructor de la clase
      *
      * @param listaPeliculas Lista de películas que se desean adaptar a un CardView
      */
-    AdaptarBibliotecaCardView(List<Biblioteca> listaPeliculas) {
-        this.listaBiblioteca = listaPeliculas;
+    AdaptarBibliotecaCardView(List<Peliculas> listaPeliculas) {
+        this.listaPeliculas = listaPeliculas;
+    }
+    AdaptarBibliotecaCardView(List<Peliculas> listaPeliculas, Usuarios usuario) {
+        this.usuario = usuario;
+        this.listaPeliculas = listaPeliculas;
     }
 
     /**
@@ -91,23 +96,25 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
         // Creamos la lista de actores para mostrarla
         String listadoActoresPelicula = "Actores: ";
         //Log.w("Adapter", "Dentro adaptador biblioteca");
-        final Biblioteca biblioteca = listaBiblioteca.get(posicion);
-        peliculaViewHolder.tituloPelicula.setText(biblioteca.getNombre());
+        final Peliculas pelicula = listaPeliculas.get(posicion);
+        peliculaViewHolder.tituloPelicula.setText(pelicula.getTitle());
 
         // Al listado de actores le quitamos la última coma
 
         Picasso.with(peliculaViewHolder.itemView.getContext()).load(
-                Constantes.IMAGENES+ biblioteca.getImagen()).into(peliculaViewHolder.imagenPelicula);
-        /*
+                Constantes.IMAGENES+pelicula.getPoster_path()).into(peliculaViewHolder.imagenPelicula);
+
         peliculaViewHolder.imagenPelicula.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), PeliculasActivity.class);
+                Intent intent = new Intent(view.getContext(), AreaIntercambioActivity.class);
                 intent.putExtra(Constantes.PELICULAS, pelicula);
+                intent.putExtra(Constantes.USUARIO, usuario);
                 view.getContext().startActivity(intent);
+                return;
             }
         });
-        */
+
     }
 
     /**
@@ -117,6 +124,6 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
      */
     @Override
     public int getItemCount() {
-        return listaBiblioteca.size();
+        return listaPeliculas.size();
     }
 }

@@ -42,11 +42,19 @@ public class PeliculasCoorFragment extends Fragment {
         Context context = inflater.getContext();
         View rootView = inflater.inflate(R.layout.recyclerview_activity, container, false);
         usuario = (Usuarios) getArguments().getSerializable("usuarios");
-        url = getArguments().getString("web");
+        if (usuario!=null)
+        {
+            conversionJson.setUsuario(usuario);
+        }
+        conversionJson.setMode(2);
+        //url = getArguments().getString("web");
         recyclerView = conversionJson.onCreateView(context, rootView, getResources());
         conversionJson.setUsuario(usuario);
-        //String url = "";
-        //url = Constantes.RUTA_BIBLIOTECA+usuario.getId_usua();
+        String url = "";
+        url = Constantes.RUTA_PELICULAS_COORDENADAS+usuario.getId_usua()+"&distancia=10000000";
+
+        Log.w("MIURL", url);
+
         //Toast.makeText(context, url, Toast.LENGTH_SHORT).show();
 
         try {
