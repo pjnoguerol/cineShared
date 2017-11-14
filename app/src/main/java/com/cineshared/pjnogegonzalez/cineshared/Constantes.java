@@ -57,6 +57,7 @@ public class Constantes {
     public static String RUTA_ACTUALIZAR_BUSQUEDA = SERVIDOR + RUTA_CLASE_PHP +"actualizarpelicula=";
     public static String RUTA_INSERTAR_COORDENADAS = SERVIDOR + RUTA_CLASE_PHP +"longitud=";
     public static String RUTA_PELICULAS_COORDENADAS = SERVIDOR + RUTA_CLASE_PHP +"usuariocoordenada=";
+    public static String RUTA_USUARIO_INTERCAMBIO = SERVIDOR + RUTA_CLASE_PHP + "usuariointercambio=";
     public static int CONNECTION_TIMEOUT = 15000;
     public static int READ_TIMEOUT = 15000;
 }

@@ -142,7 +142,10 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
         //or an image on an ImageView.
         return convertView;
     }
-
+    private String capitalizar(String cadena)
+    {
+        return Character.toUpperCase(cadena.charAt(0)) + cadena.substring(1,cadena.length());
+    }
     /**
      * Método al que se llama para mostrar la información procesada en la posición especificada, para
      * ello actualizará la información del bandaSonoraViewHolder
@@ -150,6 +153,7 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
      * @param busquedaViewHolder Información a mostrar y actualizar
      * @param posicion           Posición donde debe ser mostrada
      */
+
     @Override
     public void onBindViewHolder(BusquedaViewHolder busquedaViewHolder, int posicion) {
         // Creamos la lista de actores para mostrarla
@@ -176,9 +180,11 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
             public void onClick(final View view) {
 
                 String url2="";
+                String mensaje = "¿Quieres agregar la pelicula "+ pelicula.getTitle()+" a tu Biblioteca "+ capitalizar(usuario.getUsuario())+"?" ;
                 if (modo == 1)
                 {
                     url2 = Constantes.RUTA_ACTUALIZAR_BUSQUEDA + pelicula.getId() +"&usuario="+usuario.getId_usua();
+
                 }
                 else if (modo==0)
                 {
@@ -186,13 +192,15 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
                 }
                 else if (modo==2)
                 {
-                    return;
+                    url2 = Constantes.RUTA_USUARIO_INTERCAMBIO +pelicula.getUsuarioid()+"&peliculaintercambio="+pelicula.getId()+"&usuario="+usuario.getId_usua();
+                    mensaje = "¿Desea agregar la película para intercambiar?, "+capitalizar(usuario.getUsuario());
+
                 }
                 Log.w("URL AÑADIR BI", url2);
                 final Context context = view.getContext();
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setTitle(R.string.app_name);
-                builder.setMessage("¿Quieres agregar la pelicula "+ pelicula.getTitle()+" a tu Biblioteca "+ usuario.getUsuario()+"?");
+                builder.setMessage(mensaje);
 
                 final String url = url2;
 

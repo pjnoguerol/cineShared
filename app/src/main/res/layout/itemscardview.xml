@@ -50,6 +50,15 @@
 
                 android:textColor="@color/cardview_light_background"
                 android:textSize="@dimen/datos_title" />
+            <ImageView
+                android:id="@+id/alericon"
+                android:layout_marginLeft="10dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_below="@+id/nombreActorDirectorPelicula"
+
+                android:clickable="true"
+                android:scaleType="fitXY" />
 
             <TextView
                 android:id="@+id/datos"

@@ -25,6 +25,7 @@ public class Peliculas implements Serializable{
     private String usuarionombre;
     private int usuarioid;
     private float distancia;
+    private int alert;
 
     public String getUsuarionombre() {
         return usuarionombre;
@@ -160,5 +161,13 @@ public class Peliculas implements Serializable{
 
     public void setUsuarioid(int usuarioid) {
         this.usuarioid = usuarioid;
+    }
+
+    public int getAlert() {
+        return alert;
+    }
+
+    public void setAlert(int alert) {
+        this.alert = alert;
     }
 }

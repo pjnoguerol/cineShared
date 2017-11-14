@@ -27,7 +27,7 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
     public static class BibliotecaViewHolder extends RecyclerView.ViewHolder {
         CardView cardViewPelicula;
         TextView tituloPelicula;
-
+        ImageView imagenIcon;
         ImageView imagenPelicula;
 
         /**
@@ -39,7 +39,7 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
             super(itemView);
             cardViewPelicula = (CardView) itemView.findViewById(R.id.cardViewActorDirectorPelicula);
             tituloPelicula = (TextView) itemView.findViewById(R.id.nombreActorDirectorPelicula);
-
+            imagenIcon = (ImageView) itemView.findViewById(R.id.alericon);
             imagenPelicula = (ImageView) itemView.findViewById(R.id.imagenActorDirectorPelicula);
         }
 
@@ -99,8 +99,9 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
         final Peliculas pelicula = listaPeliculas.get(posicion);
         peliculaViewHolder.tituloPelicula.setText(pelicula.getTitle());
 
+        if (pelicula.getAlert()>0)
+            Picasso.with(peliculaViewHolder.itemView.getContext()).load(Constantes.RUTA_IMAGEN+"alert.png").into(peliculaViewHolder.imagenIcon);
         // Al listado de actores le quitamos la última coma
-
         Picasso.with(peliculaViewHolder.itemView.getContext()).load(
                 Constantes.IMAGENES+pelicula.getPoster_path()).into(peliculaViewHolder.imagenPelicula);
 
