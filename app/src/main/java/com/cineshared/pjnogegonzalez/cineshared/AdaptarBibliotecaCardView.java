@@ -1,6 +1,12 @@
 package com.cineshared.pjnogegonzalez.cineshared;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,9 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -21,6 +30,9 @@ import java.util.List;
 public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibliotecaCardView.BibliotecaViewHolder> {
 
     private Usuarios usuario;
+    private int mode;
+    private int historico;
+    private ConversionJson<Resultado> conversionJson;
     /**
      * Inner class que contiene los datos de la película que se mostrarán en la pantalla de listado
      */
@@ -53,11 +65,17 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
      *
      * @param listaPeliculas Lista de películas que se desean adaptar a un CardView
      */
-    AdaptarBibliotecaCardView(List<Peliculas> listaPeliculas) {
+    AdaptarBibliotecaCardView(List<Peliculas> listaPeliculas, int mode, int historico, Usuarios usuario) {
+        this.historico = historico;
+        this.mode = mode;
+        this.usuario = usuario;
         this.listaPeliculas = listaPeliculas;
     }
+
+
     AdaptarBibliotecaCardView(List<Peliculas> listaPeliculas, Usuarios usuario) {
         this.usuario = usuario;
+
         this.listaPeliculas = listaPeliculas;
     }
 
@@ -94,10 +112,13 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
     @Override
     public void onBindViewHolder(final BibliotecaViewHolder peliculaViewHolder, int posicion) {
         // Creamos la lista de actores para mostrarla
-        String listadoActoresPelicula = "Actores: ";
-        //Log.w("Adapter", "Dentro adaptador biblioteca");
         final Peliculas pelicula = listaPeliculas.get(posicion);
-        peliculaViewHolder.tituloPelicula.setText(pelicula.getTitle());
+
+        final int id = pelicula.getId();
+
+        //Log.w("Adapter", "Dentro adaptador biblioteca");
+
+        peliculaViewHolder.tituloPelicula.setText(Utility.acotar(pelicula.getTitle()));
 
         if (pelicula.getAlert()>0)
             Picasso.with(peliculaViewHolder.itemView.getContext()).load(Constantes.RUTA_IMAGEN+"alert.png").into(peliculaViewHolder.imagenIcon);
@@ -108,11 +129,36 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
         peliculaViewHolder.imagenPelicula.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), AreaIntercambioActivity.class);
-                intent.putExtra(Constantes.PELICULAS, pelicula);
-                intent.putExtra(Constantes.USUARIO, usuario);
-                view.getContext().startActivity(intent);
-                return;
+                Context context = view.getContext();
+
+                if (mode==1)
+                {
+                    Intent intent = new Intent(view.getContext(), AreaIntercambioActivity.class);
+                    intent.putExtra(Constantes.PELICULAS, pelicula);
+                    intent.putExtra(Constantes.USUARIO, usuario);
+                    view.getContext().startActivity(intent);
+
+                }
+                else if (mode==5)
+                {
+                    try {
+                        String url = Constantes.RUTA_ACTUALIZAR_INTERCAMBIO+historico+"&usuarioin="+usuario.getId_usua()+"&peliculain="+id;
+
+                        conversionJson = new ConversionJson<>(Constantes.RESULTADO);
+                        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                        if (networkInfo != null && networkInfo.isConnected()) {
+                            Log.w("HISTORICO", url);
+                            new ResultadoJsonTask(context).
+                                    execute(new URL(url));
+                        } else {
+                            Toast.makeText(context, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                }
+
             }
         });
 
@@ -127,4 +173,62 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
     public int getItemCount() {
         return listaPeliculas.size();
     }
+
+    public class ResultadoJsonTask extends AsyncTask<URL, Void, Resultado > {
+
+        private Resultado resultado;
+        private Context context;
+        private String pelicula;
+
+        public ResultadoJsonTask(Context context)
+        {
+            this.context = context;
+        }
+
+        /**
+         * Método que llama al parseo de biblioteca para obtener la lista a mostrar
+         *
+         * @return Biblioteca
+         */
+        @Override
+        protected Resultado doInBackground(URL... urls) {
+
+            resultado = conversionJson.doInBackground(urls).get(0);
+
+            return (resultado);
+        }
+
+        /**
+         * Método que asigna la lista de películas al adaptador para obtener un cardView
+         *
+         * @param resultado Lista de películas para el adaptador
+         */
+        @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+        @Override
+        protected void onPostExecute(Resultado resultado) {
+            if (resultado!=null)
+            {
+                if(resultado.isOk())
+                {
+                    Toast.makeText(context, "Pelicula "+pelicula+" introducida correctamente" , Toast.LENGTH_SHORT).show();
+
+
+                }
+                else
+                {
+                    Toast.makeText(context, "Error "+resultado.getError() , Toast.LENGTH_SHORT).show();
+
+                }
+            }
+            else
+            {
+                Toast.makeText(context, "Error nullable en la captura del resultado " , Toast.LENGTH_SHORT).show();
+            }
+
+
+            //FindApiBusqueda busquedalista = conversionJson.onPostExecute(busqueda);
+            //recyclerView.setAdapter(conversionJson.onPostExecute(lista));
+        }
+    }
+
 }

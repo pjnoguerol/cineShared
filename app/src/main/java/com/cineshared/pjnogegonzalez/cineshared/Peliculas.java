@@ -1,6 +1,7 @@
 package com.cineshared.pjnogegonzalez.cineshared;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by informatica on 24/10/2017.
@@ -26,6 +27,8 @@ public class Peliculas implements Serializable{
     private int usuarioid;
     private float distancia;
     private int alert;
+    private List<Usuarios> usuariointercambio;
+
 
     public String getUsuarionombre() {
         return usuarionombre;
@@ -169,5 +172,13 @@ public class Peliculas implements Serializable{
 
     public void setAlert(int alert) {
         this.alert = alert;
+    }
+
+    public List<Usuarios> getUsuariointercambio() {
+        return usuariointercambio;
+    }
+
+    public void setUsuariointercambio(List<Usuarios> usuariointercambio) {
+        this.usuariointercambio = usuariointercambio;
     }
 }

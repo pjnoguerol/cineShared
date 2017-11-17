@@ -3,11 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+
+        android:layout_height="match_parent">
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recyclerView2"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="15dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

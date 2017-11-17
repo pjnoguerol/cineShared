@@ -43,14 +43,14 @@ public class BusquedaNaturalFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         Context context = inflater.getContext();
-        View rootView = inflater.inflate(R.layout.recyclerview_activity, container, false);
+        View rootView = inflater.inflate(R.layout.recyclerview_activity2, container, false);
         cadenaBusqueda = getArguments().getString("natural");
         usuario = (Usuarios) getArguments().getSerializable(Constantes.USUARIOS);
         if (usuario!=null)
             conversionJson.setUsuario(usuario);
         //int modo = getArguments().getInt("modo");
 
-        recyclerView = conversionJson.onCreateView(context, rootView, getResources());
+        recyclerView = conversionJson.onCreateViewScroll(context, rootView, getResources());
 
         String url = "";
         //url = "http://www.intraco.es/cineshared/cineshared_clase.php?prueba";

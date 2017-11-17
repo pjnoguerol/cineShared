@@ -161,7 +161,7 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
         String listadoActoresPelicula = "Actores: ";
         final Peliculas pelicula = busquedaApi.get(posicion);
 
-        busquedaViewHolder.tituloPelicula.setText(pelicula.getTitle());
+        busquedaViewHolder.tituloPelicula.setText(Utility.acotar(pelicula.getTitle()));
         busquedaViewHolder.usuarioPelicula.setText(pelicula.getUsuarionombre());
 
         if (pelicula.getDistancia()!=0.0)

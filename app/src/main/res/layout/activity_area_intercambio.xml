@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.cineshared.pjnogegonzalez.cineshared.AreaIntercambioActivity">
     <LinearLayout
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
@@ -13,7 +15,7 @@
         <ImageView
             android:id="@+id/imagenPeliculaActivity"
             android:layout_width="@dimen/album_cover_width"
-            android:layout_height="100dp"
+            android:layout_height="130dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:scaleType="fitXY" />
@@ -39,7 +41,7 @@
             android:paddingBottom="@dimen/activity_margin"
             android:paddingLeft="@dimen/activity_margin"
             android:paddingRight="@dimen/activity_margin"
-            android:paddingTop="100dp">
+            android:paddingTop="150dp">
 
             <TabWidget
                 android:id="@android:id/tabs"
@@ -60,30 +62,23 @@
                     android:paddingLeft="@dimen/activity_margin"
                     android:paddingRight="@dimen/activity_margin"
                     android:paddingTop="@dimen/activity_margin">
-
-                    <TextView
-                        android:id="@+id/textDatos"
-                        android:layout_width="wrap_content"
+                    <Spinner
+                        android:id="@+id/spIntercambio"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:text="" />
+                        android:layout_margin="30sp" />
 
-                    <ToggleButton
-                        android:id="@+id/musicOnOf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="50dp"
-                        android:background="@color/cardview_dark_background"
-                        android:textColor="@color/cardview_light_background"
-                        android:textOff="PLAY"
-                        android:textOn="STOP" />
-
-                    <SeekBar
-                        android:id="@+id/seekBarBSO"
+                    <FrameLayout
+                        android:id="@+id/frame_intercambio"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/button"
-                        android:layout_marginTop="20dp"
-                        android:clickable="false" />
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/spIntercambio"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+
+
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -100,19 +95,7 @@
                         android:text="Contenido Tab 2" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/tabCriticas"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="20dp"
-                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/critica"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Contenido Tab 2" />
-                </LinearLayout>
             </FrameLayout>
         </LinearLayout>
     </TabHost>

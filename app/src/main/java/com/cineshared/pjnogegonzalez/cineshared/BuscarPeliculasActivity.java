@@ -47,8 +47,7 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Establecemos el fragmento con MODO 0 para Busqueda por API
-                Fragment fragment = establecerFragmeto(0);
-                generarFragmento(fragment);
+
             }
         });
 
@@ -57,8 +56,11 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //Establecemos fragmento para el MODO de BUSQUEDA NATURAL
                 //btbusqueda.setVisibility(View.VISIBLE);
-                Fragment fragment = establecerFragmeto(1);
+                Fragment fragment = establecerFragmeto(0);
+                Fragment fragment2 = establecerFragmeto(1);
                 generarFragmento(fragment);
+                generarFragmento2(fragment2);
+
 
 
             }
@@ -109,6 +111,11 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
     }
     //Generamos el fragmento a mostrar
     private void generarFragmento (Fragment fragment)
+    {
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_busqueda2, fragment).commit();
+
+    }
+    private void generarFragmento2 (Fragment fragment)
     {
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_busqueda, fragment).commit();
 

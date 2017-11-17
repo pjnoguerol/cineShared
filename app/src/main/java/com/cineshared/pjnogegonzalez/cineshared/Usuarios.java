@@ -15,6 +15,8 @@ public class Usuarios implements Serializable {
     private String email;
     private String telefono;
     private int id_gen;
+    //Historio de intercambio
+    private int hisusua;
 
     // Métodos getter y setter de todos los atributos
     public int getId_usua() {
@@ -80,4 +82,19 @@ public class Usuarios implements Serializable {
     public void setError(String error) {
         this.error = error;
     }
+
+    public int getHisusua() {
+        return hisusua;
+    }
+
+    public void setHisusua(int hisusua) {
+        this.hisusua = hisusua;
+    }
+
+    @Override
+    public String toString() {
+        return usuario;
+    }
+
+
 }

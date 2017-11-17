@@ -26,6 +26,15 @@ public class Utility {
         return Utility.resultado;
     }
 
+
+    public static String acotar(String cadena)
+    {
+       int size = (cadena.length() < 30)?cadena.length():30;
+       return cadena.substring(0,size);
+
+    }
+
+
     public static  double distance(double lat1, double lon1, double lat2, double lon2, char unit) {
         double theta = lon1 - lon2;
         double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));

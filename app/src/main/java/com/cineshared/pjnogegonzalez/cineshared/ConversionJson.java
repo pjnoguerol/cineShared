@@ -3,7 +3,9 @@ package com.cineshared.pjnogegonzalez.cineshared;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
@@ -15,13 +17,18 @@ import com.google.gson.stream.JsonReader;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Clase que convierte los JSON que se obtienen de los distintos servicios en el objeto indicado
@@ -35,6 +42,7 @@ public class ConversionJson<T> {
     private String tipoObjeto;
     private Usuarios usuario;
     private int mode;
+    private int historico;
 
     /**
      * Constructor de la clase con todos los parámetros
@@ -52,6 +60,14 @@ public class ConversionJson<T> {
     {
         this.mode = 1;
         this.tipoObjeto = tipoObjeto;
+    }
+
+    public int getHistorico() {
+        return historico;
+    }
+
+    public void setHistorico(int historico) {
+        this.historico = historico;
     }
 
     public Usuarios getUsuario() {
@@ -86,8 +102,23 @@ public class ConversionJson<T> {
         //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, 2);
         //GRID LAYOUT MANAGER DINAMICO
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, mNoOfColumns);
-       // LinearLayoutManager layoutManager
-             //   = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        //LinearLayoutManager layoutManager
+             // = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        //recyclerView.addItemDecoration(new GridViewEspaciado(mNoOfColumns, convertir_dpApx(10, resources)));
+        //recyclerView.setItemAnimator(new DefaultItemAnimator());
+        return recyclerView;
+    }
+
+    public RecyclerView onCreateViewScroll(Context context, View rootView, Resources resources) {
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView2);
+
+
+        //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, 2);
+        //GRID LAYOUT MANAGER DINAMICO
+        // RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, mNoOfColumns);
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
         //recyclerView.addItemDecoration(new GridViewEspaciado(mNoOfColumns, convertir_dpApx(10, resources)));
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -122,6 +153,55 @@ public class ConversionJson<T> {
         }
         return listaConvertir;
     }
+    //CREAR LO MISMO QUE GET PERO EN MODO POST
+    protected T doInBackgroundObjectPost (URL urls, Uri.Builder builder)
+    {
+        T convertir = null;
+        try
+        {
+            conexion = (HttpURLConnection) urls.openConnection();
+            conexion.setReadTimeout(10000);
+            conexion.setConnectTimeout(15000);
+            conexion.setRequestMethod("POST");
+            conexion.setDoInput(true);
+            conexion.setDoOutput(true);
+            String query = builder.build().getEncodedQuery();
+            OutputStream os = conexion.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+            int statusCode = conexion.getResponseCode();
+            if (statusCode == HttpsURLConnection.HTTP_OK) {
+                Gson gson = new Gson();
+
+                JsonReader reader = new JsonReader(new InputStreamReader(conexion.getInputStream()));
+                convertir = gson.fromJson(reader, FindApiBusqueda.class);
+                if (convertir ==null)
+                {
+                    Log.w("MI Iretorno", "es NULO");
+                }
+                else
+                {
+                    Log.w("MI Iretorno",((FindApiBusqueda)convertir).getResults().get(0).getTitle()+"" );
+                }
+
+            }
+
+        }
+         catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conexion.disconnect();
+        }
+
+
+        return convertir;
+
+    }
+
     protected T doInBackgroundObject(URL... urls) {
         T convertir=null;
         try {
@@ -167,7 +247,7 @@ public class ConversionJson<T> {
         RecyclerView.Adapter adaptador = null;
         if (listaConvertir != null) {
             if (Constantes.BIBLIOTECA.equals(tipoObjeto))
-                adaptador = new AdaptarBibliotecaCardView((List<Peliculas>) listaConvertir) ;
+                adaptador = new AdaptarBibliotecaCardView((List<Peliculas>) listaConvertir, mode, historico, usuario) ;
              else if (Constantes.BUSQUEDA.equals(tipoObjeto))
             {
                 List<FindApiBusqueda> lista = (List<FindApiBusqueda>) listaConvertir;
