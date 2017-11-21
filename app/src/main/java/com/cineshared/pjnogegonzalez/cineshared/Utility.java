@@ -34,6 +34,14 @@ public class Utility {
 
     }
 
+    public static String capitalizar(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        } else {
+            return str.substring(0, 1).toUpperCase() + str.substring(1);
+        }
+    }
+
 
     public static  double distance(double lat1, double lon1, double lat2, double lon2, char unit) {
         double theta = lon1 - lon2;

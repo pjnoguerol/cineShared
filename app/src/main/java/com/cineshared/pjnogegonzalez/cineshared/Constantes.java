@@ -22,10 +22,14 @@ public class Constantes {
     public static String RESULTADO = "resultado";
     public static String IMAGENES = "https://image.tmdb.org/t/p/w500";
     public static String PELICULAS = "peliculas";
+    public static String HISTORICO = "historico";
+    public static String INTERCAMBIo = "intercambio";
+
 
 
 
     // Constantes login
+    public static String CADENA_VACIA = "";
     public static String USUARIO = "usuario";
     public static String USUARIO_DATOS = "usuariodatos";
     public static String PASSWORD = "password";
@@ -42,6 +46,7 @@ public class Constantes {
     public static String RUTA_INSERTAR_USUARIO = SERVIDOR + RUTA_CLASE_PHP + "userinsert=";
     public static String RUTA_LISTA_ACTORES = SERVIDOR + RUTA_CLASE_PHP + "actorlist";
     public static String RUTA_PELICULAS = SERVIDOR + RUTA_CLASE_PHP + "nombre=";
+    public static String RUTA_HISTORICO_INTERCAMBIO = SERVIDOR + RUTA_CLASE_PHP + "=";
 
     //Constantes api
     public static String RUTA_WEB_API_BUSQUEDA = "https://api.themoviedb.org/3/search/movie?query=";

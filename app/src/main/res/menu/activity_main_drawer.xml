@@ -5,14 +5,14 @@
         <item
             android:id="@+id/nav_trans"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Transacciones" />
+            android:title="Intercambio" />
         <item
             android:id="@+id/nav_biblioteca"
             android:icon="@drawable/ic_menu_camera"
             android:title="Biblioteca" />
 
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_historico"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Historico" />
 

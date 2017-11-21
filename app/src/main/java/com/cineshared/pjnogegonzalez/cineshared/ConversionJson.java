@@ -110,6 +110,13 @@ public class ConversionJson<T> {
         return recyclerView;
     }
 
+    /**
+     * Metodo que crea los reciclyerView para los scroll views
+     * @param context
+     * @param rootView
+     * @param resources
+     * @return
+     */
     public RecyclerView onCreateViewScroll(Context context, View rootView, Resources resources) {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView2);
 
@@ -119,6 +126,19 @@ public class ConversionJson<T> {
         // RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, mNoOfColumns);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        //recyclerView.addItemDecoration(new GridViewEspaciado(mNoOfColumns, convertir_dpApx(10, resources)));
+        //recyclerView.setItemAnimator(new DefaultItemAnimator());
+        return recyclerView;
+    }
+    public RecyclerView onCreateViewHistorico(Context context, View rootView, Resources resources) {
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+
+        //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, 2);
+        //GRID LAYOUT MANAGER DINAMICO
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, 1);
+        //LinearLayoutManager layoutManager
+        // = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
         //recyclerView.addItemDecoration(new GridViewEspaciado(mNoOfColumns, convertir_dpApx(10, resources)));
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -153,6 +173,41 @@ public class ConversionJson<T> {
         }
         return listaConvertir;
     }
+    protected List<T> doInBackgroundPost(URL urls, Uri.Builder builder) {
+        List<T> listaConvertir = new ArrayList<>();
+        try {
+            conexion = (HttpURLConnection) urls.openConnection();
+            conexion.setReadTimeout(10000);
+            conexion.setConnectTimeout(15000);
+            conexion.setRequestMethod("POST");
+            conexion.setDoInput(true);
+            conexion.setDoOutput(true);
+            String query = builder.build().getEncodedQuery();
+            OutputStream os = conexion.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+            int statusCode = conexion.getResponseCode();
+            if (statusCode == HttpsURLConnection.HTTP_OK)
+            {
+                InputStream inputStream = new BufferedInputStream(conexion.getInputStream());
+                listaConvertir = parsearJson(inputStream);
+
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conexion.disconnect();
+            return listaConvertir;
+        }
+
+
+    }
+
     //CREAR LO MISMO QUE GET PERO EN MODO POST
     protected T doInBackgroundObjectPost (URL urls, Uri.Builder builder)
     {
@@ -263,6 +318,13 @@ public class ConversionJson<T> {
                 if (usuario!=null)
 
                     adaptador = new AdaptarBusquedaApiCardView((List<Peliculas>) listaConvertir, mode, usuario);
+            }
+            else if ((Constantes.INTERCAMBIo.equals(tipoObjeto)))
+            {
+
+                if (usuario!=null)
+
+                    adaptador = new AdaptarHistoricoCardView((List<Peliculas>) listaConvertir,  usuario);
             }
 
 
@@ -378,6 +440,8 @@ public class ConversionJson<T> {
             else if (Constantes.BUSQUEDA_NATURAL.equals((tipoObjeto)))
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
             else if (Constantes.PELICULAS.equals(tipoObjeto))
+                elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
+            else if (Constantes.INTERCAMBIo.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
            // else if (Constantes.USUARIO_RESULTADO.equals(tipoObjeto))
             //    elementoConvertido = gson.fromJson(jsonReader, Resultado.class);

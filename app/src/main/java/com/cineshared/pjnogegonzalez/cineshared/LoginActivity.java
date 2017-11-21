@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -78,8 +79,13 @@ public class LoginActivity extends AppCompatActivity {
                     ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                     if (networkInfo != null && networkInfo.isConnected()) {
-                        new LoginJsonTask().execute(new URL(Constantes.RUTA_LOGIN + nombreUsuario.getText() + "&"
-                                + Constantes.PASSWORD + "=" + passwordUsuario.getText()));
+                        Uri.Builder builder = new Uri.Builder()
+                                .appendQueryParameter("usuario", nombreUsuario.getText().toString())
+                                .appendQueryParameter("password", passwordUsuario.getText().toString());
+
+                        new LoginJsonTask(builder).execute(new URL(Constantes.SERVIDOR+Constantes.RUTA_CLASE_PHP));
+                        //new LoginJsonTask().execute(new URL(Constantes.RUTA_LOGIN + nombreUsuario.getText() + "&"
+                               // + Constantes.PASSWORD + "=" + passwordUsuario.getText()));
                     } else {
                         Toast.makeText(LoginActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
                     }
@@ -92,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         botonInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this, InsertUsuarioActivity.class);
                 startActivity(intent);
             }
         });
@@ -104,6 +110,12 @@ public class LoginActivity extends AppCompatActivity {
     public class LoginJsonTask extends AsyncTask<URL, Void, Usuarios> {
 
         private Usuarios usuario;
+        private Uri.Builder builder;
+
+        private LoginJsonTask(Uri.Builder builder)
+        {
+            this.builder = builder;
+        }
 
         /**
          * Método que llama al parseo del usuario logueado
@@ -113,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
          */
         @Override
         protected Usuarios doInBackground(URL... urls) {
-            return (usuario = conversionJson.doInBackground(urls).get(0));
+            return (usuario = conversionJson.doInBackgroundPost(urls[0], this.builder).get(0));
 
 
         }

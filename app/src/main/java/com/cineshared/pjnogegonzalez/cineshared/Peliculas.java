@@ -27,6 +27,8 @@ public class Peliculas implements Serializable{
     private int usuarioid;
     private float distancia;
     private int alert;
+    private String fechainioio;
+    private String fechafin;
     private List<Usuarios> usuariointercambio;
 
 
@@ -172,6 +174,22 @@ public class Peliculas implements Serializable{
 
     public void setAlert(int alert) {
         this.alert = alert;
+    }
+
+    public String getFechainioio() {
+        return fechainioio;
+    }
+
+    public void setFechainioio(String fechainioio) {
+        this.fechainioio = fechainioio;
+    }
+
+    public String getFechafin() {
+        return fechafin;
+    }
+
+    public void setFechafin(String fechafin) {
+        this.fechafin = fechafin;
     }
 
     public List<Usuarios> getUsuariointercambio() {

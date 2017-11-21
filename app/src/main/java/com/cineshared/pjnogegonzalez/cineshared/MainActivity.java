@@ -357,7 +357,10 @@ public class MainActivity extends AppCompatActivity
             establecerFragmeto(Constantes.PELICULAS);
             fragmentTransaction = true;
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_historico) {
+            establecerFragmeto(Constantes.HISTORICO);
+            fragmentTransaction = true;
+
 
         }  else if (id == R.id.nav_share) {
 
@@ -392,6 +395,11 @@ public class MainActivity extends AppCompatActivity
 
             bundle.putSerializable(Constantes.USUARIOS, usuario);
             fragment = new PeliculasCoorFragment();
+        }
+        else if (Constantes.HISTORICO.equals((tipo)))
+        {
+            bundle.putSerializable(Constantes.USUARIOS, usuario);
+            fragment = new FragmentHistoricoIntercambio();
         }
 
 
