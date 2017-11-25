@@ -2,10 +2,12 @@ package com.cineshared.pjnogegonzalez.cineshared;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.net.URL;
 import java.util.List;
@@ -19,11 +21,18 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
     private String tipoObjeto;
     private RecyclerView recyclerView;
     private Uri.Builder builder;
-    private ConversionJson<T> conversionJson = new ConversionJson<T>(activity, tipoObjeto);
+    private ConversionJson<T> conversionJson;
     private List<T> listaGenerica;
-    private HiloGenerico(Uri.Builder builder)
+    private int tipo;
+    public HiloGenerico(Uri.Builder builder)
     {
         this.builder = builder;
+    }
+
+    public HiloGenerico()
+
+    {
+
     }
 
     public Activity getActivity() {
@@ -66,6 +75,8 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
         this.conversionJson = conversionJson;
     }
 
+
+
     public List<T> getListaGenerica() {
         return listaGenerica;
     }
@@ -74,7 +85,13 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
         this.listaGenerica = listaGenerica;
     }
 
+    public int getTipo() {
+        return tipo;
+    }
 
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
+    }
 
     @Override
     protected List<T> doInBackground(URL... url) {
@@ -83,6 +100,25 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onPostExecute(List<T> lista) {
-        recyclerView.setAdapter(conversionJson.onPostExecute(lista));
+        if (tipo==0)
+        {
+            Usuarios usuario = (Usuarios) lista.get(0);
+            if (usuario != null) {
+                if (usuario.isOk()) {
+                    Toast.makeText(activity, "Insertado correctamente", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(activity, usuario.getError(), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(activity, Constantes.ERROR_JSON, Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if (tipo==1)
+        {
+            recyclerView.setAdapter(conversionJson.onPostExecute(lista));
+        }
+
+
     }
 }

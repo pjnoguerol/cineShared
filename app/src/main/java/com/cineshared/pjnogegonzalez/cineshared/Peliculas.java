@@ -27,9 +27,11 @@ public class Peliculas implements Serializable{
     private int usuarioid;
     private float distancia;
     private int alert;
-    private String fechainioio;
+    private String fechainicio;
     private String fechafin;
+    private String peliusuario;
     private List<Usuarios> usuariointercambio;
+
 
 
     public String getUsuarionombre() {
@@ -176,12 +178,12 @@ public class Peliculas implements Serializable{
         this.alert = alert;
     }
 
-    public String getFechainioio() {
-        return fechainioio;
+    public String getFechainicio() {
+        return fechainicio;
     }
 
-    public void setFechainioio(String fechainioio) {
-        this.fechainioio = fechainioio;
+    public void setFechainicio(String fechainicio) {
+        this.fechainicio = fechainicio;
     }
 
     public String getFechafin() {
@@ -190,6 +192,14 @@ public class Peliculas implements Serializable{
 
     public void setFechafin(String fechafin) {
         this.fechafin = fechafin;
+    }
+
+    public String getPeliusuario() {
+        return peliusuario;
+    }
+
+    public void setPeliusuario(String peliusuario) {
+        this.peliusuario = peliusuario;
     }
 
     public List<Usuarios> getUsuariointercambio() {

@@ -41,6 +41,10 @@ public class AdaptarHistoricoCardView extends RecyclerView.Adapter<AdaptarHistor
         CardView cardViewPelicula;
         TextView tituloPelicula;
         TextView usuarioPelicula;
+        TextView fechainicio;
+        TextView fechafin;
+        TextView peliintercambio;
+        TextView estado;
         ImageView imagenPelicula;
 
         /**
@@ -52,7 +56,11 @@ public class AdaptarHistoricoCardView extends RecyclerView.Adapter<AdaptarHistor
             super(itemView);
             cardViewPelicula = (CardView) itemView.findViewById(R.id.cardViewHistorico);
             tituloPelicula = (TextView) itemView.findViewById(R.id.nombreHistorico);
+            peliintercambio = (TextView) itemView.findViewById(R.id.peliintercambio);
             usuarioPelicula = (TextView) itemView.findViewById(R.id.cardintercambio);
+            fechainicio = (TextView) itemView.findViewById(R.id.fechainicio);
+            fechafin = (TextView) itemView.findViewById(R.id.fechafin);
+            estado = (TextView) itemView.findViewById(R.id.estadoin);
             imagenPelicula = (ImageView) itemView.findViewById(R.id.imagenHistorico);
         }
 
@@ -117,6 +125,17 @@ public class AdaptarHistoricoCardView extends RecyclerView.Adapter<AdaptarHistor
         peliculaViewHolder.tituloPelicula.setText(Utility.acotar(pelicula.getTitle()));
 
         peliculaViewHolder.usuarioPelicula.setText("Usuario Petición: "+Utility.capitalizar(pelicula.getUsuarionombre()));
+
+        peliculaViewHolder.fechainicio.setText("Fecha petición= "+pelicula.getFechainicio());
+
+        peliculaViewHolder.estado.setText("Acuerdo Abierto");
+
+        if (pelicula.getAlert()!=0)
+        {
+            peliculaViewHolder.peliintercambio.setText(Utility.acotar(pelicula.getPeliusuario()));
+            peliculaViewHolder.fechafin.setText("Acuerdo Cerrado= "+pelicula.getFechafin() );
+
+        }
 
 
         Picasso.with(peliculaViewHolder.itemView.getContext()).load(

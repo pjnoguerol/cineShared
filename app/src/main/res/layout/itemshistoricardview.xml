@@ -49,7 +49,18 @@
                 android:layout_marginLeft="5dp"
                 android:layout_below="@id/nombreHistorico"
                 android:layout_toRightOf="@id/imagenHistorico"
-                android:text="hola cara cola"
+                android:text=""
+                android:textColor="@color/cardview_light_background"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/peliintercambio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="5dp"
+                android:layout_below="@id/cardintercambio"
+                android:layout_toRightOf="@id/imagenHistorico"
+                android:text=""
                 android:textColor="@color/cardview_light_background"
                 android:textSize="15sp" />
 
@@ -57,11 +68,11 @@
                 android:id="@+id/fechainicio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="7dp"
                 android:layout_marginLeft="5dp"
-                android:layout_below="@id/cardintercambio"
+                android:layout_below="@id/peliintercambio"
                 android:layout_toRightOf="@id/imagenHistorico"
-                android:text="fecha1"
+                android:text=""
                 android:textColor="@color/cardview_light_background"
                 android:textSize="15sp" />
 
@@ -73,7 +84,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_below="@id/fechainicio"
                 android:layout_toRightOf="@id/imagenHistorico"
-                android:text="fecha2"
+                android:text=""
                 android:textColor="@color/cardview_light_background"
                 android:textSize="15sp" />
             <TextView
@@ -84,7 +95,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_below="@id/fechafin"
                 android:layout_toRightOf="@id/imagenHistorico"
-                android:text="estado"
+                android:text=""
                 android:textColor="@color/cardview_light_background"
                 android:textSize="15sp" />
 

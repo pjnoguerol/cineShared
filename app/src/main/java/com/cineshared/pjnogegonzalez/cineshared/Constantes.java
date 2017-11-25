@@ -24,8 +24,12 @@ public class Constantes {
     public static String PELICULAS = "peliculas";
     public static String HISTORICO = "historico";
     public static String INTERCAMBIo = "intercambio";
+    public static String INSERTAR = "insertar";
 
-
+    //Cosntantes ftp
+    public static String IP_FTP = "intracosl.ddns.net";
+    public static String USUARIO_FTP = "ftp2";
+    public static String PASS_FTP = "Intraco2017;";
 
 
     // Constantes login

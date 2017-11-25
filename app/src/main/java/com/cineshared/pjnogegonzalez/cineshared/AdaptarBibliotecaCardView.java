@@ -1,6 +1,7 @@
 package com.cineshared.pjnogegonzalez.cineshared;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -141,6 +142,7 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
                 }
                 else if (mode==5)
                 {
+                    /*
                     try {
                         String url = Constantes.RUTA_ACTUALIZAR_INTERCAMBIO+historico+"&usuarioin="+usuario.getId_usua()+"&peliculain="+id;
 
@@ -157,6 +159,11 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
+                    */
+                    Intent intent = new Intent(view.getContext(), ActivityAreaUsuario.class);
+                    intent.putExtra(Constantes.PELICULAS, pelicula);
+                    intent.putExtra(Constantes.USUARIO, usuario);
+                    view.getContext().startActivity(intent);
                 }
 
             }
