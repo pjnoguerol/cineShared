@@ -25,6 +25,7 @@ public class Constantes {
     public static String HISTORICO = "historico";
     public static String INTERCAMBIo = "intercambio";
     public static String INSERTAR = "insertar";
+    public static String CONFIGURACION = "configuracion";
 
     //Cosntantes ftp
     public static String IP_FTP = "intracosl.ddns.net";

@@ -30,6 +30,7 @@ public class Peliculas implements Serializable{
     private String fechainicio;
     private String fechafin;
     private String peliusuario;
+    private int estado;
     private List<Usuarios> usuariointercambio;
 
 
@@ -208,5 +209,13 @@ public class Peliculas implements Serializable{
 
     public void setUsuariointercambio(List<Usuarios> usuariointercambio) {
         this.usuariointercambio = usuariointercambio;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 }

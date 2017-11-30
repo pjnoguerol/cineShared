@@ -56,10 +56,14 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //Establecemos fragmento para el MODO de BUSQUEDA NATURAL
                 //btbusqueda.setVisibility(View.VISIBLE);
+
+               // Fragment fragment2 = establecerFragmeto(1);
+
+                //generarFragmento2(fragment2);
+
                 Fragment fragment = establecerFragmeto(0);
-                Fragment fragment2 = establecerFragmeto(1);
                 generarFragmento(fragment);
-                generarFragmento2(fragment2);
+
 
 
 

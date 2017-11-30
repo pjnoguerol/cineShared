@@ -14,6 +14,8 @@ public class Usuarios implements Serializable {
     private String password;
     private String email;
     private String telefono;
+    private String imagen;
+    private int distancia;
     private int id_gen;
     //Historio de intercambio
     private int hisusua;
@@ -91,10 +93,28 @@ public class Usuarios implements Serializable {
         this.hisusua = hisusua;
     }
 
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+
+    public int getDistancia() {
+        return distancia;
+    }
+
+    public void setDistancia(int distancia) {
+        this.distancia = distancia;
+    }
+
     @Override
     public String toString() {
         return usuario;
     }
+
+
 
 
 }

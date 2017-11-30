@@ -81,6 +81,8 @@
 
                 </LinearLayout>
 
+
+
                 <LinearLayout
                     android:id="@+id/tabSinopsis"
                     android:layout_width="match_parent"
@@ -90,6 +92,19 @@
 
                     <TextView
                         android:id="@+id/sinopsis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contenido Tab 2" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/tabEstado"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/testado"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Contenido Tab 2" />

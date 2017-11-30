@@ -32,9 +32,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     public static final String PREFS_NAME = "Preferencias";
     private TextView usuarioLogin;
     private TextView usuarioEmail;
+    private ImageView imagenUsuario;
     private Fragment fragment;
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -283,6 +287,8 @@ public class MainActivity extends AppCompatActivity
         LinearLayout linUsua = (LinearLayout) header.findViewById(R.id.layoutUsuario);
         usuarioLogin = (TextView)header.findViewById(R.id.usuarioLogin);
         usuarioEmail = (TextView)header.findViewById(R.id.usuarioEmail);
+        imagenUsuario = (ImageView)header.findViewById(R.id.imageUsuario);
+
         cargarDatos();
 
         linUsua.setOnClickListener(new View.OnClickListener() {
@@ -335,7 +341,9 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            establecerFragmeto(Constantes.CONFIGURACION);
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+            getSupportActionBar().setTitle("Configuración");
         }
 
         return super.onOptionsItemSelected(item);
@@ -401,6 +409,11 @@ public class MainActivity extends AppCompatActivity
             bundle.putSerializable(Constantes.USUARIOS, usuario);
             fragment = new FragmentHistoricoIntercambio();
         }
+        else if (Constantes.CONFIGURACION.equals(tipo))
+        {
+            bundle.putSerializable(Constantes.USUARIOS, usuario);
+            fragment = new ConfiguracionFragment();
+        }
 
 
         fragment.setArguments(bundle);
@@ -445,6 +458,7 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, Constantes.BIENVENIDO + usuario.getUsuario(), Toast.LENGTH_SHORT).show();
                     usuarioLogin.setText(usuario.getUsuario());
                     usuarioEmail.setText(usuario.getEmail());
+                    Picasso.with(MainActivity.this).load(Constantes.RUTA_IMAGEN+usuario.getImagen()).transform(new CircleTransform()).fit().centerCrop().rotate(270f).into(imagenUsuario);
                     if (usuario!=null)
                         cargarCoordenadas();
 

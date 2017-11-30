@@ -1,14 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_margin"
-    android:paddingLeft="@dimen/activity_margin"
-    android:paddingRight="@dimen/activity_margin"
-    android:paddingTop="@dimen/activity_margin"
-    tools:context="com.cineshared.pjnogegonzalez.cineshared.InsertUsuarioActivity">
+    tools:context="com.cineshared.pjnogegonzalez.cineshared.ConfiguracionFragment">
 
     <ScrollView
         android:id="@+id/formularioInsert"
@@ -111,8 +105,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Crear usuario"
+                android:text="Editar Usuario"
                 android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+</FrameLayout>

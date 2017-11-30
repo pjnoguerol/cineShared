@@ -121,8 +121,16 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
 
         peliculaViewHolder.tituloPelicula.setText(Utility.acotar(pelicula.getTitle()));
 
-        if (pelicula.getAlert()>0)
-            Picasso.with(peliculaViewHolder.itemView.getContext()).load(Constantes.RUTA_IMAGEN+"alert.png").into(peliculaViewHolder.imagenIcon);
+        if (pelicula.getEstado()==0)
+        {
+            if (pelicula.getAlert()>0)
+                Picasso.with(peliculaViewHolder.itemView.getContext()).load(Constantes.RUTA_IMAGEN+"alert.png").into(peliculaViewHolder.imagenIcon);
+        }
+        else
+        {
+            Picasso.with(peliculaViewHolder.itemView.getContext()).load(Constantes.RUTA_IMAGEN+"candado.png").into(peliculaViewHolder.imagenIcon);
+        }
+
         // Al listado de actores le quitamos la última coma
         Picasso.with(peliculaViewHolder.itemView.getContext()).load(
                 Constantes.IMAGENES+pelicula.getPoster_path()).into(peliculaViewHolder.imagenPelicula);

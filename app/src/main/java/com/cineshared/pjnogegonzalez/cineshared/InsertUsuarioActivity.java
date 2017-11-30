@@ -25,6 +25,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -58,7 +59,7 @@ public class InsertUsuarioActivity extends AppCompatActivity {
     private EditText usuarioInsert;
     private EditText passwordInsert;
     private EditText emailInsert;
-    private EditText telefonoInsert;
+    private EditText telefonoInsert, distanciaInsert;
     private ImageView subirImagen;
     private String mCurrentPhotoPath;
     private Button btInsert, subirBoton;
@@ -90,6 +91,7 @@ public class InsertUsuarioActivity extends AppCompatActivity {
         btInsert = (Button) findViewById(R.id.btInsert);
         subirBoton = (Button) findViewById(R.id.botonSubir);
         subirImagen = (ImageView) findViewById(R.id.imagenSubir);
+        distanciaInsert =(EditText) findViewById(R.id.distancia);
 
         // Antes de realizar la inserción del usuario en base de datos, comprobaremos que todos los datos están informados
         btInsert.setOnClickListener(new View.OnClickListener() {
@@ -165,14 +167,15 @@ public class InsertUsuarioActivity extends AppCompatActivity {
     }
 
     public String getPath(Uri uri) {
-        String[] projection = {MediaStore.MediaColumns.DATA};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        int column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        cursor.moveToFirst();
-        String imagePath = cursor.getString(column_index);
-
-        return cursor.getString(column_index);
+        String res = null;
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
+        if(cursor.moveToFirst()){;
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            res = cursor.getString(column_index);
+        }
+        cursor.close();
+        return res;
     }
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -297,6 +300,19 @@ public class InsertUsuarioActivity extends AppCompatActivity {
     }
 
     /**
+     * Comprobamos si el email es correcto
+     * @param target
+     * @return
+     */
+    public final static boolean isValidEmail(CharSequence target) {
+        if (TextUtils.isEmpty(target)) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
+    }
+
+    /**
      * Método que comprueba si todos los datos obligatorios se han introducido antes de dar de alta
      * al usuario en la base de datos
      *
@@ -312,12 +328,16 @@ public class InsertUsuarioActivity extends AppCompatActivity {
             passwordInsert.setError(getString(R.string.error_field_required));
             resultadoValidacion = false;
         }
-        if (Constantes.CADENA_VACIA.equals(emailInsert.getText().toString().trim())) {
-            emailInsert.setError(getString(R.string.error_field_required));
+        if (!isValidEmail(emailInsert.getText().toString().trim())) {
+            emailInsert.setError("Email incorrecto");
             resultadoValidacion = false;
         }
         if (Constantes.CADENA_VACIA.equals(telefonoInsert.getText().toString().trim())) {
             telefonoInsert.setError(getString(R.string.error_field_required));
+            resultadoValidacion = false;
+        }
+        if (Constantes.CADENA_VACIA.equals(distanciaInsert.getText().toString().trim())) {
+            distanciaInsert.setError(getString(R.string.error_field_required));
             resultadoValidacion = false;
         }
         return resultadoValidacion;
@@ -344,18 +364,22 @@ public class InsertUsuarioActivity extends AppCompatActivity {
                         .appendQueryParameter("password", passwordInsert.getText().toString())
                         .appendQueryParameter("email", emailInsert.getText().toString())
                         .appendQueryParameter("telefono", telefonoInsert.getText().toString())
+                        .appendQueryParameter("distancia", distanciaInsert.getText().toString())
                         .appendQueryParameter("imagen", imagen );
                 HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
                 hilo.setActivity(InsertUsuarioActivity.this);
                 hilo.setTipoObjeto(Constantes.USUARIOS);
                 hilo.setConversionJson(new ConversionJson<Usuarios>(InsertUsuarioActivity.this,Constantes.USUARIOS));
                 List <Usuarios>  resultado = hilo.execute(new URL(url)).get();
+                //Comprobar que se ha insertado correctament
                 if (resultado.get(0).isOk())
                     new FtpTask().execute(file);
                 //new HiloGenerico<Resultado>(builder).execute(new URL(url));
                 //new InsertUsuarioResultadoJsonTask().execute(new URL(url));
+                else
+                    Toast.makeText(InsertUsuarioActivity.this, resultado.get(0).getError(), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(InsertUsuarioActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
+
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -365,6 +389,10 @@ public class InsertUsuarioActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Metodo asincrono que sube la foto por ftp
+     */
     public class FtpTask extends AsyncTask<File, Void, String> {
 
 

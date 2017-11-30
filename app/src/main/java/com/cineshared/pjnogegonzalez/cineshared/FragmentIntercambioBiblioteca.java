@@ -42,23 +42,23 @@ public class FragmentIntercambioBiblioteca extends Fragment {
         // Inflate the layout for this fragment
         Context context = inflater.getContext();
         View rootView = inflater.inflate(R.layout.recyclerview_activity2, container, false);
-        //usuario = (Usuarios) getArguments().getSerializable("usuarios");
+        usuario = (Usuarios) getArguments().getSerializable("usuario");
         //if (usuario!=null)
        // {
             //conversionJson.setUsuario(usuario);
         //}
         Log.w("HEMOS ENTRADO AQUI", "AQUIIII");
-        user =  getArguments().getInt("intercambio");
-        Usuarios usuario = new Usuarios();
-        usuario.setId_usua(user);
+        //user =  getArguments().getInt("intercambio");
+       // Usuarios usuario = new Usuarios();
+
         conversionJson.setUsuario(usuario);
 
-        historico = getArguments().getInt("historico");
+        //historico = getArguments().getInt("historico");
         recyclerView = conversionJson.onCreateViewScroll(context, rootView, getResources());
         String url = "";
         conversionJson.setMode(5);
-        conversionJson.setHistorico(historico);
-        url = Constantes.RUTA_BIBLIOTECA+user;
+        //conversionJson.setHistorico(usuario.getHisusua());
+        url = Constantes.RUTA_BIBLIOTECA+usuario.getId_usua();
         //Toast.makeText(context, url, Toast.LENGTH_SHORT).show();
         Log.w("MI INPUTSTREAM", url );
         try {

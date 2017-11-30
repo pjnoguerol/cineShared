@@ -26,11 +26,15 @@ public class Utility {
         return Utility.resultado;
     }
 
+    public static String auxPelicula;
 
     public static String acotar(String cadena)
     {
-       int size = (cadena.length() < 30)?cadena.length():30;
-       return cadena.substring(0,size);
+       int size = (cadena.length() < 25)?cadena.length():25;
+       String retorno= cadena.substring(0,size);
+       if (cadena.length()>=25)
+           retorno += "..";
+       return retorno;
 
     }
 

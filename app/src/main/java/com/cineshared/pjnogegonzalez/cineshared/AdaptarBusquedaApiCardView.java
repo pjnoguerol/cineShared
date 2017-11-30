@@ -248,11 +248,7 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
 
         //BuscarPeliculasActivity.btbusqueda.setVisibility(View.VISIBLE);
         int i = busquedaApi.size();
-        if (i==0)
-        {
-            BuscarPeliculasActivity.btbusqueda.setVisibility(View.VISIBLE);
-            //BuscarPeliculasActivity.btBusquedaNatural.setVisibility(View.GONE);
-        }
+
 
         return i;
     }

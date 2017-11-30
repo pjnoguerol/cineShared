@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,12 +40,14 @@ public class AreaIntercambioActivity extends AppCompatActivity {
 
     }
 
-    private Fragment establecerFragmeto(int modo, int historico) {
+    private Fragment establecerFragmeto(Usuarios usuarios) {
         Fragment fragment;
         Bundle bundle = new Bundle();
         //bundle.putSerializable(Constantes.USUARIOS, usuario);
-        bundle.putInt("historico", historico);
-        bundle.putInt("intercambio", modo);
+        //bundle.putInt("historico", historico);
+        //bundle.putInt("intercambio", modo);
+        if (usuarios!=null)
+            bundle.putSerializable(Constantes.USUARIO, usuarios);
         fragment = new FragmentIntercambioBiblioteca();
 
         fragment.setArguments(bundle);
@@ -66,6 +69,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
         nombrePelicula = (TextView) findViewById(R.id.nombrePeliculaActivity);
         sinopsisPelicula = (TextView) findViewById(R.id.sinopsis);
         spinner = (Spinner) findViewById(R.id.spIntercambio);
+
         // Creamos las pestañas
         TabHost tabs = (TabHost) findViewById(android.R.id.tabhost);
         tabs.setup();
@@ -80,20 +84,36 @@ public class AreaIntercambioActivity extends AppCompatActivity {
         peliculaTabs.setIndicator("Sinopsis",
                 ContextCompat.getDrawable(this, android.R.drawable.ic_dialog_map));
         tabs.addTab(peliculaTabs);
-       // peliculaTabs = tabs.newTabSpec("tabCriticas");
-        ////peliculaTabs.setContent(R.id.tabCriticas);
-       // peliculaTabs.setIndicator("Criticas",
-                //ContextCompat.getDrawable(this, android.R.drawable.ic_dialog_map));
-        //tabs.addTab(peliculaTabs);
+        peliculaTabs = tabs.newTabSpec("tabEstado");
+        peliculaTabs.setContent(R.id.tabEstado);
+        peliculaTabs.setIndicator("Resumen",
+                ContextCompat.getDrawable(this, android.R.drawable.ic_dialog_map));
+        tabs.addTab(peliculaTabs);
         // Se establece como pestaña inicial la de datos
-        tabs.setCurrentTab(1);
+
 
         final Peliculas pelicula = (Peliculas) getIntent().getSerializableExtra(Constantes.PELICULAS);
         //Ocultamos la pelicula si no esta para intercambiar
         if (pelicula.getAlert()==0)
         {
             tabs.getTabWidget().getChildAt(0).setVisibility(View.GONE);
+            tabs.getTabWidget().getChildAt(2).setVisibility(View.GONE);
+            tabs.setCurrentTab(1);
+
         }
+        else
+        {
+            if (pelicula.getEstado()!=0)
+            {
+                tabs.getTabWidget().getChildAt(0).setVisibility(View.GONE);
+                tabs.setCurrentTab(2);
+            }
+            else {
+                tabs.getTabWidget().getChildAt(2).setVisibility(View.GONE);
+                tabs.setCurrentTab(0);
+            }
+        }
+        Utility.auxPelicula = pelicula.getTitle();
         //Creamos el objetos USUARIOS
         final Usuarios usuario = (Usuarios) getIntent().getSerializableExtra(Constantes.USUARIO);
 
@@ -112,7 +132,8 @@ public class AreaIntercambioActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                Fragment fragment = establecerFragmeto(pelicula.getUsuariointercambio().get(position).getId_usua(),pelicula.getUsuariointercambio().get(position).getHisusua() );
+                Log.w("que es hisotico",pelicula.getUsuariointercambio().get(position).getHisusua()+"" );
+                Fragment fragment = establecerFragmeto(pelicula.getUsuariointercambio().get(position));
                 generarFragmento(fragment);
 
 

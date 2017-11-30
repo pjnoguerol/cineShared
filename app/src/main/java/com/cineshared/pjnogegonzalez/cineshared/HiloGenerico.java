@@ -100,6 +100,7 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onPostExecute(List<T> lista) {
+        /**
         if (tipo==0)
         {
             Usuarios usuario = (Usuarios) lista.get(0);
@@ -114,7 +115,8 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
                 Toast.makeText(activity, Constantes.ERROR_JSON, Toast.LENGTH_SHORT).show();
             }
         }
-        else if (tipo==1)
+         **/
+        if (tipo==1)
         {
             recyclerView.setAdapter(conversionJson.onPostExecute(lista));
         }
