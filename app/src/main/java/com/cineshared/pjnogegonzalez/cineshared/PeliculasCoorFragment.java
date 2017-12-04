@@ -51,7 +51,7 @@ public class PeliculasCoorFragment extends Fragment {
         recyclerView = conversionJson.onCreateView(context, rootView, getResources());
         conversionJson.setUsuario(usuario);
         String url = "";
-        url = Constantes.RUTA_PELICULAS_COORDENADAS+usuario.getId_usua()+"&distancia=10000000";
+        url = Constantes.RUTA_PELICULAS_COORDENADAS+usuario.getId_usua()+"&distancia="+usuario.getDistancia();
 
         Log.w("MIURL", url);
 

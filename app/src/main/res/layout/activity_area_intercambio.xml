@@ -107,7 +107,12 @@
                         android:id="@+id/testado"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Contenido Tab 2" />
+                        android:text="" />
+                    <Button
+                        android:id="@+id/btstado"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Liberar Intercambio" />
                 </LinearLayout>
 
 

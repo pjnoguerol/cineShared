@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity
     private ConversionJson<Resultado> conversionJson2 = new ConversionJson<>(Constantes.RESULTADO);
     private ConversionJson<Peliculas> conversionJson3 = new ConversionJson<>(Constantes.BUSQUEDA_NATURAL);
     Usuarios usuario = new Usuarios();
+    NavigationView navigationView;
 
     /**
      * Metdo que preguntaremos al usuario si quiere desloguearse
@@ -125,6 +126,7 @@ public class MainActivity extends AppCompatActivity
                   NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                   if (networkInfo != null && networkInfo.isConnected()) {
                       new MainActivity.LoginJsonTask().execute(new URL(Constantes.RUTA_USUARIO_DATOS+ settings.getString("usuariologin","")));
+                      verNavegacion();
                   } else {
                       Toast.makeText(MainActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
                   }
@@ -143,6 +145,13 @@ public class MainActivity extends AppCompatActivity
             {
                 usuarioLogin.setText("Anónimo");
                 usuarioEmail.setText("Pulsa aqui para loguearte o registrarte");
+
+                if (fragment !=null)
+                {
+                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                    fragment = null;
+                }
+                ocultarNavegacion();
             }
 
         }
@@ -251,7 +260,22 @@ public class MainActivity extends AppCompatActivity
         public void onStatusChanged(String provider, int status, Bundle extras) {}
 
     }
-
+    private void verNavegacion()
+    {
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu nav_Menu = navigationView.getMenu();
+        nav_Menu.findItem(R.id.nav_biblioteca).setVisible(true);
+        nav_Menu.findItem(R.id.nav_trans).setVisible(true);
+        nav_Menu.findItem(R.id.nav_historico).setVisible(true);
+    }
+    private void ocultarNavegacion()
+    {
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu nav_Menu = navigationView.getMenu();
+        nav_Menu.findItem(R.id.nav_biblioteca).setVisible(false);
+        nav_Menu.findItem(R.id.nav_trans).setVisible(false);
+        nav_Menu.findItem(R.id.nav_historico).setVisible(false);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -281,7 +305,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         usuario = (Usuarios) getIntent().getSerializableExtra("usuarios");
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         View header = navigationView.getHeaderView(0);
         LinearLayout linUsua = (LinearLayout) header.findViewById(R.id.layoutUsuario);

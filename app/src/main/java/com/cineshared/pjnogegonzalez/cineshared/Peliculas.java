@@ -9,6 +9,9 @@ import java.util.List;
 
 public class Peliculas implements Serializable{
 
+
+    private boolean ok;
+    private String error;
     private int id;
     private String title;
     private String poster_path;
@@ -217,5 +220,21 @@ public class Peliculas implements Serializable{
 
     public void setEstado(int estado) {
         this.estado = estado;
+    }
+
+    public boolean isOk() {
+        return ok;
+    }
+
+    public void setOk(boolean ok) {
+        this.ok = ok;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 }

@@ -2,8 +2,10 @@ package com.cineshared.pjnogegonzalez.cineshared;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.Fragment;
@@ -26,11 +28,13 @@ import com.squareup.picasso.Picasso;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class AreaIntercambioActivity extends AppCompatActivity {
     private ImageView imagenPelicula;
-    private TextView nombrePelicula, sinopsisPelicula;
+    private TextView nombrePelicula, sinopsisPelicula, testado;
     private Spinner spinner;
+    private Peliculas datosREsumen;
 
     private ConversionJson<Peliculas> conversionJson = new ConversionJson<>(this, Constantes.BIBLIOTECA);
 
@@ -60,6 +64,47 @@ public class AreaIntercambioActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_intercambio, fragment).commit();
 
     }
+    private void cargarResumen(int id_pel, int id_usu)
+    {
+
+        try {
+            String url = Constantes.SERVIDOR+Constantes.RUTA_CLASE_PHP;
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+            if (networkInfo != null && networkInfo.isConnected()) {
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("peliresumen", id_pel+"")
+                        .appendQueryParameter("usuaresumen", id_usu+"" );
+                HiloGenerico<Peliculas> hilo = new HiloGenerico<>(builder);
+                hilo.setActivity(this);
+                hilo.setTipoObjeto(Constantes.BIBLIOTECA);
+                hilo.setConversionJson(new ConversionJson<Peliculas>(this,Constantes.BIBLIOTECA));
+                List <Peliculas>  resultado = hilo.execute(new URL(url)).get();
+                //Comprobar que se ha insertado correctament
+                if (resultado.get(0).isOk())
+                {
+
+                }
+                //new HiloGenerico<Resultado>(builder).execute(new URL(url));
+                //new InsertUsuarioResultadoJsonTask().execute(new URL(url));
+                else
+                    Toast.makeText(this, resultado.get(0).getError(), Toast.LENGTH_SHORT).show();
+            } else {
+
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +112,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_area_intercambio);
         imagenPelicula = (ImageView) findViewById(R.id.imagenPeliculaActivity);
         nombrePelicula = (TextView) findViewById(R.id.nombrePeliculaActivity);
+        testado =(TextView)findViewById(R.id.testado);
         sinopsisPelicula = (TextView) findViewById(R.id.sinopsis);
         spinner = (Spinner) findViewById(R.id.spIntercambio);
 
@@ -93,6 +139,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
 
 
         final Peliculas pelicula = (Peliculas) getIntent().getSerializableExtra(Constantes.PELICULAS);
+        final Usuarios usuario = (Usuarios) getIntent().getSerializableExtra(Constantes.USUARIO);
         //Ocultamos la pelicula si no esta para intercambiar
         if (pelicula.getAlert()==0)
         {
@@ -107,6 +154,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
             {
                 tabs.getTabWidget().getChildAt(0).setVisibility(View.GONE);
                 tabs.setCurrentTab(2);
+                cargarResumen(pelicula.getId(), usuario.getId_usua());
             }
             else {
                 tabs.getTabWidget().getChildAt(2).setVisibility(View.GONE);
@@ -115,7 +163,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
         }
         Utility.auxPelicula = pelicula.getTitle();
         //Creamos el objetos USUARIOS
-        final Usuarios usuario = (Usuarios) getIntent().getSerializableExtra(Constantes.USUARIO);
+
 
         Picasso.with(this).load(
                 Constantes.IMAGENES+pelicula.getPoster_path()).into(imagenPelicula);
@@ -125,6 +173,9 @@ public class AreaIntercambioActivity extends AppCompatActivity {
         ArrayAdapter<Usuarios> adapter =
                 new ArrayAdapter<Usuarios>(getApplicationContext(), android.R.layout.simple_spinner_item, pelicula.getUsuariointercambio());
         //adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        String mensaje = "Pelicula "+Utility.auxPelicula +" intercambiada con "+pelicula.getPeliusuario()+" del usuario:  "+usuario.getUsuario()+"?";
+
+        testado.setText(mensaje);
 
         spinner.setAdapter(adapter);
 

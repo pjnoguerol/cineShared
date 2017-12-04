@@ -61,7 +61,7 @@ public class ConfiguracionFragment extends Fragment {
 
     private Context context;
     private Usuarios usuarioConectado;
-    private EditText usuarioInsert;
+    private TextView usuarioInsert;
     private EditText passwordInsert;
     private EditText emailInsert;
     private EditText telefonoInsert, distanciaInsert;
@@ -93,10 +93,7 @@ public class ConfiguracionFragment extends Fragment {
      */
     private boolean comprobarCamposNuevoUsuario() {
         boolean resultadoValidacion = true;
-        if (Constantes.CADENA_VACIA.equals(usuarioInsert.getText().toString().trim())) {
-            usuarioInsert.setError(getString(R.string.error_field_required));
-            resultadoValidacion = false;
-        }
+
         if (Constantes.CADENA_VACIA.equals(passwordInsert.getText().toString().trim())) {
             passwordInsert.setError(getString(R.string.error_field_required));
             resultadoValidacion = false;
@@ -132,7 +129,7 @@ public class ConfiguracionFragment extends Fragment {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        usuarioInsert = (EditText) rootView.findViewById(R.id.nombreUsuario);
+        usuarioInsert = (TextView) rootView.findViewById(R.id.nombreUsuario);
         passwordInsert = (EditText) rootView.findViewById(R.id.passwordUsuario);
         emailInsert = (EditText) rootView.findViewById(R.id.emailUsuario);
         telefonoInsert = (EditText) rootView.findViewById(R.id.telefonoUsuario);
@@ -142,7 +139,7 @@ public class ConfiguracionFragment extends Fragment {
         distanciaInsert =(EditText) rootView.findViewById(R.id.distancia);
         usuarioConectado = (Usuarios) getArguments().getSerializable("usuarios");
 
-        usuarioInsert.setText(usuarioConectado.getUsuario());
+        usuarioInsert.setText(Html.fromHtml("<b>Usuario: </b>" + usuarioConectado.getUsuario()));
 
         //nombreUsuario.setText(Html.fromHtml("<b>Usuario: </b>" + usuarioConectado.getUsuario()));
         Picasso.with(rootView.getContext()).load(Constantes.RUTA_IMAGEN+usuarioConectado.getImagen()).into(subirImagen);
@@ -183,22 +180,22 @@ public class ConfiguracionFragment extends Fragment {
      */
     private void insertarNuevoUsuario() {
         try {
-            String url = Constantes.RUTA_INSERTAR_USUARIO;
+            String url = Constantes.SERVIDOR+Constantes.RUTA_CLASE_PHP;
             ConnectivityManager connMgr = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
             if (networkInfo != null && networkInfo.isConnected()) {
-                String imagen="null";
-                if (file!=null)
+                String imagen=usuarioConectado.getImagen();
+                if (file!=null && file.exists()) {
                     imagen = file.getName();
-
+                }
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("userinsert", usuarioInsert.getText().toString())
-                        .appendQueryParameter("password", passwordInsert.getText().toString())
-                        .appendQueryParameter("email", emailInsert.getText().toString())
-                        .appendQueryParameter("telefono", telefonoInsert.getText().toString())
-                        .appendQueryParameter("distancia", distanciaInsert.getText().toString())
-                        .appendQueryParameter("imagen", imagen );
+                        .appendQueryParameter("userioactu", usuarioConectado.getUsuario())
+                        .appendQueryParameter("passactu", passwordInsert.getText().toString())
+                        .appendQueryParameter("emailactu", emailInsert.getText().toString())
+                        .appendQueryParameter("telactu", telefonoInsert.getText().toString())
+                        .appendQueryParameter("disactu", distanciaInsert.getText().toString())
+                        .appendQueryParameter("imactu", imagen );
                 HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
                 hilo.setActivity(getActivity());
                 hilo.setTipoObjeto(Constantes.USUARIOS);
@@ -206,7 +203,18 @@ public class ConfiguracionFragment extends Fragment {
                 List <Usuarios>  resultado = hilo.execute(new URL(url)).get();
                 //Comprobar que se ha insertado correctament
                 if (resultado.get(0).isOk())
-                    new FtpTask().execute(file);
+                {
+                    Toast.makeText(getContext(), resultado.get(0).getError(), Toast.LENGTH_SHORT).show();
+                    Log.w("UPDATESQL", resultado.get(0).getError() );
+                    if (!imagen.equals(usuarioConectado.getImagen()))
+                        new FtpTask().execute(file);
+                    else
+                    {
+                        Intent i = new Intent(getActivity(), MainActivity.class);
+
+                        startActivity(i);
+                    }
+                }
                     //new HiloGenerico<Resultado>(builder).execute(new URL(url));
                     //new InsertUsuarioResultadoJsonTask().execute(new URL(url));
                 else
@@ -255,6 +263,9 @@ public class ConfiguracionFragment extends Fragment {
         @Override
         protected void onPostExecute(String respuesta) {
             Toast.makeText(getContext(), respuesta, Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(getActivity(), MainActivity.class);
+
+            startActivity(i);
         }
     }
 
@@ -406,24 +417,7 @@ public class ConfiguracionFragment extends Fragment {
         builder.show();
     }
 
-    /**
-     * Método que actualiza el género seleccionado por el usuario logueado
-     */
-    private void updateGeneros() {
-        try {
-            //String url = Constantes.RUTA_GENEROS_USUARIO + usuarioConectado.getId_usua() + "&generoupdate=" + generoSeleccionado.getId_gen();
-            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
-            if (networkInfo != null && networkInfo.isConnected())
-                Log.w("hola","");
-                //new ConfiguracionUsuarioResultadoJsonTask().execute(new URL(url));
-            else
-                Toast.makeText(context, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Inner class que parsea la lista de géneros a un Spinner
