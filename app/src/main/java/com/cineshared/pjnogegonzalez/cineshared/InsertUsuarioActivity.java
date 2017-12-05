@@ -2,6 +2,7 @@ package com.cineshared.pjnogegonzalez.cineshared;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -35,6 +37,13 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedOutputStream;
@@ -47,6 +56,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -65,6 +75,11 @@ public class InsertUsuarioActivity extends AppCompatActivity {
     private Button btInsert, subirBoton;
     private File file;
 
+    private FirebaseAuth firebaseAutenticacion;
+    private DatabaseReference firebaseBaseDatos;
+
+    //ProgressDialog
+    private ProgressDialog procesoOnGoing;
 
     private ConversionJson<Resultado> conversionJsonResultado = new ConversionJson<>(this, Constantes.RESULTADO);
 
@@ -79,7 +94,7 @@ public class InsertUsuarioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert_usuario);
 
-
+        firebaseAutenticacion = FirebaseAuth.getInstance();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -92,6 +107,8 @@ public class InsertUsuarioActivity extends AppCompatActivity {
         subirBoton = (Button) findViewById(R.id.botonSubir);
         subirImagen = (ImageView) findViewById(R.id.imagenSubir);
         distanciaInsert =(EditText) findViewById(R.id.distancia);
+//TODO ver el procesoOnGoing
+        procesoOnGoing = new ProgressDialog(this);
 
         // Antes de realizar la inserción del usuario en base de datos, comprobaremos que todos los datos están informados
         btInsert.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +117,10 @@ public class InsertUsuarioActivity extends AppCompatActivity {
                //String resultado = FtpUtility.subirArchivo(file);
                 //Toast.makeText(InsertUsuarioActivity.this,resultado , Toast.LENGTH_LONG).show();
                 if (comprobarCamposNuevoUsuario()) {
+                    procesoOnGoing.setTitle("Registrando usuario");
+                    procesoOnGoing.setMessage("Por favor, espera mientras se crea tu cuenta!");
+                    procesoOnGoing.setCanceledOnTouchOutside(false);
+                    procesoOnGoing.show();
                     insertarNuevoUsuario();
                }
             }
@@ -358,11 +379,13 @@ public class InsertUsuarioActivity extends AppCompatActivity {
                 String imagen="null";
                 if (file!=null)
                     imagen = file.getName();
-
+                String usuario = usuarioInsert.getText().toString();
+                String email = emailInsert.getText().toString();
+                String password = passwordInsert.getText().toString();
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("userinsert", usuarioInsert.getText().toString())
-                        .appendQueryParameter("password", passwordInsert.getText().toString())
-                        .appendQueryParameter("email", emailInsert.getText().toString())
+                        .appendQueryParameter("userinsert", usuario)
+                        .appendQueryParameter("password", password)
+                        .appendQueryParameter("email", email)
                         .appendQueryParameter("telefono", telefonoInsert.getText().toString())
                         .appendQueryParameter("distancia", distanciaInsert.getText().toString())
                         .appendQueryParameter("imagen", imagen );
@@ -372,12 +395,18 @@ public class InsertUsuarioActivity extends AppCompatActivity {
                 hilo.setConversionJson(new ConversionJson<Usuarios>(InsertUsuarioActivity.this,Constantes.USUARIOS));
                 List <Usuarios>  resultado = hilo.execute(new URL(url)).get();
                 //Comprobar que se ha insertado correctament
-                if (resultado.get(0).isOk())
+                if (resultado.get(0).isOk()) {
+
                     new FtpTask().execute(file);
+                    crearUsuarioFirebaseChat(usuario, usuario + Constantes.EMAIL_FIREBASE, password);
+                    procesoOnGoing.dismiss();
+                }
                 //new HiloGenerico<Resultado>(builder).execute(new URL(url));
                 //new InsertUsuarioResultadoJsonTask().execute(new URL(url));
-                else
+                else {
+                    procesoOnGoing.hide();
                     Toast.makeText(InsertUsuarioActivity.this, resultado.get(0).getError(), Toast.LENGTH_SHORT).show();
+                }
             } else {
 
             }
@@ -426,4 +455,60 @@ public class InsertUsuarioActivity extends AppCompatActivity {
         }
     }
 
+    private void crearUsuarioFirebaseChat(final String usuario, final String email, final String password) {
+        Log.v("CrearUsuarioFirebase", "Creando usuario " + usuario + " en firebase");
+        firebaseAutenticacion.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(InsertUsuarioActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            FirebaseUser usuarioRegistro = firebaseAutenticacion.getCurrentUser();
+                            String uid = usuarioRegistro.getUid();
+
+                            firebaseBaseDatos = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE)
+                                    .child(uid);
+                            HashMap<String, String> userMap = new HashMap<>();
+                            userMap.put(Constantes.NOMBRE_USUARIO, usuario);
+                            userMap.put(Constantes.EMAIL_USUARIO, email);
+                            userMap.put(Constantes.IMAGEN_USUARIO, "default");
+
+                            //firebaseBaseDatos.setValue(userMap);
+
+                            //TODO ver si implementamos el regProgress
+
+
+                            firebaseBaseDatos.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+/*
+                                mRegProgress.dismiss();
+
+                                Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(mainIntent);
+                                finish();*/
+                                Intent intent = new Intent(InsertUsuarioActivity.this, LoginActivity.class);
+                                intent.putExtra(Constantes.USUARIO,usuario);
+                                intent.putExtra(Constantes.PASSWORD,password);
+                                startActivity(intent);
+                                finish();
+                            }
+                            else {
+                                Toast.makeText(InsertUsuarioActivity.this, task.toString(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+
+                        } else {
+                            procesoOnGoing.hide();
+                            Toast.makeText(InsertUsuarioActivity.this, "Se ha producido un problema creando al usuario para acceder al chat",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 }

@@ -19,6 +19,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -38,6 +39,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cineshared.pjnogegonzalez.cineshared.chat.ChatActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -60,25 +71,26 @@ public class MainActivity extends AppCompatActivity
     private LocationListener locationListener;
     private ConversionJson<Usuarios> conversionJson = new ConversionJson<>(this, Constantes.USUARIOS);
     private ConversionJson<Resultado> conversionJson2 = new ConversionJson<>(Constantes.RESULTADO);
-    private ConversionJson<Peliculas> conversionJson3 = new ConversionJson<>(Constantes.BUSQUEDA_NATURAL);
     Usuarios usuario = new Usuarios();
+    private DatabaseReference firebaseBaseDatos;
     NavigationView navigationView;
+
+    private FirebaseAuth firebaseAutenticacion;
 
     /**
      * Metdo que preguntaremos al usuario si quiere desloguearse
      */
-    private void cerrarSession()
-    {
+    private void cerrarSession() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.app_name);
         builder.setMessage("¿Quieres cerrar la sesión?");
 
         builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                SharedPreferences preferencia =  getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                SharedPreferences preferencia = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
                 preferencia.edit().clear().commit();
+                FirebaseAuth.getInstance().signOut();
                 cargarDatos();
-
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -91,22 +103,17 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void desLoguearse()
-    {
+    private void desLoguearse() {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        if (settings.contains("iniciado"))
-        {
-            if (settings.getBoolean("iniciado", false))
-            {
+        if (settings.contains("iniciado")) {
+            if (settings.getBoolean("iniciado", false)) {
                 cerrarSession();
             }
-        }
-        else
-        {
+        } else {
 
 
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
 
 
         }
@@ -115,40 +122,33 @@ public class MainActivity extends AppCompatActivity
     /**
      * Cargamos  los datos para que se Loguee el usuario
      */
-    private void cargarDatos()
-    {
+    private void cargarDatos() {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        if (settings.contains("iniciado"))
-        {
-          if (settings.getBoolean("iniciado", false))
-          {
-              try {
-                  ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                  NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                  if (networkInfo != null && networkInfo.isConnected()) {
-                      new MainActivity.LoginJsonTask().execute(new URL(Constantes.RUTA_USUARIO_DATOS+ settings.getString("usuariologin","")));
-                      verNavegacion();
-                  } else {
-                      Toast.makeText(MainActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
-                  }
-              } catch (MalformedURLException e) {
-                  e.printStackTrace();
-              }
+        if (settings.contains("iniciado")) {
+            if (settings.getBoolean("iniciado", false)) {
+                try {
+                    ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                    if (networkInfo != null && networkInfo.isConnected()) {
+                        new MainActivity.LoginJsonTask().execute(new URL(Constantes.RUTA_USUARIO_DATOS + settings.getString("usuariologin", "")));
+                        verNavegacion();
+                    } else {
+                        Toast.makeText(MainActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
 
-              //usuarioLogin.setText("Cargado");
-              //usuarioEmail.setText("Pulsa aqui desloguearte");
-          }
-        }
-        else
-        {
+                //usuarioLogin.setText("Cargado");
+                //usuarioEmail.setText("Pulsa aqui desloguearte");
+            }
+        } else {
 
-            if (usuarioLogin!=null && usuarioEmail!=null)
-            {
+            if (usuarioLogin != null && usuarioEmail != null) {
                 usuarioLogin.setText("Anónimo");
                 usuarioEmail.setText("Pulsa aqui para loguearte o registrarte");
 
-                if (fragment !=null)
-                {
+                if (fragment != null) {
                     getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                     fragment = null;
                 }
@@ -165,8 +165,7 @@ public class MainActivity extends AppCompatActivity
     /**
      *
      */
-    private void cargarCoordenadas()
-    {
+    private void cargarCoordenadas() {
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION}, 1355);
@@ -183,7 +182,7 @@ public class MainActivity extends AppCompatActivity
         }
         boolean gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        String loca=null;
+        String loca = null;
         //if (gps_enabled)
         // loca = LocationManager.GPS_PROVIDER;
         //else if (network_enabled)
@@ -198,18 +197,19 @@ public class MainActivity extends AppCompatActivity
         Context con;
         public String longitude;
         public String latitude;
-        public MyLocationListener(Context context)
-        {
+
+        public MyLocationListener(Context context) {
             con = context;
         }
+
         @Override
         public void onLocationChanged(Location loc) {
 
             //pb.setVisibility(View.INVISIBLE);
 
-            longitude = ""+loc.getLongitude();
+            longitude = "" + loc.getLongitude();
             //Log.v(TAG, longitude);
-            latitude = ""+loc.getLatitude();
+            latitude = "" + loc.getLatitude();
             //Log.v(TAG, latitude);
             //salida.setText(longitude+ ""+  latitude);
 
@@ -224,8 +224,7 @@ public class MainActivity extends AppCompatActivity
                     //System.out.println(addresses.get(0).getLocality());
                     cityName = addresses.get(0).getLocality();
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             String s = longitude + "\n" + latitude + "\n\nMy Current City is: "
@@ -235,10 +234,10 @@ public class MainActivity extends AppCompatActivity
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
 
-                    String url = Constantes.RUTA_INSERTAR_COORDENADAS+longitude+"&latitud="+latitude+"&usuario="+usuario.getId_usua();
-                    String url2 = Constantes.RUTA_PELICULAS_COORDENADAS+usuario.getId_usua()+"&longitud="+longitude+"&latitud="+latitude+"&distancia=10000000";
+                    String url = Constantes.RUTA_INSERTAR_COORDENADAS + longitude + "&latitud=" + latitude + "&usuario=" + usuario.getId_usua();
+                    String url2 = Constantes.RUTA_PELICULAS_COORDENADAS + usuario.getId_usua() + "&longitud=" + longitude + "&latitud=" + latitude + "&distancia=10000000";
 
-                    new MainActivity.BusquedaJsonTask().execute(new URL(Constantes.RUTA_INSERTAR_COORDENADAS+longitude+"&latitud="+latitude+"&usuario="+usuario.getId_usua()));
+                    new MainActivity.BusquedaJsonTask().execute(new URL(Constantes.RUTA_INSERTAR_COORDENADAS + longitude + "&latitud=" + latitude + "&usuario=" + usuario.getId_usua()));
                     //establecerFragmeto(Constantes.PELICULAS, url2);
                     //cargarFragmmento();
 
@@ -252,31 +251,37 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        public void onProviderDisabled(String provider) {}
+        public void onProviderDisabled(String provider) {
+        }
 
         @Override
-        public void onProviderEnabled(String provider) {}
+        public void onProviderEnabled(String provider) {
+        }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
 
     }
-    private void verNavegacion()
-    {
+
+    private void verNavegacion() {
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu nav_Menu = navigationView.getMenu();
         nav_Menu.findItem(R.id.nav_biblioteca).setVisible(true);
         nav_Menu.findItem(R.id.nav_trans).setVisible(true);
         nav_Menu.findItem(R.id.nav_historico).setVisible(true);
+        nav_Menu.findItem(R.id.nav_chat).setVisible(true);
     }
-    private void ocultarNavegacion()
-    {
+
+    private void ocultarNavegacion() {
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu nav_Menu = navigationView.getMenu();
         nav_Menu.findItem(R.id.nav_biblioteca).setVisible(false);
         nav_Menu.findItem(R.id.nav_trans).setVisible(false);
         nav_Menu.findItem(R.id.nav_historico).setVisible(false);
+        nav_Menu.findItem(R.id.nav_chat).setVisible(false);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -284,6 +289,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
+        FirebaseUser usuarioLoginFirebase = FirebaseAuth.getInstance().getCurrentUser();
+        if (usuarioLoginFirebase != null)
+            firebaseBaseDatos = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE)
+                    .child(usuarioLoginFirebase.getUid());
 
         //Aqui ponemos el boton para añadir peliculas
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -295,7 +304,7 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra(Constantes.USUARIOS, usuario);
                 startActivity(intent);
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        //.setAction("Action", null).show();
+                //.setAction("Action", null).show();
             }
         });
 
@@ -310,9 +319,9 @@ public class MainActivity extends AppCompatActivity
 
         View header = navigationView.getHeaderView(0);
         LinearLayout linUsua = (LinearLayout) header.findViewById(R.id.layoutUsuario);
-        usuarioLogin = (TextView)header.findViewById(R.id.usuarioLogin);
-        usuarioEmail = (TextView)header.findViewById(R.id.usuarioEmail);
-        imagenUsuario = (ImageView)header.findViewById(R.id.imageUsuario);
+        usuarioLogin = (TextView) header.findViewById(R.id.usuarioLogin);
+        usuarioEmail = (TextView) header.findViewById(R.id.usuarioEmail);
+        imagenUsuario = (ImageView) header.findViewById(R.id.imageUsuario);
 
         cargarDatos();
 
@@ -333,11 +342,10 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         Log.w("destruyendo", "destruyendo");
-        if (locationListener!=null)
+        if (locationListener != null)
             locationManager.removeUpdates(locationListener);
 
     }
-
 
 
     @Override
@@ -442,10 +450,11 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction = true;
 
 
-        }  else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_chat) {
+            Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -457,32 +466,24 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawers();
         return true;
     }
+
     /**
      * Método que establece un fragmento de tipo búsqueda o configuración dependiendo del parámetro
-     *
-     *
      */
     private void establecerFragmeto(String tipo) {
         Bundle bundle = new Bundle();
-        if (Constantes.USUARIOS.equals(tipo))
-        {
+        if (Constantes.USUARIOS.equals(tipo)) {
             bundle.putSerializable(Constantes.USUARIOS, usuario);
 
             fragment = new BibliotecaFragment();
-        }
-        else if (Constantes.PELICULAS.equals(tipo))
-        {
+        } else if (Constantes.PELICULAS.equals(tipo)) {
 
             bundle.putSerializable(Constantes.USUARIOS, usuario);
             fragment = new PeliculasCoorFragment();
-        }
-        else if (Constantes.HISTORICO.equals((tipo)))
-        {
+        } else if (Constantes.HISTORICO.equals((tipo))) {
             bundle.putSerializable(Constantes.USUARIOS, usuario);
             fragment = new FragmentHistoricoIntercambio();
-        }
-        else if (Constantes.CONFIGURACION.equals(tipo))
-        {
+        } else if (Constantes.CONFIGURACION.equals(tipo)) {
             bundle.putSerializable(Constantes.USUARIOS, usuario);
             fragment = new ConfiguracionFragment();
         }
@@ -491,10 +492,10 @@ public class MainActivity extends AppCompatActivity
         fragment.setArguments(bundle);
     }
 
-    private void cargarFragmmento()
-    {
+    private void cargarFragmmento() {
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
+
     /**
      * Inner class que parsea el usuario logueado
      */
@@ -511,8 +512,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Usuarios doInBackground(URL... urls) {
             return (usuariox = conversionJson.doInBackground(urls).get(0));
-
-
         }
 
         /**
@@ -530,9 +529,10 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, Constantes.BIENVENIDO + usuario.getUsuario(), Toast.LENGTH_SHORT).show();
                     usuarioLogin.setText(usuario.getUsuario());
                     usuarioEmail.setText(usuario.getEmail());
-                    Picasso.with(MainActivity.this).load(Constantes.RUTA_IMAGEN+usuario.getImagen()).transform(new CircleTransform()).fit().centerCrop().rotate(270f).into(imagenUsuario);
-                    if (usuario!=null)
-                        cargarCoordenadas();
+                    Picasso.with(MainActivity.this).load(Constantes.RUTA_IMAGEN + usuario.getImagen()).transform(new CircleTransform()).fit().centerCrop().rotate(270f).into(imagenUsuario);
+                    if (firebaseBaseDatos != null && !usuario.getImagen().equals(firebaseBaseDatos.child(Constantes.IMAGEN_USUARIO)))
+                        firebaseBaseDatos.child(Constantes.IMAGEN_USUARIO).setValue(usuario.getImagen());
+                    cargarCoordenadas();
 
 
                 } else {
@@ -543,7 +543,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-    public class BusquedaJsonTask extends AsyncTask<URL, Void, Resultado > {
+
+    public class BusquedaJsonTask extends AsyncTask<URL, Void, Resultado> {
 
         private Resultado resultado;
         //private Context context;
@@ -578,24 +579,18 @@ public class MainActivity extends AppCompatActivity
         @TargetApi(Build.VERSION_CODES.GINGERBREAD)
         @Override
         protected void onPostExecute(Resultado resultado) {
-            if (resultado!=null)
-            {
-                if(resultado.isOk())
-                {
+            if (resultado != null) {
+                if (resultado.isOk()) {
                     //Toast.makeText(context, "Pelicula "+pelicula+" introducida correctamente" , Toast.LENGTH_SHORT).show();
                     Log.w("resultado ok", "EL RESULTADO ES OK");
 
 
-                }
-                else
-                {
+                } else {
                     //Toast.makeText(context, "Error "+resultado.getError() , Toast.LENGTH_SHORT).show();
                     Log.w("resultado ok", "EL RESULTADO NO OK");
 
                 }
-            }
-            else
-            {
+            } else {
                 //Toast.makeText(context, "Error nullable en la captura del resultado " , Toast.LENGTH_SHORT).show();
                 Log.w("resultado ok", "EL RESULTADO ES NULLO");
             }
