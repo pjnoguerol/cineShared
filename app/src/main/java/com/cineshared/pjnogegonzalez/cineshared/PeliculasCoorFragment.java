@@ -42,6 +42,7 @@ public class PeliculasCoorFragment extends Fragment {
         Context context = inflater.getContext();
         View rootView = inflater.inflate(R.layout.recyclerview_activity, container, false);
         usuario = (Usuarios) getArguments().getSerializable("usuarios");
+        String cadena = getArguments().getString("cadena");
         if (usuario!=null)
         {
             conversionJson.setUsuario(usuario);
@@ -51,7 +52,15 @@ public class PeliculasCoorFragment extends Fragment {
         recyclerView = conversionJson.onCreateView(context, rootView, getResources());
         conversionJson.setUsuario(usuario);
         String url = "";
-        url = Constantes.RUTA_PELICULAS_COORDENADAS+usuario.getId_usua()+"&distancia="+usuario.getDistancia();
+        if (cadena!=null) {
+            url = Constantes.RUTA_PELICULAS_COORDENADAS_CADENA + usuario.getId_usua() + "&distancia=" + usuario.getDistancia() + "&cadenabiblio=" + cadena;
+        }
+        else
+        {
+            url = Constantes.RUTA_PELICULAS_COORDENADAS+usuario.getId_usua()+"&distancia="+usuario.getDistancia();
+        }
+
+        ;
 
         Log.w("MIURL", url);
 

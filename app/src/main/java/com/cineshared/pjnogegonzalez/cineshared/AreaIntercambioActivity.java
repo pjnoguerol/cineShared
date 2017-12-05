@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TabHost;
@@ -35,6 +36,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
     private TextView nombrePelicula, sinopsisPelicula, testado;
     private Spinner spinner;
     private Peliculas datosREsumen;
+    private Button botonLiberar;
 
     private ConversionJson<Peliculas> conversionJson = new ConversionJson<>(this, Constantes.BIBLIOTECA);
 
@@ -64,6 +66,45 @@ public class AreaIntercambioActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_intercambio, fragment).commit();
 
     }
+    private void liberarIntercambio()
+    {
+        try {
+            String url = Constantes.SERVIDOR+Constantes.RUTA_CLASE_PHP;
+            ConnectivityManager connMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+            if (networkInfo != null && networkInfo.isConnected()) {
+
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("libhis", datosREsumen.getHistorico()+"")
+                        .appendQueryParameter("libpelipropia", datosREsumen.getId()+"")
+                        .appendQueryParameter("libpeliusuario", datosREsumen.getPeliusuario().toString());
+
+                HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
+                hilo.setActivity(this);
+                hilo.setTipoObjeto(Constantes.USUARIOS);
+                hilo.setConversionJson(new ConversionJson<Usuarios>(this,Constantes.USUARIOS));
+                List <Usuarios>  resultado = hilo.execute(new URL(url)).get();
+                //Comprobar que se ha insertado correctament
+                if (resultado.get(0).isOk())
+                    Toast.makeText(this, "pelicula liberada correctamente", Toast.LENGTH_SHORT).show();
+                    //new HiloGenerico<Resultado>(builder).execute(new URL(url));
+                    //new InsertUsuarioResultadoJsonTask().execute(new URL(url));
+                else
+                    Toast.makeText(this, resultado.get(0).getError(), Toast.LENGTH_SHORT).show();
+            } else {
+
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void cargarResumen(int id_pel, int id_usu)
     {
 
@@ -77,15 +118,19 @@ public class AreaIntercambioActivity extends AppCompatActivity {
                 Uri.Builder builder = new Uri.Builder()
                         .appendQueryParameter("peliresumen", id_pel+"")
                         .appendQueryParameter("usuaresumen", id_usu+"" );
-                HiloGenerico<Peliculas> hilo = new HiloGenerico<>(builder);
+                Log.w("builder", builder.toString());
+                HiloGenerico<PeliculasComprobacion> hilo = new HiloGenerico<>(builder);
                 hilo.setActivity(this);
-                hilo.setTipoObjeto(Constantes.BIBLIOTECA);
-                hilo.setConversionJson(new ConversionJson<Peliculas>(this,Constantes.BIBLIOTECA));
-                List <Peliculas>  resultado = hilo.execute(new URL(url)).get();
+                hilo.setTipoObjeto(Constantes.PELICULAS_CHECK);
+                hilo.setConversionJson(new ConversionJson<PeliculasComprobacion>(this,Constantes.PELICULAS_CHECK));
+                List <PeliculasComprobacion>  resultado = hilo.execute(new URL(url)).get();
                 //Comprobar que se ha insertado correctament
                 if (resultado.get(0).isOk())
                 {
+                     datosREsumen = resultado.get(0).getPeliculas().get(0);
+                     String mensaje = "Pelicula "+Utility.auxPelicula +" intercambiada con "+resultado.get(0).getPeliculas().get(0).getTitle()+" del usuario:  "+Utility.capitalizar(resultado.get(0).getPeliculas().get(0).getUsuarionombre())+"";
 
+                     testado.setText(mensaje);
                 }
                 //new HiloGenerico<Resultado>(builder).execute(new URL(url));
                 //new InsertUsuarioResultadoJsonTask().execute(new URL(url));
@@ -113,6 +158,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
         imagenPelicula = (ImageView) findViewById(R.id.imagenPeliculaActivity);
         nombrePelicula = (TextView) findViewById(R.id.nombrePeliculaActivity);
         testado =(TextView)findViewById(R.id.testado);
+        botonLiberar = (Button)findViewById(R.id.btstado);
         sinopsisPelicula = (TextView) findViewById(R.id.sinopsis);
         spinner = (Spinner) findViewById(R.id.spIntercambio);
 
@@ -140,6 +186,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
 
         final Peliculas pelicula = (Peliculas) getIntent().getSerializableExtra(Constantes.PELICULAS);
         final Usuarios usuario = (Usuarios) getIntent().getSerializableExtra(Constantes.USUARIO);
+        Utility.auxPelicula = pelicula.getTitle();
         //Ocultamos la pelicula si no esta para intercambiar
         if (pelicula.getAlert()==0)
         {
@@ -155,13 +202,22 @@ public class AreaIntercambioActivity extends AppCompatActivity {
                 tabs.getTabWidget().getChildAt(0).setVisibility(View.GONE);
                 tabs.setCurrentTab(2);
                 cargarResumen(pelicula.getId(), usuario.getId_usua());
+                botonLiberar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        liberarIntercambio();
+                        //Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        //startActivity(intent);
+                    }
+                });
+
             }
             else {
                 tabs.getTabWidget().getChildAt(2).setVisibility(View.GONE);
                 tabs.setCurrentTab(0);
             }
         }
-        Utility.auxPelicula = pelicula.getTitle();
+
         //Creamos el objetos USUARIOS
 
 
@@ -173,9 +229,9 @@ public class AreaIntercambioActivity extends AppCompatActivity {
         ArrayAdapter<Usuarios> adapter =
                 new ArrayAdapter<Usuarios>(getApplicationContext(), android.R.layout.simple_spinner_item, pelicula.getUsuariointercambio());
         //adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        String mensaje = "Pelicula "+Utility.auxPelicula +" intercambiada con "+pelicula.getPeliusuario()+" del usuario:  "+usuario.getUsuario()+"?";
+       // String mensaje = "Pelicula "+Utility.auxPelicula +" intercambiada con "+pelicula.getPeliusuario()+" del usuario:  "+usuario.getUsuario()+"?";
 
-        testado.setText(mensaje);
+        //testado.setText(mensaje);
 
         spinner.setAdapter(adapter);
 

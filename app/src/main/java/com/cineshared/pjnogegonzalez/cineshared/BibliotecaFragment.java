@@ -41,13 +41,17 @@ public class BibliotecaFragment extends Fragment {
         Context context = inflater.getContext();
         View rootView = inflater.inflate(R.layout.recyclerview_activity, container, false);
         usuario = (Usuarios) getArguments().getSerializable("usuarios");
+        String cadena = getArguments().getString("cadena");
         if (usuario!=null)
         {
             conversionJson.setUsuario(usuario);
         }
         recyclerView = conversionJson.onCreateView(context, rootView, getResources());
         String url = "";
-        url = Constantes.RUTA_BIBLIOTECA+usuario.getId_usua();
+        if (cadena!=null)
+            url = Constantes.RUTA_BIBLIOTECA_CADENA+usuario.getId_usua()+"&cadena="+cadena;
+        else
+            url = Constantes.RUTA_BIBLIOTECA+usuario.getId_usua();
         //Toast.makeText(context, url, Toast.LENGTH_SHORT).show();
         Log.w("MI INPUTSTREAM", url );
         try {

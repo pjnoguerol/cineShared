@@ -443,6 +443,8 @@ public class ConversionJson<T> {
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
             else if (Constantes.INTERCAMBIo.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
+            else if (Constantes.PELICULAS_CHECK.equals(tipoObjeto))
+                elementoConvertido = gson.fromJson(jsonReader, PeliculasComprobacion.class);
            // else if (Constantes.USUARIO_RESULTADO.equals(tipoObjeto))
             //    elementoConvertido = gson.fromJson(jsonReader, Resultado.class);
            // else if (Constantes.USUARIO_GENERO.equals(tipoObjeto))

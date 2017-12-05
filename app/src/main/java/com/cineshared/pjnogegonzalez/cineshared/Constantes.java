@@ -26,6 +26,7 @@ public class Constantes {
     public static String INTERCAMBIo = "intercambio";
     public static String INSERTAR = "insertar";
     public static String CONFIGURACION = "configuracion";
+    public static String PELICULAS_CHECK = "peliculascheck";
 
     //Cosntantes ftp
     public static String IP_FTP = "intracosl.ddns.net";
@@ -45,6 +46,7 @@ public class Constantes {
     public static String RUTA_MUSICA = SERVIDOR + "/cineshared/music/";
     public static String RUTA_CLASE_PHP = "/cineshared/cineshared_clase.php?";
     public static String RUTA_BIBLIOTECA = SERVIDOR + RUTA_CLASE_PHP + "biblioteca=";
+    public static String RUTA_BIBLIOTECA_CADENA = SERVIDOR + RUTA_CLASE_PHP + "bibliotecacadena=";
     public static String RUTA_CONTACTOS = SERVIDOR + RUTA_CLASE_PHP + "contactos=";
     public static String RUTA_GENEROS = SERVIDOR + RUTA_CLASE_PHP + "generos";
     public static String RUTA_GENEROS_USUARIO = SERVIDOR + RUTA_CLASE_PHP + "generousuario=";
@@ -68,6 +70,7 @@ public class Constantes {
     public static String RUTA_ACTUALIZAR_BUSQUEDA = SERVIDOR + RUTA_CLASE_PHP +"actualizarpelicula=";
     public static String RUTA_INSERTAR_COORDENADAS = SERVIDOR + RUTA_CLASE_PHP +"longitud=";
     public static String RUTA_PELICULAS_COORDENADAS = SERVIDOR + RUTA_CLASE_PHP +"usuariocoordenada=";
+    public static String RUTA_PELICULAS_COORDENADAS_CADENA = SERVIDOR + RUTA_CLASE_PHP +"usuariocoordenadacadena=";
     public static String RUTA_USUARIO_INTERCAMBIO = SERVIDOR + RUTA_CLASE_PHP + "usuariointercambio=";
     public static String RUTA_ACTUALIZAR_INTERCAMBIO = SERVIDOR + RUTA_CLASE_PHP + "actualizarintercambio=";
     public static int CONNECTION_TIMEOUT = 15000;

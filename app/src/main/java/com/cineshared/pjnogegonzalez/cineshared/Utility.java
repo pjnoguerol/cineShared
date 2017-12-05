@@ -28,6 +28,8 @@ public class Utility {
 
     public static String auxPelicula;
 
+    public static int auxFragment=0;
+
     public static String acotar(String cadena)
     {
        int size = (cadena.length() < 25)?cadena.length():25;

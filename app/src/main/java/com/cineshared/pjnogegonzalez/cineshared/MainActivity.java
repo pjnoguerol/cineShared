@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -353,6 +354,50 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        final MenuItem menuItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) menuItem.getActionView();
+        // Establecemos la acción del botón de búsqueda
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Bundle bundle = new Bundle();
+                if (Utility.auxFragment==1)
+                {
+                    bundle.putSerializable(Constantes.USUARIOS, usuario);
+                    bundle.putString("cadena", query);
+                    fragment = new BibliotecaFragment();
+                    fragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+                    getSupportActionBar().setTitle("Biblioteca");
+                }
+                else if (Utility.auxFragment==2)
+                {
+                    establecerFragmeto(Constantes.PELICULAS);
+                    bundle.putString("cadena", query);
+                    bundle.putSerializable(Constantes.USUARIOS, usuario);
+                    fragment = new PeliculasCoorFragment();
+                    fragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+                    getSupportActionBar().setTitle("Intercambio");
+                }else if (Utility.auxFragment==3)
+                {
+                    establecerFragmeto(Constantes.HISTORICO);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+                }
+                else
+
+                if (!searchView.isIconified()) {
+                    searchView.setIconified(true);
+                }
+                menuItem.collapseActionView();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
         return true;
     }
 
@@ -384,13 +429,16 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_biblioteca) {
             // Handle the camera action
             establecerFragmeto(Constantes.USUARIOS);
+            Utility.auxFragment = 1;
             fragmentTransaction = true;
         } else if (id == R.id.nav_trans) {
             establecerFragmeto(Constantes.PELICULAS);
+            Utility.auxFragment = 2;
             fragmentTransaction = true;
 
         } else if (id == R.id.nav_historico) {
             establecerFragmeto(Constantes.HISTORICO);
+            Utility.auxFragment = 3;
             fragmentTransaction = true;
 
 

@@ -34,6 +34,7 @@ public class Peliculas implements Serializable{
     private String fechafin;
     private String peliusuario;
     private int estado;
+    private int historico;
     private List<Usuarios> usuariointercambio;
 
 
@@ -236,5 +237,14 @@ public class Peliculas implements Serializable{
 
     public void setError(String error) {
         this.error = error;
+    }
+
+
+    public int getHistorico() {
+        return historico;
+    }
+
+    public void setHistorico(int historico) {
+        this.historico = historico;
     }
 }
