@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -37,6 +38,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedOutputStream;
@@ -70,7 +77,9 @@ public class ConfiguracionFragment extends Fragment {
     private Button btInsert, subirBoton;
     private File file;
 
-
+    //Firebase
+    private DatabaseReference firebaseBaseDatos;
+    private FirebaseUser firebaseUsuario;
 
     /**
      * Comprobamos si el email es correcto
@@ -169,8 +178,11 @@ public class ConfiguracionFragment extends Fragment {
             }
         });
 
+        //Firebase
+        firebaseUsuario = FirebaseAuth.getInstance().getCurrentUser();
+        String current_uid = firebaseUsuario.getUid();
 
-        // Permitimos que el usuario modifique el valor del género elegido como favorito
+        firebaseBaseDatos = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE).child(current_uid);
 
         return rootView;
     }
@@ -189,9 +201,10 @@ public class ConfiguracionFragment extends Fragment {
                 if (file!=null && file.exists()) {
                     imagen = file.getName();
                 }
+                String password = passwordInsert.getText().toString();
                 Uri.Builder builder = new Uri.Builder()
                         .appendQueryParameter("userioactu", usuarioConectado.getUsuario())
-                        .appendQueryParameter("passactu", passwordInsert.getText().toString())
+                        .appendQueryParameter("passactu", password)
                         .appendQueryParameter("emailactu", emailInsert.getText().toString())
                         .appendQueryParameter("telactu", telefonoInsert.getText().toString())
                         .appendQueryParameter("disactu", distanciaInsert.getText().toString())
@@ -206,6 +219,7 @@ public class ConfiguracionFragment extends Fragment {
                 {
                     Toast.makeText(getContext(), resultado.get(0).getError(), Toast.LENGTH_SHORT).show();
                     Log.w("UPDATESQL", resultado.get(0).getError() );
+                    actualizarUsuarioFirebase(password, imagen);
                     if (!imagen.equals(usuarioConectado.getImagen()))
                         new FtpTask().execute(file);
                     else
@@ -417,10 +431,9 @@ public class ConfiguracionFragment extends Fragment {
         builder.show();
     }
 
-
-
-    /**
-     * Inner class que parsea la lista de géneros a un Spinner
-     */
-
+    // TODO probar
+    private void actualizarUsuarioFirebase(String password, String imagen) {
+        firebaseBaseDatos.child(Constantes.IMAGEN_USUARIO).setValue(imagen);
+        firebaseUsuario.updatePassword(password);
+    }
 }

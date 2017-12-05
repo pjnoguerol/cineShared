@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "438275503011",
+    "firebase_url": "https://cineshared-d164f.firebaseio.com",
+    "project_id": "cineshared-d164f",
+    "storage_bucket": "cineshared-d164f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:438275503011:android:85315c4a966f1381",
+        "android_client_info": {
+          "package_name": "com.cineshared.pjnogegonzalez.cineshared"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "438275503011-ikr6s9v8u845kiddsjil3ic6cq2fndse.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cineshared.pjnogegonzalez.cineshared",
+            "certificate_hash": "9cb5726478e58ebbf11d5683012e91120ae043eb"
+          }
+        },
+        {
+          "client_id": "438275503011-5keot02pbmm1ucb7nib17o2ssrdpnkcj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpYLrsww8iLva9Fv3XEo_hwUZBNlT_ge8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "438275503011-5keot02pbmm1ucb7nib17o2ssrdpnkcj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -39,6 +39,14 @@ public class Constantes {
     public static String USUARIO_DATOS = "usuariodatos";
     public static String PASSWORD = "password";
     public static String BIENVENIDO = "Bienvenido: ";
+
+    // Constantes FirebaseDatabase
+    public static String USUARIOS_FIREBASE = "Usuarios";
+    public static String NOMBRE_USUARIO = "nombreUsuario";
+    public static String IMAGEN_USUARIO = "imagenUsuario";
+    public static String EMAIL_USUARIO = "emailUsuario";
+    public static String EMAIL_FIREBASE = "@cineShared.com";
+
     // Constantes URLs y conexiones
     public static String SERVIDOR = "http://www.intraco.es";
     public static String RUTA_IMAGEN = SERVIDOR + "/cineshared/img/";
