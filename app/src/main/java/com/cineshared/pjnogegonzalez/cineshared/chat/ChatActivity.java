@@ -1,5 +1,6 @@
 package com.cineshared.pjnogegonzalez.cineshared.chat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,19 +9,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cineshared.pjnogegonzalez.cineshared.BuscarPeliculasActivity;
 import com.cineshared.pjnogegonzalez.cineshared.CircleTransform;
 import com.cineshared.pjnogegonzalez.cineshared.Constantes;
-import com.cineshared.pjnogegonzalez.cineshared.MainActivity;
 import com.cineshared.pjnogegonzalez.cineshared.R;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -68,30 +72,42 @@ public class ChatActivity extends AppCompatActivity {
         FirebaseRecyclerAdapter<UsuarioChat, UsuarioChatViewHolder> firebaseRecyclerAdapter =
                 new FirebaseRecyclerAdapter<UsuarioChat, UsuarioChatViewHolder>(
                         UsuarioChat.class,
-                        R.layout.chat_elemento_conversaciones,
+                        R.layout.chat_elemento_lista_usuarios,
                         UsuarioChatViewHolder.class,
                         firebaseBaseDatos
                 ) {
                     @Override
-                    protected void populateViewHolder(UsuarioChatViewHolder usuarioChatViewHolder, final UsuarioChat users, int position) {
+                    protected void populateViewHolder(final UsuarioChatViewHolder usuarioChatViewHolder, final UsuarioChat usuarios,
+                                                      int posicion) {
 
-                        usuarioChatViewHolder.setNombreUsuarioChat(users.getNombreUsuario());
-                        usuarioChatViewHolder.setUltimoMensajeChat(users.getEmailUsuario());
-                        usuarioChatViewHolder.setImagenUsuarioChat(users.getImagenUsuario(), getApplicationContext());
+                        final String identificadorUsuario = getRef(posicion).getKey();
 
-                        final String identificadorUsuario = getRef(position).getKey();
-
-                        usuarioChatViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                        firebaseBaseDatos.child(identificadorUsuario).addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onClick(View view) {
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String conexionUsuario = "false";
+                                if (dataSnapshot.hasChild(Constantes.CONEXION_USUARIO)) {
+                                    conexionUsuario = dataSnapshot.child(Constantes.CONEXION_USUARIO).getValue().toString();
+                                }
 
-                                Intent conversacionIntent = new Intent(ChatActivity.this, ConversacionActivity.class);
-                                conversacionIntent.putExtra("identificadorUsuario", identificadorUsuario);
-                                conversacionIntent.putExtra("nombreUsuario", users.getNombreUsuario());
-                                startActivity(conversacionIntent);
+                                usuarioChatViewHolder.setNombreUsuarioChat(dataSnapshot.child(Constantes.NOMBRE_USUARIO).getValue().toString());
+                                usuarioChatViewHolder.setImagenUsuarioChat(dataSnapshot.child(Constantes.IMAGEN_USUARIO).getValue().toString(), ChatActivity.this);
+                                usuarioChatViewHolder.setEstadoUsuario(conexionUsuario);
+                                usuarioChatViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent conversacionIntent = new Intent(ChatActivity.this, ConversacionActivity.class);
+                                        conversacionIntent.putExtra("identificadorUsuarioDestinatario", identificadorUsuario);
+                                        conversacionIntent.putExtra("nombreUsuario", usuarios.getNombreUsuario());
+                                        startActivity(conversacionIntent);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
                             }
                         });
-
                     }
                 };
 
@@ -120,25 +136,18 @@ public class ChatActivity extends AppCompatActivity {
             ultimoMensajeTextView.setText(ultimoMensajeChat);
         }
 
-        public void setImagenUsuarioChat(String imagen, Context contexto) {
-            ImageView imagenUsuarioChat = (ImageView) mView.findViewById(R.id.imagenUsuarioChat);
-            Picasso.with(contexto).load(Constantes.RUTA_IMAGEN + imagen).placeholder(R.drawable.ic_chat_img_defecto)
-                    .transform(new CircleTransform()).fit().centerCrop().rotate(270f).into(imagenUsuarioChat);
+        public void setImagenUsuarioChat(final String imagen, final Context contexto) {
+            final ImageView imagenUsuarioChat = (ImageView) mView.findViewById(R.id.imagenUsuarioChat);
+            Utilidades.establecerImagenUsuario(mView.getContext(), imagen, imagenUsuarioChat);
         }
 
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Intent intent = new Intent(ChatActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        public void setEstadoUsuario(String conexionUsuario) {
+            ImageView estadoConexionUsuario = (ImageView) mView.findViewById(R.id.estadoConexionUsuario);
+            if ("true".equals(conexionUsuario)) {
+                estadoConexionUsuario.setImageResource(R.drawable.ic_usuario_online);
+            } else {
+                estadoConexionUsuario.setImageResource(R.drawable.ic_usuario_offline);
+            }
         }
     }
 }

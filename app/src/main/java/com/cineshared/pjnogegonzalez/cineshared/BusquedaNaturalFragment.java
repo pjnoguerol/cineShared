@@ -104,7 +104,7 @@ public class BusquedaNaturalFragment extends Fragment {
         @Override
         protected void onPostExecute(List<Peliculas> listaPeliculas) {
 
-            //Utility.resultado(listaPeliculas.size());
+            //Utilidades.resultado(listaPeliculas.size());
             //FindApiBusqueda busquedalista = conversionJson.onPostExecute(busqueda);
             recyclerView.setAdapter(conversionJson.onPostExecute(listaPeliculas));
         }

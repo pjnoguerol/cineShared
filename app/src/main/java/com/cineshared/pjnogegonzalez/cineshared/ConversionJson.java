@@ -10,8 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.Toast;
 
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
@@ -97,7 +97,7 @@ public class ConversionJson<T> {
 
     public RecyclerView onCreateView(Context context, View rootView, Resources resources) {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-        int mNoOfColumns = Utility.calculateNoOfColumns(context);
+        int mNoOfColumns = Utilidades.calculateNoOfColumns(context);
         Log.w("numero de columnas", mNoOfColumns+"");
         //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, 2);
         //GRID LAYOUT MANAGER DINAMICO
@@ -153,7 +153,7 @@ public class ConversionJson<T> {
      * @param urls Url de conexión
      * @return Lista de objetos parseados
      */
-    protected List<T> doInBackground(URL... urls) {
+    public List<T> doInBackground(URL... urls) {
         List<T> listaConvertir = new ArrayList<>();
         try {
             // Establecer la conexión
@@ -331,25 +331,6 @@ public class ConversionJson<T> {
 
         }
 
-
-        /*
-        if (listaConvertir != null) {
-            if (Constantes.ACTORES.equals(tipoObjeto))
-                adaptador = new AdaptarActoresCardView((List<Actores>) listaConvertir);
-            else if (Constantes.PELICULAS.equals(tipoObjeto))
-                adaptador = new AdaptarPeliculasCardView((List<Peliculas>) listaConvertir);
-            else if (Constantes.DIRECTORES.equals(tipoObjeto))
-                adaptador = new AdaptarDirectoresCardView((List<Directores>) listaConvertir);
-            else if (Constantes.SONORAS.equals(tipoObjeto))
-                adaptador = new AdaptarBandasSonorasCardView((List<BandasSonoras>) listaConvertir);
-            else if (Constantes.USUARIOS.equals(tipoObjeto))
-                adaptador = new AdaptarUsuariosCardView((List<Usuarios>) listaConvertir);
-
-        } else {
-            Toast.makeText(
-                    this.activity, Constantes.ERROR_JSON, Toast.LENGTH_SHORT).show();
-        }
-        */
         return adaptador;
     }
 
@@ -445,10 +426,6 @@ public class ConversionJson<T> {
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
             else if (Constantes.PELICULAS_CHECK.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, PeliculasComprobacion.class);
-           // else if (Constantes.USUARIO_RESULTADO.equals(tipoObjeto))
-            //    elementoConvertido = gson.fromJson(jsonReader, Resultado.class);
-           // else if (Constantes.USUARIO_GENERO.equals(tipoObjeto))
-              //  elementoConvertido = gson.fromJson(jsonReader, Generos.class);
 
             listaConvertir.add(elementoConvertido);
         }

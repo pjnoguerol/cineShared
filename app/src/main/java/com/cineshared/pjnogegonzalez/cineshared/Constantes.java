@@ -40,12 +40,21 @@ public class Constantes {
     public static String USUARIO_DATOS = "usuariodatos";
     public static String PASSWORD = "password";
     public static String BIENVENIDO = "Bienvenido: ";
+    public static String INICIADO = "iniciado";
 
     // Constantes FirebaseDatabase
     public static String USUARIOS_FIREBASE = "Usuarios";
+    public static String CHAT_FIREBASE = "Chats";
+    public static String MENSAJES_FIREBASE = "Mensajes";
     public static String NOMBRE_USUARIO = "nombreUsuario";
     public static String IMAGEN_USUARIO = "imagenUsuario";
     public static String EMAIL_USUARIO = "emailUsuario";
+    public static String TOKEN_USUARIO = "tokenUsuario";
+    public static String TEXTO_MENSAJE = "textoMensaje";
+    public static String HORA_MENSAJE = "horaMensaje";
+    public static String REMITENTE_MENSAJE = "remitenteMensaje";
+    public static String VISTO_MENSAJE = "vistoMensaje";
+    public static String CONEXION_USUARIO = "conexionUsuario";
     public static String EMAIL_FIREBASE = "@cineShared.com";
 
     // Constantes URLs y conexiones

@@ -4,8 +4,6 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -21,11 +19,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.squareup.picasso.Picasso;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -161,7 +159,7 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
         String listadoActoresPelicula = "Actores: ";
         final Peliculas pelicula = busquedaApi.get(posicion);
 
-        busquedaViewHolder.tituloPelicula.setText(Utility.acotar(pelicula.getTitle()));
+        busquedaViewHolder.tituloPelicula.setText(Utilidades.acotar(pelicula.getTitle()));
         busquedaViewHolder.usuarioPelicula.setText(pelicula.getUsuarionombre());
 
         if (pelicula.getDistancia()!=0.0)

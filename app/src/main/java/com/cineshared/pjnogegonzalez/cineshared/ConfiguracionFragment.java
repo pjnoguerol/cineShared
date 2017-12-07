@@ -44,6 +44,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedOutputStream;
@@ -83,6 +85,7 @@ public class ConfiguracionFragment extends Fragment {
 
     /**
      * Comprobamos si el email es correcto
+     *
      * @param target
      * @return
      */
@@ -134,7 +137,7 @@ public class ConfiguracionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         context = inflater.getContext();
-        View rootView = inflater.inflate(R.layout.fragment_configuracion, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_configuracion, container, false);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -145,17 +148,30 @@ public class ConfiguracionFragment extends Fragment {
         btInsert = (Button) rootView.findViewById(R.id.btInsert);
         subirBoton = (Button) rootView.findViewById(R.id.botonSubir);
         subirImagen = (ImageView) rootView.findViewById(R.id.imagenSubir);
-        distanciaInsert =(EditText) rootView.findViewById(R.id.distancia);
+        distanciaInsert = (EditText) rootView.findViewById(R.id.distancia);
         usuarioConectado = (Usuarios) getArguments().getSerializable("usuarios");
 
         usuarioInsert.setText(Html.fromHtml("<b>Usuario: </b>" + usuarioConectado.getUsuario()));
 
         //nombreUsuario.setText(Html.fromHtml("<b>Usuario: </b>" + usuarioConectado.getUsuario()));
-        Picasso.with(rootView.getContext()).load(Constantes.RUTA_IMAGEN+usuarioConectado.getImagen()).into(subirImagen);
+        //Picasso.with(rootView.getContext()).load(Constantes.RUTA_IMAGEN+usuarioConectado.getImagen()).into(subirImagen);
+        Picasso.with(rootView.getContext()).load(Constantes.RUTA_IMAGEN + usuarioConectado.getImagen())
+                .networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.ic_chat_img_defecto)
+                .into(subirImagen, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                    }
+
+                    @Override
+                    public void onError() {
+                        Picasso.with(rootView.getContext()).load(Constantes.RUTA_IMAGEN + usuarioConectado.getImagen())
+                                .placeholder(R.drawable.ic_chat_img_defecto).into(subirImagen);
+                    }
+                });
         passwordInsert.setText(usuarioConectado.getPassword());
         emailInsert.setText((usuarioConectado.getEmail()));
         telefonoInsert.setText((usuarioConectado.getTelefono()));
-        distanciaInsert.setText(usuarioConectado.getDistancia()+"");
+        distanciaInsert.setText(usuarioConectado.getDistancia() + "");
 
         subirBoton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -180,9 +196,9 @@ public class ConfiguracionFragment extends Fragment {
 
         //Firebase
         firebaseUsuario = FirebaseAuth.getInstance().getCurrentUser();
-        String current_uid = firebaseUsuario.getUid();
+        //String current_uid = firebaseUsuario.getUid();
 
-        firebaseBaseDatos = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE).child(current_uid);
+        //firebaseBaseDatos = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE).child(current_uid);
 
         return rootView;
     }
@@ -192,13 +208,13 @@ public class ConfiguracionFragment extends Fragment {
      */
     private void insertarNuevoUsuario() {
         try {
-            String url = Constantes.SERVIDOR+Constantes.RUTA_CLASE_PHP;
+            String url = Constantes.SERVIDOR + Constantes.RUTA_CLASE_PHP;
             ConnectivityManager connMgr = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
             if (networkInfo != null && networkInfo.isConnected()) {
-                String imagen=usuarioConectado.getImagen();
-                if (file!=null && file.exists()) {
+                String imagen = usuarioConectado.getImagen();
+                if (file != null && file.exists()) {
                     imagen = file.getName();
                 }
                 String password = passwordInsert.getText().toString();
@@ -208,29 +224,27 @@ public class ConfiguracionFragment extends Fragment {
                         .appendQueryParameter("emailactu", emailInsert.getText().toString())
                         .appendQueryParameter("telactu", telefonoInsert.getText().toString())
                         .appendQueryParameter("disactu", distanciaInsert.getText().toString())
-                        .appendQueryParameter("imactu", imagen );
+                        .appendQueryParameter("imactu", imagen);
                 HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
                 hilo.setActivity(getActivity());
                 hilo.setTipoObjeto(Constantes.USUARIOS);
-                hilo.setConversionJson(new ConversionJson<Usuarios>(getActivity(),Constantes.USUARIOS));
-                List <Usuarios>  resultado = hilo.execute(new URL(url)).get();
+                hilo.setConversionJson(new ConversionJson<Usuarios>(getActivity(), Constantes.USUARIOS));
+                List<Usuarios> resultado = hilo.execute(new URL(url)).get();
                 //Comprobar que se ha insertado correctament
-                if (resultado.get(0).isOk())
-                {
+                if (resultado.get(0).isOk()) {
                     Toast.makeText(getContext(), resultado.get(0).getError(), Toast.LENGTH_SHORT).show();
-                    Log.w("UPDATESQL", resultado.get(0).getError() );
+                    Log.w("UPDATESQL", resultado.get(0).getError());
                     actualizarUsuarioFirebase(password, imagen);
                     if (!imagen.equals(usuarioConectado.getImagen()))
                         new FtpTask().execute(file);
-                    else
-                    {
+                    else {
                         Intent i = new Intent(getActivity(), MainActivity.class);
 
                         startActivity(i);
                     }
                 }
-                    //new HiloGenerico<Resultado>(builder).execute(new URL(url));
-                    //new InsertUsuarioResultadoJsonTask().execute(new URL(url));
+                //new HiloGenerico<Resultado>(builder).execute(new URL(url));
+                //new InsertUsuarioResultadoJsonTask().execute(new URL(url));
                 else
                     Toast.makeText(getContext(), resultado.get(0).getError(), Toast.LENGTH_SHORT).show();
             } else {
@@ -244,15 +258,11 @@ public class ConfiguracionFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
     /**
      * Metodo asincrono que sube la foto por ftp
      */
     public class FtpTask extends AsyncTask<File, Void, String> {
-
-
-
-
-
 
         /**
          * Método que llama al parseo del usuario logueado
@@ -290,9 +300,22 @@ public class ConfiguracionFragment extends Fragment {
             if (requestCode == 1) {
 
                 // Show the thumbnail on ImageView
-                Uri imageUri = Uri.parse(mCurrentPhotoPath);
+                final Uri imageUri = Uri.parse(mCurrentPhotoPath);
                 file = new File(imageUri.getPath());
-                Picasso.with(getContext()).load(imageUri).into(subirImagen);
+                //Picasso.with(getContext()).load(imageUri).into(subirImagen);
+                Picasso.with(getContext()).load(imageUri)
+                        .networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.ic_chat_img_defecto)
+                        .into(subirImagen, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                            }
+
+                            @Override
+                            public void onError() {
+                                Picasso.with(getContext()).load(imageUri)
+                                        .placeholder(R.drawable.ic_chat_img_defecto).into(subirImagen);
+                            }
+                        });
 
                 try {
                     //InputStream ims = new FileInputStream(file);
@@ -312,8 +335,8 @@ public class ConfiguracionFragment extends Fragment {
             } else if (requestCode == 2) {
 
                 Uri selectedImage = data.getData();
-                String[] filePath = { MediaStore.Images.Media.DATA };
-                Cursor c = getContext().getContentResolver().query(selectedImage,filePath, null, null, null);
+                String[] filePath = {MediaStore.Images.Media.DATA};
+                Cursor c = getContext().getContentResolver().query(selectedImage, filePath, null, null, null);
                 c.moveToFirst();
                 int columnIndex = c.getColumnIndex(filePath[0]);
                 String picturePath = c.getString(columnIndex);
@@ -337,9 +360,10 @@ public class ConfiguracionFragment extends Fragment {
 
     public String getPath(Uri uri) {
         String res = null;
-        String[] proj = { MediaStore.Images.Media.DATA };
+        String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = getContext().getContentResolver().query(uri, proj, null, null, null);
-        if(cursor.moveToFirst()){;
+        if (cursor.moveToFirst()) {
+            ;
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             res = cursor.getString(column_index);
         }
@@ -350,6 +374,7 @@ public class ConfiguracionFragment extends Fragment {
 
     /**
      * Aqui crearemos las imagenes
+     *
      * @return
      * @throws IOException
      */
@@ -369,16 +394,17 @@ public class ConfiguracionFragment extends Fragment {
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void selectImage() {
 
-        if (getContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE )
-                != PackageManager.PERMISSION_GRANTED ) {
+        if (getContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     50);
         }
 
-        final CharSequence[] options = { "Toma foto", "Elige de la galeria","Cancel" };
+        final CharSequence[] options = {"Toma foto", "Elige de la galeria", "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Añade Foto");
@@ -386,11 +412,10 @@ public class ConfiguracionFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                if (options[item].equals("Toma foto"))
-                {
+                if (options[item].equals("Toma foto")) {
                     int MY_CAMERA_REQUEST_CODE = 100;
-                    if (getContext().checkSelfPermission(Manifest.permission.CAMERA  )
-                            != PackageManager.PERMISSION_GRANTED ) {
+                    if (getContext().checkSelfPermission(Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.CAMERA},
                                 MY_CAMERA_REQUEST_CODE);
                     }
@@ -416,14 +441,11 @@ public class ConfiguracionFragment extends Fragment {
                         startActivityForResult(takePictureIntent, 1);
                     }
 
-                }
-                else if (options[item].equals("Elige de la galeria"))
-                {
-                    Intent intent = new   Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                } else if (options[item].equals("Elige de la galeria")) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(intent, 2);
 
-                }
-                else if (options[item].equals("Cancel")) {
+                } else if (options[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
             }
@@ -433,7 +455,7 @@ public class ConfiguracionFragment extends Fragment {
 
     // TODO probar
     private void actualizarUsuarioFirebase(String password, String imagen) {
-        firebaseBaseDatos.child(Constantes.IMAGEN_USUARIO).setValue(imagen);
-        firebaseUsuario.updatePassword(password);
+        //firebaseBaseDatos.child(Constantes.IMAGEN_USUARIO).setValue(imagen);
+        //firebaseUsuario.updatePassword(password);
     }
 }

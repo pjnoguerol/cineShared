@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -188,7 +189,10 @@ public class LoginActivity extends AppCompatActivity {
                 new LoginJsonTask(builder).execute(new URL(Constantes.SERVIDOR + Constantes.RUTA_CLASE_PHP));
                 //new LoginJsonTask().execute(new URL(Constantes.RUTA_LOGIN + nombreUsuario.getText() + "&"
                 // + Constantes.PASSWORD + "=" + passwordUsuario.getText()));
-                loginUserFirebase(usuario + Constantes.EMAIL_FIREBASE, password);
+                //loginUserFirebase(usuario + Constantes.EMAIL_FIREBASE, password);
+                if (mAuth != null && mUserDatabase != null)
+                    AccionesFirebase.loginUserFirebase(mAuth, mUserDatabase,
+                            usuario + Constantes.EMAIL_FIREBASE, password, LoginActivity.this);
             } else {
                 Toast.makeText(LoginActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
             }
@@ -197,28 +201,4 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void loginUserFirebase(String email, String password) {
-
-
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-
-                if(task.isSuccessful()){
-
-                    String current_user_id = mAuth.getCurrentUser().getUid();
-
-                } else {
-
-                    String task_result = task.getException().getMessage().toString();
-
-                    Toast.makeText(LoginActivity.this, "Error : " + task_result, Toast.LENGTH_LONG).show();
-
-                }
-
-            }
-        });
-
-
-    }
 }

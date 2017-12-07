@@ -1,28 +1,16 @@
 package com.cineshared.pjnogegonzalez.cineshared;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -122,9 +110,9 @@ public class AdaptarHistoricoCardView extends RecyclerView.Adapter<AdaptarHistor
 
         //Log.w("Adapter", "Dentro adaptador biblioteca");
 
-        peliculaViewHolder.tituloPelicula.setText(Utility.acotar(pelicula.getTitle()));
+        peliculaViewHolder.tituloPelicula.setText(Utilidades.acotar(pelicula.getTitle()));
 
-        peliculaViewHolder.usuarioPelicula.setText("Usuario Petición: "+Utility.capitalizar(pelicula.getUsuarionombre()));
+        peliculaViewHolder.usuarioPelicula.setText("Usuario Petición: "+ Utilidades.capitalizar(pelicula.getUsuarionombre()));
 
         peliculaViewHolder.fechainicio.setText("Fecha petición= "+pelicula.getFechainicio());
 
@@ -132,7 +120,7 @@ public class AdaptarHistoricoCardView extends RecyclerView.Adapter<AdaptarHistor
 
         if (pelicula.getAlert()!=0)
         {
-            peliculaViewHolder.peliintercambio.setText(Utility.acotar(pelicula.getPeliusuario()));
+            peliculaViewHolder.peliintercambio.setText(Utilidades.acotar(pelicula.getPeliusuario()));
             peliculaViewHolder.fechafin.setText("Acuerdo Cerrado= "+pelicula.getFechafin() );
 
         }

@@ -17,9 +17,9 @@
         android:id="@+id/nombreUsuarioChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/imagenUsuarioChat"
-        android:layout_marginStart="20dp"
-        android:layout_toEndOf="@+id/imagenUsuarioChat"
+        android:layout_alignTop="@+id/estadoConexionUsuario"
+        android:layout_marginLeft="5dp"
+        android:layout_toEndOf="@+id/estadoConexionUsuario"
         android:text="Nombre usuario"
         android:textColor="@android:color/black"
         android:textSize="18sp"
@@ -29,9 +29,19 @@
         android:id="@+id/ultimoMensajeChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/nombreUsuarioChat"
+        android:layout_alignStart="@+id/estadoConexionUsuario"
         android:layout_below="@+id/nombreUsuarioChat"
         android:layout_marginTop="10dp"
         android:text="Último mensaje" />
+
+    <ImageView
+        android:id="@+id/estadoConexionUsuario"
+        android:layout_width="15dp"
+        android:layout_height="25dp"
+        android:layout_alignTop="@+id/imagenUsuarioChat"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/imagenUsuarioChat"
+        android:paddingTop="2dp"
+        app:srcCompat="@drawable/ic_usuario_online" />
 
 </RelativeLayout>

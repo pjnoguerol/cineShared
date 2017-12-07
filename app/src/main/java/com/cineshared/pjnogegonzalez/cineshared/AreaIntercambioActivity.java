@@ -1,18 +1,13 @@
 package com.cineshared.pjnogegonzalez.cineshared;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +19,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.squareup.picasso.Picasso;
 
 import java.net.MalformedURLException;
@@ -128,7 +124,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
                 if (resultado.get(0).isOk())
                 {
                      datosREsumen = resultado.get(0).getPeliculas().get(0);
-                     String mensaje = "Pelicula "+Utility.auxPelicula +" intercambiada con "+resultado.get(0).getPeliculas().get(0).getTitle()+" del usuario:  "+Utility.capitalizar(resultado.get(0).getPeliculas().get(0).getUsuarionombre())+"";
+                     String mensaje = "Pelicula "+ Utilidades.auxPelicula +" intercambiada con "+resultado.get(0).getPeliculas().get(0).getTitle()+" del usuario:  "+ Utilidades.capitalizar(resultado.get(0).getPeliculas().get(0).getUsuarionombre())+"";
 
                      testado.setText(mensaje);
                 }
@@ -186,7 +182,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
 
         final Peliculas pelicula = (Peliculas) getIntent().getSerializableExtra(Constantes.PELICULAS);
         final Usuarios usuario = (Usuarios) getIntent().getSerializableExtra(Constantes.USUARIO);
-        Utility.auxPelicula = pelicula.getTitle();
+        Utilidades.auxPelicula = pelicula.getTitle();
         //Ocultamos la pelicula si no esta para intercambiar
         if (pelicula.getAlert()==0)
         {
@@ -229,7 +225,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
         ArrayAdapter<Usuarios> adapter =
                 new ArrayAdapter<Usuarios>(getApplicationContext(), android.R.layout.simple_spinner_item, pelicula.getUsuariointercambio());
         //adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-       // String mensaje = "Pelicula "+Utility.auxPelicula +" intercambiada con "+pelicula.getPeliusuario()+" del usuario:  "+usuario.getUsuario()+"?";
+       // String mensaje = "Pelicula "+Utilidades.auxPelicula +" intercambiada con "+pelicula.getPeliusuario()+" del usuario:  "+usuario.getUsuario()+"?";
 
         //testado.setText(mensaje);
 

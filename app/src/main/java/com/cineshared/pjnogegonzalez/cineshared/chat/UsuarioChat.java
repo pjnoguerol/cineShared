@@ -9,15 +9,17 @@ public class UsuarioChat {
     public String emailUsuario;
     public String imagenUsuario;
     public String nombreUsuario;
+    public String estadoUsuario;
 
     public UsuarioChat() {
 
     }
 
-    public UsuarioChat(String emailUsuario, String imagenUsuario, String nombreUsuario) {
+    public UsuarioChat(String emailUsuario, String imagenUsuario, String nombreUsuario, String estadoUsuario) {
         this.emailUsuario = emailUsuario;
         this.imagenUsuario = imagenUsuario;
         this.nombreUsuario = nombreUsuario;
+        this.estadoUsuario = estadoUsuario;
     }
 
     public String getEmailUsuario() {
@@ -44,4 +46,11 @@ public class UsuarioChat {
         this.nombreUsuario = nombreUsuario;
     }
 
+    public String getEstadoUsuario() {
+        return estadoUsuario;
+    }
+
+    public void setEstadoUsuario(String estadoUsuario) {
+        this.estadoUsuario = estadoUsuario;
+    }
 }

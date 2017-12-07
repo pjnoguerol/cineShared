@@ -44,6 +44,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedOutputStream;
@@ -468,16 +469,15 @@ public class InsertUsuarioActivity extends AppCompatActivity {
 
                             firebaseBaseDatos = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE)
                                     .child(uid);
+                            String tokenUsuario = FirebaseInstanceId.getInstance().getToken();
+
                             HashMap<String, String> userMap = new HashMap<>();
                             userMap.put(Constantes.NOMBRE_USUARIO, usuario);
                             userMap.put(Constantes.EMAIL_USUARIO, email);
                             userMap.put(Constantes.IMAGEN_USUARIO, "default");
-
-                            //firebaseBaseDatos.setValue(userMap);
+                            userMap.put(Constantes.TOKEN_USUARIO, tokenUsuario);
 
                             //TODO ver si implementamos el regProgress
-
-
                             firebaseBaseDatos.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {

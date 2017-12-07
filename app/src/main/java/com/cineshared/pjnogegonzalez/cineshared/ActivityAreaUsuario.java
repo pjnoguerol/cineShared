@@ -3,20 +3,17 @@ package com.cineshared.pjnogegonzalez.cineshared;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.squareup.picasso.Picasso;
 
 import java.net.MalformedURLException;
@@ -118,7 +115,7 @@ public class ActivityAreaUsuario extends AppCompatActivity {
 
         Picasso.with(this).load(Constantes.RUTA_IMAGEN+usuario.getImagen()).transform(new CircleTransform()).fit().centerCrop().rotate(270f).into(imagenUsuario);
 
-        String mensaje = "Desear compartir tu pelicula "+Utility.auxPelicula +" con la pelicula "+pelicula.getTitle()+" del usuario:  "+usuario.getUsuario()+"?";
+        String mensaje = "Desear compartir tu pelicula "+ Utilidades.auxPelicula +" con la pelicula "+pelicula.getTitle()+" del usuario:  "+usuario.getUsuario()+"?";
 
         sinopsisPelicula.setText(mensaje);
 
