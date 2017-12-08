@@ -6,8 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.cineshared.pjnogegonzalez.cineshared.Constantes;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +27,7 @@ public class AdaptarMensajeChat extends RecyclerView.Adapter<AdaptarMensajeChat.
 
     private List<MensajeChat> listaMensajes;
     private DatabaseReference referenciaBD;
+    private View vistaMensajeChat;
 
     public AdaptarMensajeChat(List<MensajeChat> listaMensajes) {
         this.listaMensajes = listaMensajes;
@@ -34,7 +36,8 @@ public class AdaptarMensajeChat extends RecyclerView.Adapter<AdaptarMensajeChat.
     @Override
     public MensajeChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View vistaMensaje = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.mensaje_chat_layout, parent, false);
+                .inflate(R.layout.layout_mensaje_chat, parent, false);
+        this.vistaMensajeChat = vistaMensaje;
         return new MensajeChatViewHolder(vistaMensaje);
     }
 
@@ -53,9 +56,17 @@ public class AdaptarMensajeChat extends RecyclerView.Adapter<AdaptarMensajeChat.
     }
 
     @Override
-    public void onBindViewHolder(final MensajeChatViewHolder mensajeChatViewHolder, int i) {
-        MensajeChat mensajeChat = listaMensajes.get(i);
+    public void onBindViewHolder(final MensajeChatViewHolder mensajeChatViewHolder, int posicion) {
+        MensajeChat mensajeChat = listaMensajes.get(posicion);
         String remitenteMensaje = mensajeChat.getRemitenteMensaje();
+        if(remitenteMensaje.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            vistaMensajeChat.setBackground(vistaMensajeChat.getResources().getDrawable(R.drawable.fondo_mensaje_chat_remitente));
+            mensajeChatViewHolder.textoMensaje.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+        }
+        else {
+            vistaMensajeChat.setBackground(vistaMensajeChat.getResources().getDrawable(R.drawable.fondo_mensaje_chat));
+            mensajeChatViewHolder.textoMensaje.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+        }
 
         referenciaBD = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE).child(remitenteMensaje);
         referenciaBD.addValueEventListener(new ValueEventListener() {

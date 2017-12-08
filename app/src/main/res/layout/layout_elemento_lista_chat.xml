@@ -20,7 +20,7 @@
         android:layout_alignTop="@+id/estadoConexionUsuario"
         android:layout_marginLeft="5dp"
         android:layout_toEndOf="@+id/estadoConexionUsuario"
-        android:text="Nombre usuario"
+        android:text="@string/nombre_usuario"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -31,8 +31,9 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/estadoConexionUsuario"
         android:layout_below="@+id/nombreUsuarioChat"
+        android:layout_marginRight="15dp"
         android:layout_marginTop="10dp"
-        android:text="Último mensaje" />
+        android:text="@string/ultimo_mensaje" />
 
     <ImageView
         android:id="@+id/estadoConexionUsuario"

@@ -2,8 +2,6 @@ package com.cineshared.pjnogegonzalez.cineshared.utilidades;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.ConnectivityManager;
@@ -14,16 +12,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.cineshared.pjnogegonzalez.cineshared.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.ConversionJson;
-import com.cineshared.pjnogegonzalez.cineshared.MainActivity;
 import com.cineshared.pjnogegonzalez.cineshared.Resultado;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Creada por Pablo Noguerol y Elena González

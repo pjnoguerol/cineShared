@@ -11,23 +11,17 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,8 +39,8 @@ public class LoginActivity extends AppCompatActivity {
     public static final String PREFS_NAME = "Preferencias";
     private String emailUsuario;
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference mUserDatabase;
+    private FirebaseAuth autenticacionFirebase;
+    private DatabaseReference referenciaBD;
 
     // TODO Revisar
     private ProgressDialog procesoOnGoing;
@@ -76,8 +70,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // Si venimos de dar de alta al usuario y nos viene la información para loguearnos, no mostramos
         // el formulario de login se autentica al usuario y se le redirige al MainActivity
-        mAuth = FirebaseAuth.getInstance();
-        mUserDatabase = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE);
+        autenticacionFirebase = FirebaseAuth.getInstance();
+        referenciaBD = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE);
 
         if (getIntent().hasExtra(Constantes.USUARIO) && getIntent().hasExtra(Constantes.PASSWORD)) {
             loginUsuario(getIntent().getStringExtra(Constantes.USUARIO), getIntent().getStringExtra(Constantes.PASSWORD));
@@ -87,8 +81,8 @@ public class LoginActivity extends AppCompatActivity {
             passwordUsuario = (EditText) findViewById(R.id.passwordUsuario);
             botonLogin = (Button) findViewById(R.id.btLogin);
             botonInsert = (Button) findViewById(R.id.btInsert);
-
             procesoOnGoing = new ProgressDialog(this);
+            autenticacionFirebase = FirebaseAuth.getInstance();
 
             // Permitimos al usuario cerrar la sesión, establecemos el funcionamiento en ese caso
             LoginActivity.cerrarSesion = false;
@@ -121,6 +115,18 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD);
     }
 
     /**
@@ -187,11 +193,8 @@ public class LoginActivity extends AppCompatActivity {
                         .appendQueryParameter(Constantes.PASSWORD, password);
 
                 new LoginJsonTask(builder).execute(new URL(Constantes.SERVIDOR + Constantes.RUTA_CLASE_PHP));
-                //new LoginJsonTask().execute(new URL(Constantes.RUTA_LOGIN + nombreUsuario.getText() + "&"
-                // + Constantes.PASSWORD + "=" + passwordUsuario.getText()));
-                //loginUserFirebase(usuario + Constantes.EMAIL_FIREBASE, password);
-                if (mAuth != null && mUserDatabase != null)
-                    AccionesFirebase.loginUserFirebase(mAuth, mUserDatabase,
+                if (autenticacionFirebase != null && referenciaBD != null)
+                    AccionesFirebase.loginUserFirebase(autenticacionFirebase, referenciaBD,
                             usuario + Constantes.EMAIL_FIREBASE, password, LoginActivity.this);
             } else {
                 Toast.makeText(LoginActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();

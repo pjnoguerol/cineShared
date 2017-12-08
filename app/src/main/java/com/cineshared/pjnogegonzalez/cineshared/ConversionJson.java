@@ -11,6 +11,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -97,7 +98,7 @@ public class ConversionJson<T> {
 
     public RecyclerView onCreateView(Context context, View rootView, Resources resources) {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-        int mNoOfColumns = Utilidades.calculateNoOfColumns(context);
+        int mNoOfColumns = Utilidades.calcularNumeroColumnas(context);
         Log.w("numero de columnas", mNoOfColumns+"");
         //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, 2);
         //GRID LAYOUT MANAGER DINAMICO
@@ -319,7 +320,7 @@ public class ConversionJson<T> {
 
                     adaptador = new AdaptarBusquedaApiCardView((List<Peliculas>) listaConvertir, mode, usuario);
             }
-            else if ((Constantes.INTERCAMBIo.equals(tipoObjeto)))
+            else if ((Constantes.INTERCAMBIO.equals(tipoObjeto)))
             {
 
                 if (usuario!=null)
@@ -422,7 +423,7 @@ public class ConversionJson<T> {
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
             else if (Constantes.PELICULAS.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
-            else if (Constantes.INTERCAMBIo.equals(tipoObjeto))
+            else if (Constantes.INTERCAMBIO.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
             else if (Constantes.PELICULAS_CHECK.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, PeliculasComprobacion.class);

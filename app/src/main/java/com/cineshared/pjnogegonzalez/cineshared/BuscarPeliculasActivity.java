@@ -1,26 +1,26 @@
 package com.cineshared.pjnogegonzalez.cineshared;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class BuscarPeliculasActivity extends AppCompatActivity {
-    public static Button btbusqueda  ;
+    public static Button btbusqueda;
     public static Button btBusquedaNatural;
     EditText txtBusqueda;
     private Toolbar mToolbar;
+    private FirebaseAuth autenticacionFirebase;
+    private DatabaseReference referenciaBD;
 
     Usuarios usuario;
 
@@ -30,11 +30,14 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_buscar_peliculas);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        btbusqueda = (Button)findViewById(R.id.btBusqueda);
+        btbusqueda = (Button) findViewById(R.id.btBusqueda);
         usuario = (Usuarios) getIntent().getSerializableExtra("usuarios");
-        btBusquedaNatural =(Button)findViewById(R.id.btBusquedaNatural);
+        btBusquedaNatural = (Button) findViewById(R.id.btBusquedaNatural);
         //btbusqueda.setVisibility(View.GONE);
-        txtBusqueda = (EditText)findViewById(R.id.userBusqueda);
+        txtBusqueda = (EditText) findViewById(R.id.userBusqueda);
+
+        referenciaBD = FirebaseDatabase.getInstance().getReference();
+        autenticacionFirebase = FirebaseAuth.getInstance();
 
         //Cargamos el action BAR
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -54,24 +57,10 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
         btBusquedaNatural.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Establecemos fragmento para el MODO de BUSQUEDA NATURAL
-                //btbusqueda.setVisibility(View.VISIBLE);
-
-               // Fragment fragment2 = establecerFragmeto(1);
-
-                //generarFragmento2(fragment2);
-
                 Fragment fragment = establecerFragmeto(0);
                 generarFragmento(fragment);
-
-
-
-
             }
         });
-
-
-
     }
 
     //Establecemos el fragmento para cargar
@@ -79,34 +68,36 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
         Fragment fragment;
         Bundle bundle = new Bundle();
         //bundle.putSerializable(Constantes.USUARIOS, usuario);
-        if (modo==0)
-        {
+        if (modo == 0) {
             bundle.putString("busqueda", txtBusqueda.getText().toString());
             bundle.putSerializable(Constantes.USUARIOS, usuario);
             fragment = new BusquedaFragment();
-        }
-        else
-        {
+        } else {
             bundle.putString("natural", txtBusqueda.getText().toString());
             bundle.putSerializable(Constantes.USUARIOS, usuario);
             fragment = new BusquedaNaturalFragment();
         }
 
 
-
         fragment.setArguments(bundle);
         return fragment;
     }
+
     //Generamos el fragmento a mostrar
-    private void generarFragmento (Fragment fragment)
-    {
+    private void generarFragmento(Fragment fragment) {
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_busqueda2, fragment).commit();
 
     }
-    private void generarFragmento2 (Fragment fragment)
-    {
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_busqueda, fragment).commit();
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD);
+    }
 }

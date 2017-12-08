@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;

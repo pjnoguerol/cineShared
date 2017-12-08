@@ -37,9 +37,10 @@ import android.widget.Toast;
 
 import com.cineshared.pjnogegonzalez.cineshared.chat.ChatActivity;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.LocalizacionListener;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
@@ -379,11 +380,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Método onStop gestiona las acciones cuando se minimiza la aplicación
+     * Método onPause gestiona las acciones cuando se pausa la aplicación
      */
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         AccionesFirebase.establecerUsuarioOffline(firebaseAutenticacion, usuarioBD);
     }
 
@@ -447,8 +448,9 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, Constantes.BIENVENIDO + usuarioLogeado.getUsuario(), Toast.LENGTH_SHORT).show();
                     usuarioLogin.setText(usuarioLogeado.getUsuario());
                     usuarioEmail.setText(usuarioLogeado.getEmail());
-                    Picasso.with(MainActivity.this).load(Constantes.RUTA_IMAGEN + usuarioLogeado.getImagen()).transform(new CircleTransform()).fit().centerCrop().rotate(270f).into(usuarioImagen);
-                    usuarioImagen.setBackgroundResource(R.color.colorPrimary);
+                    //Picasso.with(MainActivity.this).load(Constantes.RUTA_IMAGEN + usuarioLogeado.getImagen()).transform(new TransformacionCirculo()).fit().centerCrop().rotate(270f).into(usuarioImagen);
+                    Utilidades.establecerImagenUsuario(MainActivity.this, usuarioLogeado.getImagen(), usuarioImagen, true);
+                    //usuarioImagen.setBackgroundResource(R.color.colorPrimary);
                     // Si la imagen del FTP y la de firebase no coinciden, se actualiza la de firebase
                     if (usuarioBD != null && firebaseAutenticacion.getCurrentUser() != null
                         &&!usuarioLogeado.getImagen().equals(usuarioBD.child(Constantes.IMAGEN_USUARIO)))

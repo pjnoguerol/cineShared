@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.squareup.picasso.Picasso;
 
@@ -95,7 +96,7 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
      */
     @Override
     public BibliotecaViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.itemscardview, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_detalle_pelicula, viewGroup, false);
         return new BibliotecaViewHolder(view);
     }
 
@@ -164,7 +165,7 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
                         e.printStackTrace();
                     }
                     */
-                    Intent intent = new Intent(view.getContext(), ActivityAreaUsuario.class);
+                    Intent intent = new Intent(view.getContext(), AreaUsuarioActivity.class);
                     intent.putExtra(Constantes.PELICULAS, pelicula);
                     intent.putExtra(Constantes.USUARIO, usuario);
                     view.getContext().startActivity(intent);

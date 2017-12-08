@@ -7,10 +7,10 @@
     tools:context="com.cineshared.pjnogegonzalez.cineshared.chat.ChatActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/barraChatLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:id="@+id/appBarLayout">
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/barraChat"
@@ -25,7 +25,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/appBarLayout" />
-
-
+        android:layout_below="@+id/barraChatLayout" />
 </RelativeLayout>

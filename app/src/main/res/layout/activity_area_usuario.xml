@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cineshared.pjnogegonzalez.cineshared.ActivityAreaUsuario">
+    tools:context="com.cineshared.pjnogegonzalez.cineshared.AreaUsuarioActivity">
+
     <LinearLayout
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="5dp"
+        tools:layout_editor_absoluteY="5dp">
 
         <ImageView
             android:id="@+id/imagenUsuario"
@@ -26,11 +27,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
-            android:text=""
+            android:text="Nombew usuario"
             android:textSize="20sp" />
     </LinearLayout>
     <TabHost
-        android:id="@android:id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -44,12 +44,10 @@
             android:paddingTop="150dp">
 
             <TabWidget
-                android:id="@android:id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <FrameLayout
-                android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -63,7 +61,7 @@
                     android:paddingRight="@dimen/activity_margin"
                     android:paddingTop="@dimen/activity_margin">
                     <Spinner
-                        android:id="@+id/spIntercambio"
+                        android:id="@+id/tabIntercambio"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="30sp" />
@@ -104,7 +102,7 @@
 
             </FrameLayout>
         </LinearLayout>
-    </TabHost>
+    </TabHost >
 
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

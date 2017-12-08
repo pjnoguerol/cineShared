@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -30,23 +29,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -153,21 +146,8 @@ public class ConfiguracionFragment extends Fragment {
 
         usuarioInsert.setText(Html.fromHtml("<b>Usuario: </b>" + usuarioConectado.getUsuario()));
 
-        //nombreUsuario.setText(Html.fromHtml("<b>Usuario: </b>" + usuarioConectado.getUsuario()));
-        //Picasso.with(rootView.getContext()).load(Constantes.RUTA_IMAGEN+usuarioConectado.getImagen()).into(subirImagen);
-        Picasso.with(rootView.getContext()).load(Constantes.RUTA_IMAGEN + usuarioConectado.getImagen())
-                .networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.ic_chat_img_defecto)
-                .into(subirImagen, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                    }
+        Utilidades.establecerImagenUsuario(rootView.getContext(), usuarioConectado.getImagen(), subirImagen, false);
 
-                    @Override
-                    public void onError() {
-                        Picasso.with(rootView.getContext()).load(Constantes.RUTA_IMAGEN + usuarioConectado.getImagen())
-                                .placeholder(R.drawable.ic_chat_img_defecto).into(subirImagen);
-                    }
-                });
         passwordInsert.setText(usuarioConectado.getPassword());
         emailInsert.setText((usuarioConectado.getEmail()));
         telefonoInsert.setText((usuarioConectado.getTelefono()));
@@ -302,8 +282,9 @@ public class ConfiguracionFragment extends Fragment {
                 // Show the thumbnail on ImageView
                 final Uri imageUri = Uri.parse(mCurrentPhotoPath);
                 file = new File(imageUri.getPath());
+                Utilidades.establecerImagenUsuario(getContext(), imageUri.toString(), subirImagen, false);
                 //Picasso.with(getContext()).load(imageUri).into(subirImagen);
-                Picasso.with(getContext()).load(imageUri)
+                /*Picasso.with(getContext()).load(imageUri)
                         .networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.ic_chat_img_defecto)
                         .into(subirImagen, new Callback() {
                             @Override
@@ -316,7 +297,7 @@ public class ConfiguracionFragment extends Fragment {
                                         .placeholder(R.drawable.ic_chat_img_defecto).into(subirImagen);
                             }
                         });
-
+*/
                 try {
                     //InputStream ims = new FileInputStream(file);
                     //ivPreview.setImageBitmap(BitmapFactory.decodeStream(ims));

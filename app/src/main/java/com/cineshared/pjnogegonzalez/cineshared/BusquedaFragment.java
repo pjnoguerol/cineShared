@@ -10,18 +10,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.cineshared.pjnogegonzalez.cineshared.Constantes.API_KEY;
+import static com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes.API_KEY;
 
 
 /**

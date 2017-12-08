@@ -27,7 +27,7 @@ public class ServicioMensajeriaFirebase extends FirebaseMessagingService {
         // Cuando la aplicación está minimizada, recibe la notificación que forma la función de firebase
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.mipmap.ic_launcher_cineshared)
                         .setContentTitle(tituloNotificacion)
                         .setContentText(mensajeNotificacion);
 

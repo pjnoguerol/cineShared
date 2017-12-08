@@ -3,23 +3,19 @@ package com.cineshared.pjnogegonzalez.cineshared;
 /**
  * Created by informatica on 23/11/2017.
  */
-import android.renderscript.ScriptGroup;
 import android.util.Log;
 
-import org.apache.commons.net.PrintCommandListener;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
+
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 public class FtpUtility {
 

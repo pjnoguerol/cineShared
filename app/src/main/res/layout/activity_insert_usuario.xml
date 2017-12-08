@@ -29,7 +29,7 @@
                     android:id="@+id/nombreUsuario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Usuario"
+                    android:hint="@string/usuario"
                     android:inputType="text"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
@@ -42,7 +42,7 @@
                     android:id="@+id/passwordUsuario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Password"
+                    android:hint="@string/password"
 
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
@@ -58,7 +58,7 @@
                     android:id="@+id/emailUsuario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Email"
+                    android:hint="@string/email"
                     android:inputType="textEmailAddress"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
@@ -71,10 +71,11 @@
                     android:id="@+id/telefonoUsuario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Teléfono"
+                    android:hint="@string/telefono"
                     android:inputType="text"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -83,10 +84,11 @@
                     android:id="@+id/distancia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Distancia Máxima"
+                    android:hint="@string/distancia_maxima"
                     android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -96,14 +98,13 @@
                     android:id="@+id/imagenSubir"
                     android:layout_width="150dp"
                     android:layout_height="150dp" />
+
                 <Button
                     android:id="@+id/botonSubir"
                     android:layout_width="150dp"
                     android:layout_height="50dp"
-                    android:text="Subir Imagen"/>
-
+                    android:text="@string/subir_imagen" />
             </LinearLayout>
-
 
             <Button
                 android:id="@+id/btInsert"
@@ -111,7 +112,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Crear usuario"
+                android:text="@string/crear_usuario"
                 android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>

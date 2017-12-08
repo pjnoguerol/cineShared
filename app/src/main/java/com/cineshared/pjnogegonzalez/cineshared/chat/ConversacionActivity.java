@@ -1,8 +1,6 @@
 package com.cineshared.pjnogegonzalez.cineshared.chat;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,17 +10,15 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.cineshared.pjnogegonzalez.cineshared.Constantes;
-import com.cineshared.pjnogegonzalez.cineshared.MainActivity;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.R;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -30,7 +26,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
@@ -38,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class ConversacionActivity extends AppCompatActivity {
 
@@ -97,6 +91,9 @@ public class ConversacionActivity extends AppCompatActivity {
         listaMensajes.setHasFixedSize(true);
         listaMensajes.setLayoutManager(conversacionesLayout);
         listaMensajes.setAdapter(adaptarMensajeChat);
+        referenciaBD.child(Constantes.CHAT_FIREBASE).child(identificadorUsuarioLogueado).child(identificadorUsuarioDestinatario)
+                .child(Constantes.VISTO_MENSAJE).setValue(true);
+
         cargarMensajes();
 
         nombreUsuarioBarra.setText("Chat - " + nombreUsuario);
@@ -110,13 +107,7 @@ public class ConversacionActivity extends AppCompatActivity {
                 }
 
                 String imagen = dataSnapshot.child(Constantes.IMAGEN_USUARIO).getValue().toString();
-                Utilidades.establecerImagenUsuario(ConversacionActivity.this, imagen, imagenUsuarioBarra);
-                if (!"null".equals(imagen) && !"default".equals(imagen)) {
-                    imagenUsuarioBarra.setBackgroundResource(R.color.colorPrimary);
-                }
-                else {
-                    imagenUsuarioBarra.setBackgroundResource(R.color.colorBlanco);
-                }
+                Utilidades.establecerImagenUsuario(ConversacionActivity.this, imagen, imagenUsuarioBarra, true);
 
                 if(conexionUsuario.equals("true")) {
                     conexionUsuarioBarra.setText("Conectado");
@@ -168,6 +159,18 @@ public class ConversacionActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
+    }
+
     /**
      * Método enviarMensajeChat envía los mensajes y los almacena en firebase
      */
@@ -175,6 +178,7 @@ public class ConversacionActivity extends AppCompatActivity {
         String mensajeEscrito = textoMensaje.getText().toString();
 
         if(!TextUtils.isEmpty(mensajeEscrito.trim())){
+            // Definimos los nodos donde se crearán los mensajes en firebase y los datos que tendrán
             String referenciaMensajeRemitente = Constantes.MENSAJES_FIREBASE + "/" + identificadorUsuarioLogueado
                     + "/" + identificadorUsuarioDestinatario;
             String referenciaMensajeDestinatario = Constantes.MENSAJES_FIREBASE + "/" + identificadorUsuarioDestinatario + "/"
@@ -194,7 +198,7 @@ public class ConversacionActivity extends AppCompatActivity {
             mapaMensajeUsuarios.put(referenciaMensajeDestinatario + "/" + identificadorPush, mapaMensajeNuevo);
             // Una vez creados los mapas para crear en la base de datos de firebase, limpiamos el texto del chat
             textoMensaje.setText("");
-
+            // Creamos los mensajes con sus propiedades en la base de datos de firebase
             referenciaBD.child(Constantes.CHAT_FIREBASE).child(identificadorUsuarioLogueado).child(identificadorUsuarioDestinatario)
                     .child(Constantes.VISTO_MENSAJE).setValue(true);
             referenciaBD.child(Constantes.CHAT_FIREBASE).child(identificadorUsuarioLogueado).child(identificadorUsuarioDestinatario)
@@ -228,6 +232,7 @@ public class ConversacionActivity extends AppCompatActivity {
                         MensajeChat mensajeChat = dataSnapshot.getValue(MensajeChat.class);
                         listaMensajesChat.add(mensajeChat);
                         adaptarMensajeChat.notifyDataSetChanged();
+                        listaMensajes.scrollToPosition(listaMensajesChat.size() - 1);
                     }
 
                     @Override

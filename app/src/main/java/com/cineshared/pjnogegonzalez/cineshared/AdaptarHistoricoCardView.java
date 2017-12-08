@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.squareup.picasso.Picasso;
 
@@ -90,7 +91,7 @@ public class AdaptarHistoricoCardView extends RecyclerView.Adapter<AdaptarHistor
      */
     @Override
     public BibliotecaViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.itemshistoricardview, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_historico_cardview, viewGroup, false);
         return new BibliotecaViewHolder(view);
     }
 
@@ -112,7 +113,7 @@ public class AdaptarHistoricoCardView extends RecyclerView.Adapter<AdaptarHistor
 
         peliculaViewHolder.tituloPelicula.setText(Utilidades.acotar(pelicula.getTitle()));
 
-        peliculaViewHolder.usuarioPelicula.setText("Usuario Petición: "+ Utilidades.capitalizar(pelicula.getUsuarionombre()));
+        peliculaViewHolder.usuarioPelicula.setText("Usuario Petición: "+ Utilidades.capitalizarCadena(pelicula.getUsuarionombre()));
 
         peliculaViewHolder.fechainicio.setText("Fecha petición= "+pelicula.getFechainicio());
 
