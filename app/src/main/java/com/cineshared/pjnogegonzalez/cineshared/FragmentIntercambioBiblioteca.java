@@ -30,11 +30,9 @@ public class FragmentIntercambioBiblioteca extends Fragment {
 
     private ConversionJson<Peliculas> conversionJson = new ConversionJson<>(getActivity(), Constantes.BIBLIOTECA);
     private RecyclerView recyclerView;
-    private int user;
-    private int historico;
     private Usuarios usuario;
     public FragmentIntercambioBiblioteca() {
-        // Required empty public constructor
+
     }
 
 
@@ -45,14 +43,7 @@ public class FragmentIntercambioBiblioteca extends Fragment {
         Context context = inflater.getContext();
         View rootView = inflater.inflate(R.layout.recyclerview_activity2, container, false);
         usuario = (Usuarios) getArguments().getSerializable("usuario");
-        //if (usuario!=null)
-       // {
-            //conversionJson.setUsuario(usuario);
-        //}
         Log.w("HEMOS ENTRADO AQUI", "AQUIIII");
-        //user =  getArguments().getInt("intercambio");
-       // Usuarios usuario = new Usuarios();
-
         conversionJson.setUsuario(usuario);
 
         //historico = getArguments().getInt("historico");

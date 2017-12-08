@@ -36,7 +36,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
     private ImageView imagenPelicula;
     private TextView nombrePelicula, sinopsisPelicula, textEstado;
     private Spinner spinner;
-    private Peliculas datosREsumen;
+    private Peliculas datosResumen;
     private Button botonLiberar;
 
     private FirebaseAuth autenticacionFirebase;
@@ -54,7 +54,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
     }
 
     private void generarFragmento(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_intercambio, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameAreaIntercambio, fragment).commit();
 
     }
 
@@ -68,9 +68,9 @@ public class AreaIntercambioActivity extends AppCompatActivity {
 
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("libhis", datosREsumen.getHistorico() + "")
-                        .appendQueryParameter("libpelipropia", datosREsumen.getId() + "")
-                        .appendQueryParameter("libpeliusuario", datosREsumen.getPeliusuario().toString());
+                        .appendQueryParameter("libhis", datosResumen.getHistorico() + "")
+                        .appendQueryParameter("libpelipropia", datosResumen.getId() + "")
+                        .appendQueryParameter("libpeliusuario", datosResumen.getPeliusuario().toString());
 
                 HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
                 hilo.setActivity(this);
@@ -114,7 +114,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
                 List<PeliculasComprobacion> resultado = hilo.execute(new URL(url)).get();
                 //Comprobar que se ha insertado correctament
                 if (resultado.get(0).isOk()) {
-                    datosREsumen = resultado.get(0).getPeliculas().get(0);
+                    datosResumen = resultado.get(0).getPeliculas().get(0);
                     String mensaje = "Película " + Utilidades.auxPelicula + " intercambiada con "
                             + resultado.get(0).getPeliculas().get(0).getTitle() + " del usuario:  "
                             + Utilidades.capitalizarCadena(resultado.get(0).getPeliculas().get(0).getUsuarionombre())

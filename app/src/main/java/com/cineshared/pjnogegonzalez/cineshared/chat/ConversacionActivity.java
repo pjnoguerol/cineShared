@@ -91,6 +91,7 @@ public class ConversacionActivity extends AppCompatActivity {
         listaMensajes.setHasFixedSize(true);
         listaMensajes.setLayoutManager(conversacionesLayout);
         listaMensajes.setAdapter(adaptarMensajeChat);
+
         referenciaBD.child(Constantes.CHAT_FIREBASE).child(identificadorUsuarioLogueado).child(identificadorUsuarioDestinatario)
                 .child(Constantes.VISTO_MENSAJE).setValue(true);
 

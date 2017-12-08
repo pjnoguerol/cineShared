@@ -18,4 +18,7 @@
     <string name="ultimo_mensaje">Último mensaje</string>
     <string name="hora_defecto">00:00</string>
     <string name="texto_chat">Texto Chat</string>
+    <string name="resumen_peliculas_a_intercambiar">Resumen peliculas a intercambiar</string>
+    <string name="aceptar">ACEPTAR</string>
+    <string name="chat">Chat</string>
 </resources>
