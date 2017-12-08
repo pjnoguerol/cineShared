@@ -6,31 +6,31 @@ package com.cineshared.pjnogegonzalez.cineshared.chat;
 
 public class ConversacionChat {
 
-    private boolean vistaConversacion;
-    private long horaConversacion;
+    private boolean vistoMensaje;
+    private long horaMensaje;
 
     public ConversacionChat() {
     }
 
-    public ConversacionChat(boolean vistaConversacion, long horaConversacion) {
-        this.vistaConversacion = vistaConversacion;
-        this.horaConversacion = horaConversacion;
+    public ConversacionChat(boolean vistoMensaje, long horaMensaje) {
+        this.vistoMensaje = vistoMensaje;
+        this.horaMensaje = horaMensaje;
     }
 
-    public boolean isVistaConversacion() {
-        return vistaConversacion;
+    public boolean isVistoMensaje() {
+        return vistoMensaje;
     }
 
-    public void setVistaConversacion(boolean vistaConversacion) {
-        this.vistaConversacion = vistaConversacion;
+    public void setVistoMensaje(boolean vistoMensaje) {
+        this.vistoMensaje = vistoMensaje;
     }
 
-    public long getHoraConversacion() {
-        return horaConversacion;
+    public long getHoraMensaje() {
+        return horaMensaje;
     }
 
-    public void setHoraConversacion(long horaConversacion) {
-        this.horaConversacion = horaConversacion;
+    public void setHoraMensaje(long horaMensaje) {
+        this.horaMensaje = horaMensaje;
     }
 
 }

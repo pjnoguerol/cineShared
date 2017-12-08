@@ -97,7 +97,9 @@ public class ChatActivity extends AppCompatActivity {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String cadena) {
                                 String textoMensaje = dataSnapshot.child(Constantes.TEXTO_MENSAJE).getValue().toString();
-                                conversacionChatViewHolder.setUltimoMensajeChat(textoMensaje, conversacionChat.isVistaConversacion());
+                                conversacionChatViewHolder.setUltimoMensajeChat(textoMensaje, conversacionChat.isVistoMensaje());
+                                Log.v("ELENA CONV", String.valueOf(conversacionChat.getHoraMensaje()));
+                                Log.v("ELENA CONV", String.valueOf(conversacionChat.isVistoMensaje()));
                             }
 
                             @Override
@@ -172,7 +174,7 @@ public class ChatActivity extends AppCompatActivity {
         public void setUltimoMensajeChat(String ultimoMensajeChat, boolean isVisto) {
             TextView ultimoMensajeTextView = (TextView) mView.findViewById(R.id.ultimoMensajeChat);
             ultimoMensajeTextView.setText(ultimoMensajeChat);
-
+Log.v("ELENAAAA isVisto", String.valueOf(isVisto));
             if (!isVisto) {
                 ultimoMensajeTextView.setTypeface(ultimoMensajeTextView.getTypeface(), Typeface.BOLD);
             } else {

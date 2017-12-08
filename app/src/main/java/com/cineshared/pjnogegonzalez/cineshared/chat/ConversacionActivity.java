@@ -20,6 +20,7 @@ import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.R;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +44,7 @@ public class ConversacionActivity extends AppCompatActivity {
 
     // Variables de firebase
     private DatabaseReference referenciaBD;
+    private DatabaseReference referenciaBDNotificaciones;
     private FirebaseAuth autenticacionFirebase;
     private String identificadorUsuarioLogueado;
     private String identificadorUsuarioDestinatario;
@@ -64,6 +66,7 @@ public class ConversacionActivity extends AppCompatActivity {
         String nombreUsuario = getIntent().getStringExtra("nombreUsuario");
         identificadorUsuarioDestinatario = getIntent().getStringExtra("identificadorUsuarioDestinatario");
         referenciaBD = FirebaseDatabase.getInstance().getReference();
+        referenciaBDNotificaciones = FirebaseDatabase.getInstance().getReference().child(Constantes.NOTIFICACIONES_FIREBASE);
         autenticacionFirebase = FirebaseAuth.getInstance();
         identificadorUsuarioLogueado = autenticacionFirebase.getCurrentUser().getUid();
 
@@ -215,6 +218,12 @@ public class ConversacionActivity extends AppCompatActivity {
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if(databaseError != null){
                         Log.v("CineSharedConversacion", databaseError.getMessage().toString());
+                    }
+                    else {
+                        HashMap<String, String> hashMapNotificacion = new HashMap<>();
+                        hashMapNotificacion.put("remitenteId", identificadorUsuarioLogueado);
+
+                        referenciaBDNotificaciones.child(identificadorUsuarioDestinatario).push().setValue(hashMapNotificacion);
                     }
                 }
             });

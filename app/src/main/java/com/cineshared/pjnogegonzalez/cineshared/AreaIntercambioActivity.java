@@ -203,9 +203,8 @@ public class AreaIntercambioActivity extends AppCompatActivity {
 
         //Creamos el objetos USUARIOS
 
+        Utilidades.establecerImagen(this, pelicula.getPoster_path(), imagenPelicula);
 
-        Picasso.with(this).load(
-                Constantes.IMAGENES + pelicula.getPoster_path()).into(imagenPelicula);
         nombrePelicula.setText(pelicula.getTitle());
         sinopsisPelicula.setText(pelicula.getOverview());
 
@@ -229,12 +228,12 @@ public class AreaIntercambioActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD);
+        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD);
+        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
     }
 }

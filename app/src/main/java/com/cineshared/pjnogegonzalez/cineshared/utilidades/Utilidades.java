@@ -100,4 +100,12 @@ public class Utilidades {
             }
         }
     }
+
+    public static void establecerImagen(final Context contexto, final String imagenUrl, final ImageView imagenViewField) {
+        String urlImagen = imagenUrl;
+        if (!imagenUrl.contains("http"))
+            urlImagen = Constantes.RUTA_IMAGEN + urlImagen;
+
+        Picasso.with(contexto).load(urlImagen).networkPolicy(NetworkPolicy.OFFLINE).into(imagenViewField);
+    }
 }

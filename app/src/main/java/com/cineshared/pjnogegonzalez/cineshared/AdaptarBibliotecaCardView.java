@@ -147,24 +147,6 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
                 }
                 else if (mode==5)
                 {
-                    /*
-                    try {
-                        String url = Constantes.RUTA_ACTUALIZAR_INTERCAMBIO+historico+"&usuarioin="+usuario.getId_usua()+"&peliculain="+id;
-
-                        conversionJson = new ConversionJson<>(Constantes.RESULTADO);
-                        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                        if (networkInfo != null && networkInfo.isConnected()) {
-                            Log.w("HISTORICO", url);
-                            new ResultadoJsonTask(context).
-                                    execute(new URL(url));
-                        } else {
-                            Toast.makeText(context, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-                    */
                     Intent intent = new Intent(view.getContext(), AreaUsuarioActivity.class);
                     intent.putExtra(Constantes.PELICULAS, pelicula);
                     intent.putExtra(Constantes.USUARIO, usuario);
@@ -236,10 +218,6 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
             {
                 Toast.makeText(context, "Error nullable en la captura del resultado " , Toast.LENGTH_SHORT).show();
             }
-
-
-            //FindApiBusqueda busquedalista = conversionJson.onPostExecute(busqueda);
-            //recyclerView.setAdapter(conversionJson.onPostExecute(lista));
         }
     }
 

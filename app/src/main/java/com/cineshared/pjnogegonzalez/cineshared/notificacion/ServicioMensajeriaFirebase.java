@@ -3,6 +3,7 @@ package com.cineshared.pjnogegonzalez.cineshared.notificacion;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.cineshared.pjnogegonzalez.cineshared.R;
@@ -27,9 +28,15 @@ public class ServicioMensajeriaFirebase extends FirebaseMessagingService {
         // Cuando la aplicación está minimizada, recibe la notificación que forma la función de firebase
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher_cineshared)
+
                         .setContentTitle(tituloNotificacion)
                         .setContentText(mensajeNotificacion);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            notificationBuilder.setSmallIcon(R.mipmap.ic_launcher_cineshared_round);
+        } else {
+            notificationBuilder.setSmallIcon(R.mipmap.ic_launcher_cineshared);
+        }
 
         Intent intentDestinatario = new Intent(accionClickNotificacion);
 

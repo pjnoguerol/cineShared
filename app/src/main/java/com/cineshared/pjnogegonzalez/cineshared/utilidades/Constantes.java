@@ -41,6 +41,7 @@ public class Constantes {
     public static String USUARIOS_FIREBASE = "Usuarios";
     public static String CHAT_FIREBASE = "Chats";
     public static String MENSAJES_FIREBASE = "Mensajes";
+    public static String NOTIFICACIONES_FIREBASE = "Notificaciones";
     public static String NOMBRE_USUARIO = "nombreUsuario";
     public static String IMAGEN_USUARIO = "imagenUsuario";
     public static String EMAIL_USUARIO = "emailUsuario";
