@@ -17,8 +17,11 @@ public class Usuarios implements Serializable {
     private String imagen;
     private int distancia;
     private int id_gen;
+    private double longitud;
+    private double latitud;
     //Historio de intercambio
     private int hisusua;
+
 
     // Métodos getter y setter de todos los atributos
     public int getId_usua() {
@@ -114,7 +117,19 @@ public class Usuarios implements Serializable {
         return usuario;
     }
 
+    public double getLongitud() {
+        return longitud;
+    }
 
+    public void setLongitud(double longitud) {
+        this.longitud = longitud;
+    }
 
+    public double getLatitud() {
+        return latitud;
+    }
 
+    public void setLatitud(double latitud) {
+        this.latitud = latitud;
+    }
 }

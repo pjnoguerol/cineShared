@@ -2,6 +2,7 @@ package com.cineshared.pjnogegonzalez.cineshared;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,6 +25,7 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
     private ConversionJson<T> conversionJson;
     private List<T> listaGenerica;
     private int tipo;
+    private ProgressDialog carga;
     public HiloGenerico(Uri.Builder builder)
     {
         this.builder = builder;
@@ -93,6 +95,15 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
         this.tipo = tipo;
     }
 
+
+
+    @Override
+    protected void onPreExecute(){
+        super.onPreExecute();
+        carga = new ProgressDialog(this.activity);
+        carga.setMessage("Cargando...");
+        carga.show();
+    }
     @Override
     protected List<T> doInBackground(URL... url) {
         return (listaGenerica=conversionJson.doInBackgroundPost(url[0],builder));
@@ -100,21 +111,23 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onPostExecute(List<T> lista) {
-        /**
-        if (tipo==0)
-        {
-            Usuarios usuario = (Usuarios) lista.get(0);
-            if (usuario != null) {
-                if (usuario.isOk()) {
-                    Toast.makeText(activity, "Insertado correctamente", Toast.LENGTH_SHORT).show();
 
-                } else {
-                    Toast.makeText(activity, usuario.getError(), Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(activity, Constantes.ERROR_JSON, Toast.LENGTH_SHORT).show();
-            }
-        }
+        carga.dismiss();
+        /**
+         if (tipo==0)
+         {
+         Usuarios usuario = (Usuarios) lista.get(0);
+         if (usuario != null) {
+         if (usuario.isOk()) {
+         Toast.makeText(activity, "Insertado correctamente", Toast.LENGTH_SHORT).show();
+
+         } else {
+         Toast.makeText(activity, usuario.getError(), Toast.LENGTH_SHORT).show();
+         }
+         } else {
+         Toast.makeText(activity, Constantes.ERROR_JSON, Toast.LENGTH_SHORT).show();
+         }
+         }
          **/
         if (tipo==1)
         {

@@ -314,6 +314,11 @@ public class ConversionJson<T> {
                 if (usuario!=null)
                     adaptador = new AdaptarBusquedaApiCardView((List<Peliculas>) listaConvertir, 1, usuario);
             }
+            else if (Constantes.CONTACTOS.equals(tipoObjeto))
+            {
+
+                    adaptador = new AdaptarUsuariosCardView((List<Usuarios>) listaConvertir);
+            }
             else if ((Constantes.PELICULAS.equals(tipoObjeto)))
             {
                 if (usuario!=null)
@@ -326,6 +331,11 @@ public class ConversionJson<T> {
                 if (usuario!=null)
 
                     adaptador = new AdaptarHistoricoCardView((List<Peliculas>) listaConvertir,  usuario);
+            }
+            else if (Constantes.PELICULAS_CHECK.equals(tipoObjeto))
+            {
+                List<PeliculasComprobacion> lista = (List<PeliculasComprobacion>) listaConvertir;
+                adaptador = new AdaptarHistoricoCardView(lista.get(0).getPeliculas(),  usuario);
             }
 
 
@@ -409,10 +419,7 @@ public class ConversionJson<T> {
             T elementoConvertido = null;
             if (Constantes.BIBLIOTECA.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
-          //  else if (Constantes.PELICULAS.equals(tipoObjeto))
-             //   elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
-          //  else if (Constantes.DIRECTORES.equals(tipoObjeto))
-             //   elementoConvertido = gson.fromJson(jsonReader, Directores.class);
+
             else if (Constantes.BUSQUEDA.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, FindApiBusqueda.class);
            else if (Constantes.USUARIOS.equals(tipoObjeto))
@@ -427,6 +434,9 @@ public class ConversionJson<T> {
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
             else if (Constantes.PELICULAS_CHECK.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, PeliculasComprobacion.class);
+            else if (Constantes.CONTACTOS.equals(tipoObjeto))
+                elementoConvertido = gson.fromJson(jsonReader, Usuarios.class);
+
 
             listaConvertir.add(elementoConvertido);
         }

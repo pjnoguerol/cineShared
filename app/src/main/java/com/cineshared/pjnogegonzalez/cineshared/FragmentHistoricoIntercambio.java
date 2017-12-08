@@ -15,102 +15,125 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 
 
 /**
  * A simple {@link Fragment} subclass.
+ * Clase fragment que lista el historico de intercambio
  */
 public class FragmentHistoricoIntercambio extends Fragment {
 
-    private ConversionJson<Peliculas> conversionJson = new ConversionJson<>(getActivity(), Constantes.INTERCAMBIo);
+    private ConversionJson<PeliculasComprobacion> conversionJson = new ConversionJson<PeliculasComprobacion>(getActivity(),Constantes.PELICULAS_CHECK);
     private RecyclerView recyclerView;
-
+    private RadioGroup radioGroup;
     private Usuarios usuario;
+    //private Uri.Builder builder;
     public FragmentHistoricoIntercambio() {
         // Required empty public constructor
     }
 
 
+    /**
+     * Cargamos la biblioteca de usuario en el fragment
+     * @param builder
+     */
+    private void cargarBiblioteca(Uri.Builder builder){
+        {
+
+            try {
+                String url = Constantes.SERVIDOR+Constantes.RUTA_CLASE_PHP;
+                ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+                if (networkInfo != null && networkInfo.isConnected()) {
+
+
+                    Log.w("builder", builder.toString());
+                    HiloGenerico<PeliculasComprobacion> hilo = new HiloGenerico<>(builder);
+                    hilo.setActivity(getActivity());
+                    hilo.setRecyclerView(recyclerView);
+                    hilo.setTipo(1);
+                    hilo.setTipoObjeto(Constantes.PELICULAS_CHECK);
+                    hilo.setConversionJson(conversionJson);
+                    List <PeliculasComprobacion>  resultado = hilo.execute(new URL(url)).get();
+                    //Comprobar que se ha insertado correctament
+                    if (resultado.get(0).isOk()) {
+
+                    }
+                    else
+                        Toast.makeText(getActivity(), resultado.get(0).getError(), Toast.LENGTH_SHORT).show();
+                } else {
+
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // cargamos el contexto
         Context context = inflater.getContext();
-        View rootView = inflater.inflate(R.layout.recyclerview_activity, container, false);
+        View rootView = inflater.inflate(R.layout.recyclerview_activity_radio, container, false);
         usuario = (Usuarios) getArguments().getSerializable("usuarios");
-        //if (usuario!=null)
-       // {
-            //conversionJson.setUsuario(usuario);
-        //}
+        radioGroup = (RadioGroup)rootView.findViewById(R.id.radio_grupo);
+        RadioButton rb1=(RadioButton)rootView.findViewById(R.id.radio_todas);
+        rb1.setChecked(true);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // comprobamos cual de los radios están activos
+                RadioButton rb=(RadioButton)getActivity().findViewById(checkedId);
+                Uri.Builder  builder = new Uri.Builder();
+                builder.appendQueryParameter("usuariohistorico", usuario.getId_usua()+"");
+                if(rb.getText().equals("Todas"))
+                {
+                    builder.appendQueryParameter("estadohistorico", "3");
+                }
+                else if (rb.getText().equals("Abiertas"))
+                {
+                    builder.appendQueryParameter("estadohistorico", "1");
+                }
+                else if (rb.getText().equals("Cerradas"))
+                {
+                    builder.appendQueryParameter("estadohistorico", "2");
+                }
+                cargarBiblioteca(builder);
 
+            }
+        });
 
+        //Cargamos el usuario si existiera
         if (usuario!=null)
             conversionJson.setUsuario(usuario);
 
-
+        //Cargamos el tipo de recylerView
         recyclerView = conversionJson.onCreateViewHistorico(context, rootView, getResources());
         String url = "";
-        Log.w("FRAGMENT HISTORICO", "aqui no ENTRA o que?" );
 
-        //Toast.makeText(context, url, Toast.LENGTH_SHORT).show();
-
-        try {
-            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("usuariohistorico", usuario.getId_usua()+"");
-
-
-                new PeliculasJsonTask(builder).execute(new URL(Constantes.SERVIDOR+Constantes.RUTA_CLASE_PHP));
-            } else {
-                Toast.makeText(context, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        //Cargamos los parametros para el POST
+        Uri.Builder  builder = new Uri.Builder()
+                .appendQueryParameter("usuariohistorico", usuario.getId_usua()+"")
+                .appendQueryParameter("estadohistorico", "3");
+        cargarBiblioteca(builder);
 
         return rootView;
     }
-    /**
-     * Inner class que parsea la Biblioteca a una CardView
-     */
-    public class PeliculasJsonTask extends AsyncTask<URL, Void, List<Peliculas>> {
 
-        private List<Peliculas> listaPelicula;
-        private Uri.Builder builder;
 
-        private PeliculasJsonTask(Uri.Builder builder)
-        {
-            this.builder = builder;
-        }
-
-        /**
-         * Método que llama al parseo de biblioteca para obtener la lista a mostrar
-         *
-         * @return Biblioteca
-         */
-        @Override
-        protected List<Peliculas> doInBackground(URL... urls) {
-            return (listaPelicula = conversionJson.doInBackgroundPost(urls[0], this.builder));
-        }
-
-        /**
-         * Método que asigna la lista de películas al adaptador para obtener un cardView
-         *
-         * @param listaPelicula Lista de películas para el adaptador
-         */
-        @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-        @Override
-        protected void onPostExecute(List<Peliculas> listaPelicula) {
-            Log.w("LLEGA AL ADAPTADOR","SEGURO?");
-            recyclerView.setAdapter(conversionJson.onPostExecute(listaPelicula));
-        }
-    }
 
 }

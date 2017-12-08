@@ -303,7 +303,15 @@ public class MainActivity extends AppCompatActivity
             establecerFragmeto(Constantes.HISTORICO);
             auxFragment = 3;
             fragmentTransaction = true;
-        } else if (identificadorOpcion == R.id.nav_chat) {
+        } else if (identificadorOpcion == R.id.nav_localizacion) {
+            establecerFragmeto(Constantes.LOCALIZACION);
+            auxFragment = 4;
+            fragmentTransaction = true;
+        } else if (identificadorOpcion == R.id.nav_contactos) {
+            establecerFragmeto(Constantes.CONTACTOS);
+            auxFragment = 5;
+            fragmentTransaction = true;
+        }else if (identificadorOpcion == R.id.nav_chat) {
             Intent intent = new Intent(MainActivity.this, ChatActivity.class);
             startActivity(intent);
         }
@@ -412,6 +420,10 @@ public class MainActivity extends AppCompatActivity
             fragment = new FragmentHistoricoIntercambio();
         } else if (Constantes.CONFIGURACION.equals(tipo)) {
             fragment = new ConfiguracionFragment();
+        } else if (Constantes.LOCALIZACION.equals(tipo)) {
+            fragment = new PosicionFragment();
+        }else if (Constantes.CONTACTOS.equals(tipo)) {
+            fragment = new ContactosFragment();
         }
         fragment.setArguments(bundle);
     }
