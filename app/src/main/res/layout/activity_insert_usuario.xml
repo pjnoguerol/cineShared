@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_margin"
     android:paddingRight="@dimen/activity_margin"
     android:paddingTop="@dimen/activity_margin"
-    tools:context="com.cineshared.pjnogegonzalez.cineshared.InsertUsuarioActivity">
+    tools:context="com.cineshared.pjnogegonzalez.cineshared.acceso.InsertUsuarioActivity">
 
     <ScrollView
         android:id="@+id/formularioInsert"
@@ -43,7 +43,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password"
-
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
@@ -81,7 +80,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/distancia"
+                    android:id="@+id/distanciaMaximaUsuario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/distancia_maxima"
@@ -100,14 +99,14 @@
                     android:layout_height="150dp" />
 
                 <Button
-                    android:id="@+id/botonSubir"
+                    android:id="@+id/subirBtn"
                     android:layout_width="150dp"
                     android:layout_height="50dp"
                     android:text="@string/subir_imagen" />
             </LinearLayout>
 
             <Button
-                android:id="@+id/btInsert"
+                android:id="@+id/insertBtn"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import com.squareup.picasso.Transformation;
 
 /**
- * Clase que gestiona la transformación de cualquier imagen en una imagen circular
+ * Clase TransformacionCirculo gestiona la transformación de cualquier imagen en una imagen circular
  * <p>
  * Creada por Pablo Noguerol y Elena González
  */

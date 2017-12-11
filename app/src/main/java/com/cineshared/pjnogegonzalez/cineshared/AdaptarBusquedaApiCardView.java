@@ -166,7 +166,12 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
         if (pelicula.getDistancia()!=0.0)
             busquedaViewHolder.datosPelicula.setText("Distancia= "+pelicula.getDistancia()+"");
 
-        Utilidades.establecerImagen(busquedaViewHolder.itemView.getContext(), pelicula.getPoster_path(), busquedaViewHolder.imagenPelicula);
+        // Al listado de actores le quitamos la última coma
+
+        Picasso.with(busquedaViewHolder.itemView.getContext()).load(
+                Constantes.IMAGENES+pelicula.getPoster_path()).into(busquedaViewHolder.imagenPelicula);
+
+
 
 
         busquedaViewHolder.imagenPelicula.setOnClickListener(new View.OnClickListener() {

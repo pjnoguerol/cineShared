@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.R;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,33 +20,31 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by elgonzalez on 07/12/2017.
+ * Clase AdaptarMensajeChat gestiona lo necesario para mostrar los mensajes del chat por pantalla
+ * <p>
+ * Creada por Pablo Noguerol y Elena González
  */
-
 public class AdaptarMensajeChat extends RecyclerView.Adapter<AdaptarMensajeChat.MensajeChatViewHolder> {
-
+    // Definimos las variables
     private List<MensajeChat> listaMensajes;
     private DatabaseReference referenciaBD;
     private View vistaMensajeChat;
 
+    // Constructor inicial
     public AdaptarMensajeChat(List<MensajeChat> listaMensajes) {
         this.listaMensajes = listaMensajes;
     }
 
-    @Override
-    public MensajeChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View vistaMensaje = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_mensaje_chat, parent, false);
-        this.vistaMensajeChat = vistaMensaje;
-        return new MensajeChatViewHolder(vistaMensaje);
-    }
-
+    /**
+     * Inner class que contiene los datos de los mensajes que se mostrarán en la pantalla del chat
+     */
     public class MensajeChatViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textoMensaje;
         public TextView nombreMensaje;
         public TextView horaMensaje;
 
+        // Constructor de la inner class
         public MensajeChatViewHolder(View view) {
             super(view);
             textoMensaje = (TextView) view.findViewById(R.id.texto_mensaje_chat);
@@ -55,15 +53,38 @@ public class AdaptarMensajeChat extends RecyclerView.Adapter<AdaptarMensajeChat.
         }
     }
 
+    /**
+     * Método que se llama para crear un MensajeChatViewHolder
+     *
+     * @param viewGroup ViewGroup al que se le añadirá la nueva vista
+     * @param viewType  Tipo de vista
+     * @return ViewHolder con los datos de la nueva vista
+     */
+    @Override
+    public MensajeChatViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        View vistaMensaje = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.layout_mensaje_chat, viewGroup, false);
+        this.vistaMensajeChat = vistaMensaje;
+        return new MensajeChatViewHolder(vistaMensaje);
+    }
+
+    /**
+     * Método al que se llama para mostrar la información procesada en la posición especificada, para
+     * ello actualizará la información del mensajeChatViewHolder
+     *
+     * @param mensajeChatViewHolder Información a mostrar y actualizar
+     * @param posicion              Posición donde debe ser mostrada
+     */
     @Override
     public void onBindViewHolder(final MensajeChatViewHolder mensajeChatViewHolder, int posicion) {
+        // Creamos el mensaje para mostrarlo
         MensajeChat mensajeChat = listaMensajes.get(posicion);
         String remitenteMensaje = mensajeChat.getRemitenteMensaje();
-        if(remitenteMensaje.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+        // Dependiendo de si el usuario es el remitente o el receptor se aplica un estilo u otro a los mensajes
+        if (remitenteMensaje.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             vistaMensajeChat.setBackground(vistaMensajeChat.getResources().getDrawable(R.drawable.fondo_mensaje_chat_remitente));
             mensajeChatViewHolder.textoMensaje.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
-        }
-        else {
+        } else {
             vistaMensajeChat.setBackground(vistaMensajeChat.getResources().getDrawable(R.drawable.fondo_mensaje_chat));
             mensajeChatViewHolder.textoMensaje.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         }

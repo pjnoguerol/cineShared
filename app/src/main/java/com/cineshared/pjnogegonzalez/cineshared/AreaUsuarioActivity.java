@@ -13,17 +13,12 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cineshared.pjnogegonzalez.cineshared.chat.ConversacionActivity;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,7 +31,6 @@ public class AreaUsuarioActivity extends AppCompatActivity {
     private TextView sinopsisPelicula;
     private TextView nombreUsuario;
     private Button botonAceptar;
-    private Button botonChat;
     private Usuarios usuario;
     private Peliculas pelicula;
 
@@ -51,14 +45,31 @@ public class AreaUsuarioActivity extends AppCompatActivity {
         imagenUsuario = (ImageView) findViewById(R.id.imagenUsuario);
         nombreUsuario = (TextView) findViewById(R.id.nombreUsuario);
         sinopsisPelicula = (TextView) findViewById(R.id.sinopsis);
-        botonAceptar = (Button) findViewById(R.id.acepIntercambioBtn);
-        botonChat = (Button) findViewById(R.id.iniciarChatBtn);
+        botonAceptar = (Button) findViewById(R.id.acepIntercambio);
 
         firebaseAutenticacion = FirebaseAuth.getInstance();
         referenciaBD = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE);
 
+        // Creamos las pestañas
+        TabHost tabs = (TabHost) findViewById(android.R.id.tabhost);
+        tabs.setup();
+
+        TabHost.TabSpec peliculaTabs = tabs.newTabSpec("tabDatos");
+        peliculaTabs.setContent(R.id.tabDatos);
+        peliculaTabs.setIndicator("Intercambio",
+                ContextCompat.getDrawable(this, android.R.drawable.ic_btn_speak_now));
+        tabs.addTab(peliculaTabs);
+        peliculaTabs = tabs.newTabSpec("Resumen");
+        peliculaTabs.setContent(R.id.tabSinopsis);
+        peliculaTabs.setIndicator("Resumen",
+                ContextCompat.getDrawable(this, android.R.drawable.ic_dialog_map));
+        tabs.addTab(peliculaTabs);
+        // Se establece como pestaña inicial la de datos
+        tabs.setCurrentTab(1);
+
         pelicula = (Peliculas) getIntent().getSerializableExtra(Constantes.PELICULAS);
         //Ocultamos la pelicula si no esta para intercambiar
+        tabs.getTabWidget().getChildAt(0).setVisibility(View.GONE);
 
         //Creamos el objetos USUARIOS
         usuario = (Usuarios) getIntent().getSerializableExtra(Constantes.USUARIO);
@@ -71,43 +82,6 @@ public class AreaUsuarioActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finalizar();
-            }
-        });
-        final String identificadorUsuarioDestinatario;
-        botonChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                referenciaBD.orderByChild(Constantes.NOMBRE_USUARIO).equalTo(usuario.getUsuario())
-                        .addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        if(dataSnapshot != null) {
-                            Intent conversacionIntent = new Intent(AreaUsuarioActivity.this, ConversacionActivity.class);
-                            conversacionIntent.putExtra("identificadorUsuarioDestinatario", dataSnapshot.getKey().toString());
-                            conversacionIntent.putExtra("nombreUsuario", usuario.getUsuario());
-                            startActivity(conversacionIntent);
-                        }
-                        else {
-                            Toast.makeText(AreaUsuarioActivity.this, "Se ha producido un error al inicar Chat con esta persona", Toast.LENGTH_SHORT);
-                        }
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
             }
         });
     }

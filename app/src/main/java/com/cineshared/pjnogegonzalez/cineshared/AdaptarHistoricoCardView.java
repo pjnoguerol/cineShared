@@ -1,6 +1,5 @@
 package com.cineshared.pjnogegonzalez.cineshared;
 
-import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -127,7 +126,9 @@ public class AdaptarHistoricoCardView extends RecyclerView.Adapter<AdaptarHistor
 
         }
 
-        Utilidades.establecerImagen(peliculaViewHolder.itemView.getContext(), pelicula.getPoster_path(), peliculaViewHolder.imagenPelicula);
+
+        Picasso.with(peliculaViewHolder.itemView.getContext()).load(
+                Constantes.IMAGENES+pelicula.getPoster_path()).into(peliculaViewHolder.imagenPelicula);
 
         peliculaViewHolder.imagenPelicula.setOnClickListener(new View.OnClickListener() {
             @Override

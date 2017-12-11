@@ -13,9 +13,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 /**
+ * Clase AccionesFirebase gestiona las acciones relacionadas con firebase y el chat
+ * <p>
  * Creada por Pablo Noguerol y Elena González
  */
-
 public class AccionesFirebase {
 
     /**
@@ -43,7 +44,7 @@ public class AccionesFirebase {
                                 AccionesFirebase.establecerUsuarioOnline(firebaseAutenticacion, referenciaBD);
                             } else {
                                 String task_result = task.getException().getMessage().toString();
-                                Toast.makeText(contexto, "Error: " + task_result, Toast.LENGTH_LONG).show();
+                                Toast.makeText(contexto, "Error: " + task_result, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

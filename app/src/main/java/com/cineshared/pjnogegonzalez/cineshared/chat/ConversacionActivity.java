@@ -1,9 +1,9 @@
 package com.cineshared.pjnogegonzalez.cineshared.chat;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,11 +16,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.R;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -35,8 +34,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Clase ConversacionActivity gestiona las acciones relacionadas con activity_conversacion.xml
+ * <p>
+ * Creada por Pablo Noguerol y Elena González
+ */
 public class ConversacionActivity extends AppCompatActivity {
 
+    // Defenimos las variables necesarias
     private Toolbar barraConversacion;
     private TextView nombreUsuarioBarra;
     private TextView conexionUsuarioBarra;
@@ -58,11 +63,17 @@ public class ConversacionActivity extends AppCompatActivity {
 
     private final List<MensajeChat> listaMensajesChat = new ArrayList<>();
 
+    /**
+     * Método onCreate se ejecuta cuando se inicia el activity de la conversación sin estar en segundo plano
+     *
+     * @param savedInstanceState Instancia guardada con los datos del activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversacion);
 
+        // Establecemos los valores de las variables
         String nombreUsuario = getIntent().getStringExtra("nombreUsuario");
         identificadorUsuarioDestinatario = getIntent().getStringExtra("identificadorUsuarioDestinatario");
         referenciaBD = FirebaseDatabase.getInstance().getReference();
@@ -88,7 +99,6 @@ public class ConversacionActivity extends AppCompatActivity {
         textoMensaje = (EditText) findViewById(R.id.mensajeChatTexto);
         listaMensajes = (RecyclerView) findViewById(R.id.listaMensajes);
         conversacionesLayout = new LinearLayoutManager(this);
-
         adaptarMensajeChat = new AdaptarMensajeChat(listaMensajesChat);
 
         listaMensajes.setHasFixedSize(true);
@@ -97,64 +107,64 @@ public class ConversacionActivity extends AppCompatActivity {
 
         referenciaBD.child(Constantes.CHAT_FIREBASE).child(identificadorUsuarioLogueado).child(identificadorUsuarioDestinatario)
                 .child(Constantes.VISTO_MENSAJE).setValue(true);
-
+        // Cargamos por pantalla todos los mensajes
         cargarMensajes();
 
+        // Ponemos la información en la barra principal de la pantalla
         nombreUsuarioBarra.setText("Chat - " + nombreUsuario);
         referenciaBD.child(Constantes.USUARIOS_FIREBASE).child(identificadorUsuarioDestinatario)
                 .addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String conexionUsuario = "false";
-                if (dataSnapshot.hasChild(Constantes.CONEXION_USUARIO)) {
-                    conexionUsuario = dataSnapshot.child(Constantes.CONEXION_USUARIO).getValue().toString();
-                }
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String conexionUsuario = "false";
+                        if (dataSnapshot.hasChild(Constantes.CONEXION_USUARIO)) {
+                            conexionUsuario = dataSnapshot.child(Constantes.CONEXION_USUARIO).getValue().toString();
+                        }
+                        String imagen = dataSnapshot.child(Constantes.IMAGEN_USUARIO).getValue().toString();
+                        Utilidades.establecerImagenUsuario(ConversacionActivity.this, imagen, imagenUsuarioBarra, true);
+                        if (conexionUsuario.equals("true")) {
+                            conexionUsuarioBarra.setText("Conectado");
+                        } else {
+                            conexionUsuarioBarra.setText("Desconectado");
+                        }
+                    }
 
-                String imagen = dataSnapshot.child(Constantes.IMAGEN_USUARIO).getValue().toString();
-                Utilidades.establecerImagenUsuario(ConversacionActivity.this, imagen, imagenUsuarioBarra, true);
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
 
-                if(conexionUsuario.equals("true")) {
-                    conexionUsuarioBarra.setText("Conectado");
-                } else {
-                    conexionUsuarioBarra.setText("Desconectado");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
+        // Creamos los nodos necesarios en firebase para el correcto funcionamiento del chat
         referenciaBD.child(Constantes.CHAT_FIREBASE).child(identificadorUsuarioLogueado)
                 .addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Si no existe una conversación entre dos usuarios la creamos
-                if(!dataSnapshot.hasChild(identificadorUsuarioDestinatario)){
-                    Map chatNuevoMap = new HashMap();
-                    chatNuevoMap.put("visto", false);
-                    chatNuevoMap.put("horaMensaje", ServerValue.TIMESTAMP);
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Si no existe una conversación entre dos usuarios la creamos
+                        if (!dataSnapshot.hasChild(identificadorUsuarioDestinatario)) {
+                            Map chatNuevoMap = new HashMap();
+                            chatNuevoMap.put("visto", false);
+                            chatNuevoMap.put("horaMensaje", ServerValue.TIMESTAMP);
 
-                    Map chatUsuariosMap = new HashMap();
-                    chatUsuariosMap.put(Constantes.CHAT_FIREBASE + "/" + identificadorUsuarioLogueado + "/"
-                            + identificadorUsuarioDestinatario, chatNuevoMap);
-                    chatUsuariosMap.put(Constantes.CHAT_FIREBASE + "/" + identificadorUsuarioDestinatario + "/"
-                            + identificadorUsuarioLogueado, chatNuevoMap);
-                    referenciaBD.updateChildren(chatUsuariosMap, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            if(databaseError != null){
-                                Log.v("CineSharedConversacion", databaseError.getMessage().toString());
-                            }
+                            Map chatUsuariosMap = new HashMap();
+                            chatUsuariosMap.put(Constantes.CHAT_FIREBASE + "/" + identificadorUsuarioLogueado + "/"
+                                    + identificadorUsuarioDestinatario, chatNuevoMap);
+                            chatUsuariosMap.put(Constantes.CHAT_FIREBASE + "/" + identificadorUsuarioDestinatario + "/"
+                                    + identificadorUsuarioLogueado, chatNuevoMap);
+                            referenciaBD.updateChildren(chatUsuariosMap, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        Log.v("CineSharedConversacion", databaseError.getMessage().toString());
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
-            }
+                    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
         enviarMensajeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -163,12 +173,18 @@ public class ConversacionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Método onResumen se ejecuta cada vez que la actividad se inicia
+     */
     @Override
     public void onResume() {
         super.onResume();
         AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
     }
 
+    /**
+     * Método onPause gestiona las acciones cuando se pausa la aplicación
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -181,7 +197,7 @@ public class ConversacionActivity extends AppCompatActivity {
     private void enviarMensajeChat() {
         String mensajeEscrito = textoMensaje.getText().toString();
 
-        if(!TextUtils.isEmpty(mensajeEscrito.trim())){
+        if (!TextUtils.isEmpty(mensajeEscrito.trim())) {
             // Definimos los nodos donde se crearán los mensajes en firebase y los datos que tendrán
             String referenciaMensajeRemitente = Constantes.MENSAJES_FIREBASE + "/" + identificadorUsuarioLogueado
                     + "/" + identificadorUsuarioDestinatario;
@@ -216,13 +232,11 @@ public class ConversacionActivity extends AppCompatActivity {
             referenciaBD.updateChildren(mapaMensajeUsuarios, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    if(databaseError != null){
+                    if (databaseError != null) {
                         Log.v("CineSharedConversacion", databaseError.getMessage().toString());
-                    }
-                    else {
+                    } else {
                         HashMap<String, String> hashMapNotificacion = new HashMap<>();
                         hashMapNotificacion.put("remitenteId", identificadorUsuarioLogueado);
-
                         referenciaBDNotificaciones.child(identificadorUsuarioDestinatario).push().setValue(hashMapNotificacion);
                     }
                 }

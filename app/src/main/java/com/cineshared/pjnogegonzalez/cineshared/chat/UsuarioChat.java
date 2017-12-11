@@ -1,9 +1,10 @@
 package com.cineshared.pjnogegonzalez.cineshared.chat;
 
 /**
- * Created by elgonzalez on 05/12/2017.
+ * Clase UsuarioChat con todos los atributos de un usuario del chat y los métodos getter y setter
+ * <p>
+ * Creada por Pablo Noguerol y Elena González
  */
-
 public class UsuarioChat {
 
     public String emailUsuario;
@@ -11,10 +12,11 @@ public class UsuarioChat {
     public String nombreUsuario;
     public String estadoUsuario;
 
+    // Constructor vacío
     public UsuarioChat() {
-
     }
 
+    // Constructor con parámetros
     public UsuarioChat(String emailUsuario, String imagenUsuario, String nombreUsuario, String estadoUsuario) {
         this.emailUsuario = emailUsuario;
         this.imagenUsuario = imagenUsuario;
@@ -22,6 +24,7 @@ public class UsuarioChat {
         this.estadoUsuario = estadoUsuario;
     }
 
+    // Métodos getter y setter de todos los atributos
     public String getEmailUsuario() {
         return emailUsuario;
     }

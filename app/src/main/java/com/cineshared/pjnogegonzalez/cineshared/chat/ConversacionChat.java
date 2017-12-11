@@ -1,22 +1,26 @@
 package com.cineshared.pjnogegonzalez.cineshared.chat;
 
 /**
- * Created by elgonzalez on 05/12/2017.
+ * Clase ConversacionChat con todos los atributos de un mensaje del chat y los métodos getter y setter
+ * <p>
+ * Creada por Pablo Noguerol y Elena González
  */
-
 public class ConversacionChat {
 
     private boolean vistoMensaje;
     private long horaMensaje;
 
+    // Constructor vacío
     public ConversacionChat() {
     }
 
+    // Constructor con parámetros
     public ConversacionChat(boolean vistoMensaje, long horaMensaje) {
         this.vistoMensaje = vistoMensaje;
         this.horaMensaje = horaMensaje;
     }
 
+    // Métodos getter y setter de todos los atributos
     public boolean isVistoMensaje() {
         return vistoMensaje;
     }

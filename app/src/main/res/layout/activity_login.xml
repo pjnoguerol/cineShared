@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_margin"
     android:paddingTop="@dimen/activity_margin"
     android:weightSum="1"
-    tools:context="com.cineshared.pjnogegonzalez.cineshared.MainActivity">
+    tools:context="com.cineshared.pjnogegonzalez.cineshared.acceso.MainActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -55,7 +55,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password"
-                    android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"

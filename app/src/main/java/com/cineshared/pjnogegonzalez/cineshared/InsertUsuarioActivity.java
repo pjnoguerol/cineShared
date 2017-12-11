@@ -34,7 +34,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
-import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -143,7 +142,7 @@ public class InsertUsuarioActivity extends AppCompatActivity {
                 // Show the thumbnail on ImageView
                 Uri imageUri = Uri.parse(mCurrentPhotoPath);
                 file = new File(imageUri.getPath());
-                Utilidades.establecerImagen(InsertUsuarioActivity.this, imageUri.toString(), subirImagen);
+                Picasso.with(InsertUsuarioActivity.this).load(imageUri).into(subirImagen);
 
                 try {
                     //InputStream ims = new FileInputStream(file);
@@ -224,12 +223,6 @@ public class InsertUsuarioActivity extends AppCompatActivity {
 
         final CharSequence[] options = { "Toma foto", "Elige de la galeria","Cancel" };
 
-        if (checkSelfPermission(Manifest.permission.CAMERA  )
-                != PackageManager.PERMISSION_GRANTED ) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA},
-                    100);
-        }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Añade Foto");
         builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -238,7 +231,12 @@ public class InsertUsuarioActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int item) {
                 if (options[item].equals("Toma foto"))
                 {
-
+                     int MY_CAMERA_REQUEST_CODE = 100;
+                    if (checkSelfPermission(Manifest.permission.CAMERA  )
+                            != PackageManager.PERMISSION_GRANTED ) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                MY_CAMERA_REQUEST_CODE);
+                    }
 
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     File photoFile = null;

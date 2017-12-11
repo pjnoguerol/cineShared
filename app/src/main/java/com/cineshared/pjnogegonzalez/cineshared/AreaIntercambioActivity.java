@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,7 +37,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
     private ImageView imagenPelicula;
     private TextView nombrePelicula, sinopsisPelicula, textEstado;
     private Spinner spinner;
-    private Peliculas datosResumen;
+    private Peliculas datosREsumen;
     private Button botonLiberar;
 
     private FirebaseAuth autenticacionFirebase;
@@ -54,7 +55,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
     }
 
     private void generarFragmento(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.frameAreaIntercambio, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_intercambio, fragment).commit();
 
     }
 
@@ -68,9 +69,9 @@ public class AreaIntercambioActivity extends AppCompatActivity {
 
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("libhis", datosResumen.getHistorico() + "")
-                        .appendQueryParameter("libpelipropia", datosResumen.getId() + "")
-                        .appendQueryParameter("libpeliusuario", datosResumen.getPeliusuario().toString());
+                        .appendQueryParameter("libhis", datosREsumen.getHistorico() + "")
+                        .appendQueryParameter("libpelipropia", datosREsumen.getId() + "")
+                        .appendQueryParameter("libpeliusuario", datosREsumen.getPeliusuario().toString());
 
                 HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
                 hilo.setActivity(this);
@@ -98,6 +99,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
 
         try {
             String url = Constantes.SERVIDOR + Constantes.RUTA_CLASE_PHP;
+
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -114,7 +116,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
                 List<PeliculasComprobacion> resultado = hilo.execute(new URL(url)).get();
                 //Comprobar que se ha insertado correctament
                 if (resultado.get(0).isOk()) {
-                    datosResumen = resultado.get(0).getPeliculas().get(0);
+                    datosREsumen = resultado.get(0).getPeliculas().get(0);
                     String mensaje = "Película " + Utilidades.auxPelicula + " intercambiada con "
                             + resultado.get(0).getPeliculas().get(0).getTitle() + " del usuario:  "
                             + Utilidades.capitalizarCadena(resultado.get(0).getPeliculas().get(0).getUsuarionombre())
@@ -203,8 +205,9 @@ public class AreaIntercambioActivity extends AppCompatActivity {
 
         //Creamos el objetos USUARIOS
 
-        Utilidades.establecerImagen(this, pelicula.getPoster_path(), imagenPelicula);
 
+        Picasso.with(this).load(
+                Constantes.IMAGENES + pelicula.getPoster_path()).into(imagenPelicula);
         nombrePelicula.setText(pelicula.getTitle());
         sinopsisPelicula.setText(pelicula.getOverview());
 
@@ -228,12 +231,12 @@ public class AreaIntercambioActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
+        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
+        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD);
     }
 }

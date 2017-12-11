@@ -3,7 +3,6 @@ package com.cineshared.pjnogegonzalez.cineshared.notificacion;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.cineshared.pjnogegonzalez.cineshared.R;
@@ -11,11 +10,18 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 /**
- * Created by elgonzalez on 06/12/2017.
+ * Clase ServicioMensajeriaFirebase gestiona las notificaciones en el movil por los mensajes de chat
+ * <p>
+ * Creada por Pablo Noguerol y Elena González
  */
-
 public class ServicioMensajeriaFirebase extends FirebaseMessagingService {
 
+    /**
+     * Método onMessageReceived se ejecuta cuando se recibe un mensaje, y se actualizará la información
+     * de la notificación a enviar al usuario
+     *
+     * @param remoteMessage Datos del mensaje enviado
+     */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -28,18 +34,12 @@ public class ServicioMensajeriaFirebase extends FirebaseMessagingService {
         // Cuando la aplicación está minimizada, recibe la notificación que forma la función de firebase
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this)
-
                         .setContentTitle(tituloNotificacion)
                         .setContentText(mensajeNotificacion);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            notificationBuilder.setSmallIcon(R.mipmap.ic_launcher_cineshared_round);
-        } else {
-            notificationBuilder.setSmallIcon(R.mipmap.ic_launcher_cineshared);
-        }
+        notificationBuilder.setSmallIcon(R.mipmap.ic_launcher_cineshared);
 
         Intent intentDestinatario = new Intent(accionClickNotificacion);
-
         PendingIntent intentDestinatarioPending =
                 PendingIntent.getActivity(this, 0,
                         intentDestinatario, PendingIntent.FLAG_UPDATE_CURRENT
