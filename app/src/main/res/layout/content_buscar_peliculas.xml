@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.cineshared.pjnogegonzalez.cineshared.BuscarPeliculasActivity"
+    tools:context="com.cineshared.pjnogegonzalez.cineshared.busqueda.BuscarPeliculasActivity"
     tools:showIn="@layout/activity_buscar_peliculas">
 
     <LinearLayout
@@ -25,8 +25,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp">
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -40,30 +40,32 @@
                 android:inputType="text"
                 android:maxLines="1" />
         </android.support.design.widget.TextInputLayout>
+
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btBusqueda"
-            style="?android:textAppearanceSmall"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Busqueda Externa"
-            android:textStyle="bold"
-            android:visibility="gone"/>
+            <Button
+                android:id="@+id/btBusqueda"
+                style="?android:textAppearanceSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Busqueda Externa"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
-        <Button
-            android:id="@+id/btBusquedaNatural"
-            style="?android:textAppearanceSmall"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Buscar"
-            android:textStyle="bold" />
+            <Button
+                android:id="@+id/btBusquedaNatural"
+                style="?android:textAppearanceSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Buscar"
+                android:textStyle="bold" />
         </LinearLayout>
+
         <FrameLayout
             android:id="@+id/frame_busqueda"
             android:layout_width="match_parent"
@@ -71,6 +73,7 @@
             android:layout_marginTop="16dp"
             tools:layout_editor_absoluteX="8dp"
             tools:layout_editor_absoluteY="8dp" />
+
         <FrameLayout
             android:id="@+id/frame_busqueda2"
             android:layout_width="match_parent"
@@ -80,9 +83,5 @@
             tools:layout_editor_absoluteY="8dp" />
 
     </LinearLayout>
-
-
-
-
 
 </RelativeLayout>
