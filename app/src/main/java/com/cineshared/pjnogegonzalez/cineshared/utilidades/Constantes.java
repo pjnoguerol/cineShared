@@ -11,13 +11,11 @@ public class Constantes {
     public static String ERROR_JSON = "Ocurrió un error de Parsing Json";
     public static String ERROR_CONEXION = "Error de conexión";
     public static String ERROR_INSERT = "Error creando el usuario: ";
-    public static String ERROR_CONTACTOS = "La lista de contactos no se ha leido correctamente";
 
     public static String USUARIOS = "usuarios";
     public static String BIBLIOTECA = "biblioteca";
     public static String BUSQUEDA = "FindApiBusqueda";
     public static String BUSQUEDA_NATURAL = "natural";
-    public static String BUSQUEDA_CONTACTOS ="contactos";
     public static String RESULTADO = "resultado";
     public static String IMAGENES = "https://image.tmdb.org/t/p/w500";
     public static String PELICULAS = "peliculas";
@@ -26,7 +24,6 @@ public class Constantes {
     public static String INTERCAMBIO = "intercambio";
     public static String CONFIGURACION = "configuracion";
     public static String PELICULAS_CHECK = "peliculascheck";
-    public static String CONTACTOS = "contactos";
 
     // Constantes ftp
     public static String IP_FTP = "intracosl.ddns.net";
@@ -58,15 +55,13 @@ public class Constantes {
     public static String EMAIL_FIREBASE = "@cineShared.com";
 
     // Constantes URLs y conexiones
-    //public static String SERVIDOR = "http://www.intraco.es";
-    public static String SERVIDOR = "http://192.168.1.3";
+    public static String SERVIDOR = "http://www.intraco.es";
     public static String RUTA_IMAGEN = SERVIDOR + "/cineshared/img/";
     public static String RUTA_CLASE_PHP = "/cineshared/cineshared_clase.php?";
     public static String RUTA_BIBLIOTECA = SERVIDOR + RUTA_CLASE_PHP + "biblioteca=";
     public static String RUTA_BIBLIOTECA_CADENA = SERVIDOR + RUTA_CLASE_PHP + "bibliotecacadena=";
     public static String RUTA_INSERTAR_USUARIO = SERVIDOR + RUTA_CLASE_PHP + "userinsert=";
     public static String RUTA_PELICULAS = SERVIDOR + RUTA_CLASE_PHP + "nombre=";
-    public static String RUTA_CONTACTOS = SERVIDOR + RUTA_CLASE_PHP + "contactos=";
 
     // Constantes api
     public static String RUTA_WEB_API_BUSQUEDA = "https://api.themoviedb.org/3/search/movie?query=";

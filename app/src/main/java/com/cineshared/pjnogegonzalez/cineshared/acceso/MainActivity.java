@@ -323,7 +323,6 @@ public class MainActivity extends AppCompatActivity
             auxFragment = 4;
             fragmentTransaction = true;
         } else if (identificadorOpcion == R.id.nav_chat) {
-
             Intent chatIntent = new Intent(MainActivity.this, ChatActivity.class);
             startActivity(chatIntent);
         }
@@ -436,8 +435,6 @@ public class MainActivity extends AppCompatActivity
             fragment = new ConfiguracionFragment();
         } else if (Constantes.LOCALIZACION.equals(tipo)) {
             fragment = new PosicionFragment();
-        }else if (Constantes.CONTACTOS.equals(tipo)) {
-            fragment = new ContactosFragment();
         }
 
         fragment.setArguments(bundle);
@@ -476,9 +473,8 @@ public class MainActivity extends AppCompatActivity
                     usuarioLogin.setText(usuarioLogeado.getUsuario());
                     usuarioEmail.setText(usuarioLogeado.getEmail());
                     Utilidades.establecerImagenUsuario(MainActivity.this, usuarioLogeado.getImagen(), usuarioImagen, true);
-// Si la imagen del FTP y la de firebase no coinciden, se actualiza la de firebase
+                    // Si la imagen del FTP y la de firebase no coinciden, se actualiza la de firebase
                     if (usuarioBD != null && firebaseAutenticacion.getCurrentUser() != null
-
                             && !usuarioLogeado.getImagen().equals(usuarioBD.child(Constantes.IMAGEN_USUARIO)))
                         usuarioBD.child(firebaseAutenticacion.getCurrentUser().getUid()).child(Constantes.IMAGEN_USUARIO).setValue(usuario.getImagen());
                     cargarCoordenadas();
