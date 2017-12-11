@@ -1,7 +1,7 @@
 package com.cineshared.pjnogegonzalez.cineshared.utilidades;
 
 /**
- * Clase que contiene las constantes con texto que van a ser empleadas en la aplicación
+ * Clase Constantes contiene las constantes con texto que van a ser empleadas en la aplicación
  * <p>
  * Creada por Pablo Noguerol y Elena González
  */
@@ -20,6 +20,7 @@ public class Constantes {
     public static String IMAGENES = "https://image.tmdb.org/t/p/w500";
     public static String PELICULAS = "peliculas";
     public static String HISTORICO = "historico";
+    public static String LOCALIZACION = "localizacion";
     public static String INTERCAMBIO = "intercambio";
     public static String CONFIGURACION = "configuracion";
     public static String PELICULAS_CHECK = "peliculascheck";
