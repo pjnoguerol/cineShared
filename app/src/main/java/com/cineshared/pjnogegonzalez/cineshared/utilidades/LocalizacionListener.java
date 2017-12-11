@@ -12,9 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.cineshared.pjnogegonzalez.cineshared.ConversionJson;
-import com.cineshared.pjnogegonzalez.cineshared.Resultado;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 

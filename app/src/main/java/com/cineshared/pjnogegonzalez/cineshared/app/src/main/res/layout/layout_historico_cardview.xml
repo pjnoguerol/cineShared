@@ -1,0 +1,110 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="170dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardViewHistorico"
+
+
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="12dp"
+        card_view:cardBackgroundColor="@color/cardview_dark_background"
+        android:layout_centerHorizontal="true"
+        android:innerRadius="0dp"
+        android:shape="ring"
+        android:thicknessRatio="1.9"
+        card_view:cardCornerRadius="@dimen/card_album_radius">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imagenHistorico"
+                android:layout_width="100dp"
+                android:layout_height="@dimen/album_cover_height"
+
+                android:clickable="true"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:id="@+id/nombreHistorico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/imagenHistorico"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:textStyle="bold"
+                android:textColor="@color/cardview_light_background"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/cardintercambio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="5dp"
+                android:layout_below="@id/nombreHistorico"
+                android:layout_toRightOf="@id/imagenHistorico"
+                android:text=""
+                android:textColor="@color/cardview_light_background"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/peliintercambio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="5dp"
+                android:layout_below="@id/cardintercambio"
+                android:layout_toRightOf="@id/imagenHistorico"
+                android:text=""
+                android:textColor="@color/cardview_light_background"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/fechainicio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="5dp"
+                android:layout_below="@id/peliintercambio"
+                android:layout_toRightOf="@id/imagenHistorico"
+                android:text=""
+                android:textColor="@color/cardview_light_background"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/fechafin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="5dp"
+                android:layout_below="@id/fechainicio"
+                android:layout_toRightOf="@id/imagenHistorico"
+                android:text=""
+                android:textColor="@color/cardview_light_background"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/estadoin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="5dp"
+                android:layout_below="@id/fechafin"
+                android:layout_toRightOf="@id/imagenHistorico"
+                android:text=""
+                android:textColor="@color/cardview_light_background"
+                android:textSize="15sp" />
+
+
+
+        </RelativeLayout>
+
+
+
+
+    </android.support.v7.widget.CardView>
+</LinearLayout>
