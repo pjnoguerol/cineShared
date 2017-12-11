@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,14 +29,18 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Clase ChatActivity gestiona las acciones relacionadas con activity_chat.xml
+ * <p>
+ * Creada por Pablo Noguerol y Elena González
+ */
 public class ChatActivity extends AppCompatActivity {
 
+    // Definimos las variables necesarias
     private Toolbar barraChat;
-
     private RecyclerView listaConversaciones;
     private final List<MensajeChat> messagesList = new ArrayList<>();
     private LinearLayoutManager mLinearLayoutManager;
-    //private MessageAdapter mAdapter;
 
     private FirebaseAuth firebaseAutenticacion;
     private DatabaseReference referenciaBDUsuarios;
@@ -45,13 +48,17 @@ public class ChatActivity extends AppCompatActivity {
     private DatabaseReference referenciaBDMensajes;
     private String identificadorUsuarioLogeado;
 
-
+    /**
+     * Método onCreate se ejecuta cuando se inicia el chat sin estar en segundo plano
+     *
+     * @param savedInstanceState Instancia guardada con los datos del activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        //Cargamos el action BAR
+        // Establecemos los valores de las variables
         barraChat = (Toolbar) findViewById(R.id.barraChat);
         setSupportActionBar(barraChat);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -74,6 +81,10 @@ public class ChatActivity extends AppCompatActivity {
         listaConversaciones.setLayoutManager(mLinearLayoutManager);
     }
 
+    /**
+     * Método onStart se ejecuta cada vez que el chat se abre y se encarga de recopilar la información
+     * sobre cada chat y mostrarla por pantalla
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -98,8 +109,6 @@ public class ChatActivity extends AppCompatActivity {
                             public void onChildAdded(DataSnapshot dataSnapshot, String cadena) {
                                 String textoMensaje = dataSnapshot.child(Constantes.TEXTO_MENSAJE).getValue().toString();
                                 conversacionChatViewHolder.setUltimoMensajeChat(textoMensaje, conversacionChat.isVistoMensaje());
-                                Log.v("ELENA CONV", String.valueOf(conversacionChat.getHoraMensaje()));
-                                Log.v("ELENA CONV", String.valueOf(conversacionChat.isVistoMensaje()));
                             }
 
                             @Override
@@ -119,7 +128,6 @@ public class ChatActivity extends AppCompatActivity {
                             }
                         });
 
-
                         referenciaBDUsuarios.child(identificadorUsuarioDestinatario).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -131,9 +139,11 @@ public class ChatActivity extends AppCompatActivity {
                                 conversacionChatViewHolder.setNombreUsuarioChat(nombreUsuarioChat);
                                 conversacionChatViewHolder.setImagenUsuarioChat(dataSnapshot.child(Constantes.IMAGEN_USUARIO).getValue().toString(), ChatActivity.this);
                                 conversacionChatViewHolder.setEstadoUsuario(conexionUsuario);
-                                conversacionChatViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                conversacionChatViewHolder.vistaChat.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
+                                        // Si el usuaro selecciona uno de los chats listados, se le redirige a la actividad
+                                        // ConversacionActivity
                                         Intent conversacionIntent = new Intent(ChatActivity.this, ConversacionActivity.class);
                                         conversacionIntent.putExtra("identificadorUsuarioDestinatario", identificadorUsuarioDestinatario);
                                         conversacionIntent.putExtra("nombreUsuario", nombreUsuarioChat);
@@ -151,30 +161,38 @@ public class ChatActivity extends AppCompatActivity {
         listaConversaciones.setAdapter(firebaseRecyclerAdapter);
     }
 
+    /**
+     * Método onResumen se ejecuta cada vez que la actividad se inicia
+     */
     @Override
     public void onResume() {
         super.onResume();
         AccionesFirebase.establecerUsuarioOnline(firebaseAutenticacion, referenciaBDUsuarios);
     }
 
+    /**
+     * Inner class que gestiona la infomación que muestra cada uno de los chats listados
+     */
     public static class ConversacionChatViewHolder extends RecyclerView.ViewHolder {
+        View vistaChat;
 
-        View mView;
-
+        // Constructor de la inner class
         public ConversacionChatViewHolder(View itemView) {
             super(itemView);
-            mView = itemView;
+            vistaChat = itemView;
         }
 
+        // Setter del nombre del usuario
         public void setNombreUsuarioChat(String nombreUsuarioChat) {
-            TextView nombreUsuarioTextView = (TextView) mView.findViewById(R.id.nombreUsuarioChat);
+            TextView nombreUsuarioTextView = (TextView) vistaChat.findViewById(R.id.nombreUsuarioChat);
             nombreUsuarioTextView.setText(nombreUsuarioChat);
         }
 
+        // Setter del último mensaje visto. Si el mensaje no se ha visto se mostrará en negrita, en caso contrario
+        // se mostrará normal
         public void setUltimoMensajeChat(String ultimoMensajeChat, boolean isVisto) {
-            TextView ultimoMensajeTextView = (TextView) mView.findViewById(R.id.ultimoMensajeChat);
+            TextView ultimoMensajeTextView = (TextView) vistaChat.findViewById(R.id.ultimoMensajeChat);
             ultimoMensajeTextView.setText(ultimoMensajeChat);
-Log.v("ELENAAAA isVisto", String.valueOf(isVisto));
             if (!isVisto) {
                 ultimoMensajeTextView.setTypeface(ultimoMensajeTextView.getTypeface(), Typeface.BOLD);
             } else {
@@ -182,13 +200,15 @@ Log.v("ELENAAAA isVisto", String.valueOf(isVisto));
             }
         }
 
+        // Setter de la imagen de cada usuario o de la de por defecto si no tiene una
         public void setImagenUsuarioChat(final String imagen, final Context contexto) {
-            final ImageView imagenUsuarioChat = (ImageView) mView.findViewById(R.id.imagenUsuarioChat);
-            Utilidades.establecerImagenUsuario(mView.getContext(), imagen, imagenUsuarioChat, false);
+            final ImageView imagenUsuarioChat = (ImageView) vistaChat.findViewById(R.id.imagenUsuarioChat);
+            Utilidades.establecerImagenUsuario(vistaChat.getContext(), imagen, imagenUsuarioChat, false);
         }
 
+        // Setter que nos permite conocer si el usuario se encuentra conectado a la aplicación
         public void setEstadoUsuario(String conexionUsuario) {
-            ImageView estadoConexionUsuario = (ImageView) mView.findViewById(R.id.estadoConexionUsuario);
+            ImageView estadoConexionUsuario = (ImageView) vistaChat.findViewById(R.id.estadoConexionUsuario);
             if ("true".equals(conexionUsuario)) {
                 estadoConexionUsuario.setImageResource(R.drawable.ic_usuario_online);
             } else {
@@ -197,10 +217,12 @@ Log.v("ELENAAAA isVisto", String.valueOf(isVisto));
         }
     }
 
+    /**
+     * Método onPause gestiona las acciones cuando se pausa la aplicación
+     */
     @Override
     public void onPause() {
         super.onPause();
-        Log.v("ELENA: onStop", "onPause");
         AccionesFirebase.establecerUsuarioOffline(firebaseAutenticacion, referenciaBDUsuarios);
     }
 }

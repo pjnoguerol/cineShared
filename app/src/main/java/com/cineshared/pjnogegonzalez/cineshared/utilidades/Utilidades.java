@@ -1,7 +1,9 @@
 package com.cineshared.pjnogegonzalez.cineshared.utilidades;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Patterns;
 import android.widget.ImageView;
 
 import com.cineshared.pjnogegonzalez.cineshared.R;
@@ -10,9 +12,10 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 /**
- * Created by pjnog on 08/08/2017.
+ * Clase Utilidades contiene diversos métodos usados en varias áreas de la aplicación
+ * <p>
+ * Creada por Pablo Noguerol y Elena González
  */
-
 public class Utilidades {
 
     private static int resultado;
@@ -32,6 +35,7 @@ public class Utilidades {
         return numeroColumnas;
     }
 
+    // Métodos getter y setter
     public static void resultado(int resultado) {
         Utilidades.resultado = resultado;
     }
@@ -55,6 +59,12 @@ public class Utilidades {
 
     }
 
+    /**
+     * Método capitalizarCadena deja la primera letra en mayúsculas y el resto normal
+     *
+     * @param cadena Cadena a capitalizar
+     * @return Cadena capitalizada
+     */
     public static String capitalizarCadena(String cadena) {
         if (cadena == null || cadena.isEmpty()) {
             return cadena;
@@ -67,8 +77,8 @@ public class Utilidades {
      * Método establecerImagenUsuario establece la imagen del usuario con la librería Picasso y le da
      * formato circular. Además, establece el color de fondo dependiendo de si la imagen está informada o no.
      *
-     * @param contexto Contexto del activity donde se cargará la imagen
-     * @param imagenUrl URL de la imagen que se cargará
+     * @param contexto        Contexto del activity donde se cargará la imagen
+     * @param imagenUrl       URL de la imagen que se cargará
      * @param imagenViewField Campo donde se realiza la visualización de la imagen
      */
     public static void establecerImagenUsuario(final Context contexto, final String imagenUrl,
@@ -101,11 +111,61 @@ public class Utilidades {
         }
     }
 
+    /**
+     * Método establecerImagen establece la imagen del usuario con la librería Picasso y establece el color de
+     * fondo dependiendo de si la imagen está informada o no.
+     *
+     * @param contexto        Contexto del activity donde se cargará la imagen
+     * @param imagenUrl       URL de la imagen que se cargará
+     * @param imagenViewField Campo donde se realiza la visualización de la imagen
+     */
     public static void establecerImagen(final Context contexto, final String imagenUrl, final ImageView imagenViewField) {
         String urlImagen = imagenUrl;
         if (!imagenUrl.contains("http"))
             urlImagen = Constantes.RUTA_IMAGEN + urlImagen;
 
         Picasso.with(contexto).load(urlImagen).networkPolicy(NetworkPolicy.OFFLINE).into(imagenViewField);
+    }
+
+    /**
+     * Método isEmailValido comprueba si el email es correcto
+     *
+     * @param charSequenceToCheck Cadena para comprobar si es un mail válido
+     * @return Resultado de la validación
+     */
+    public static boolean isEmailValido(CharSequence charSequenceToCheck) {
+        if (TextUtils.isEmpty(charSequenceToCheck)) {
+            return false;
+        } else {
+            return Patterns.EMAIL_ADDRESS.matcher(charSequenceToCheck).matches();
+        }
+    }
+
+    /**
+     * Método isPasswordValida comprueba si la contraseña es correcta
+     *
+     * @param password Cadena para comprobar si la contraseña es correcta
+     * @return Resultado de la validación
+     */
+    public static final boolean isPasswordValida(String password) {
+        if (TextUtils.isEmpty(password)) {
+            return false;
+        } else {
+            return password.length() >= 6 && password.matches("[a-zA-Z0-9]*");
+        }
+    }
+
+    /**
+     * Método isTelefonoValido comprueba si el teléfono es correcto
+     *
+     * @param charSequenceTelefono Cadena para comprobar si el teléfono es correcto
+     * @return Resultado de la validación
+     */
+    public static final boolean isTelefonoValido(CharSequence charSequenceTelefono) {
+        if (TextUtils.isEmpty(charSequenceTelefono)) {
+            return false;
+        } else {
+            return Patterns.PHONE.matcher(charSequenceTelefono).matches();
+        }
     }
 }
