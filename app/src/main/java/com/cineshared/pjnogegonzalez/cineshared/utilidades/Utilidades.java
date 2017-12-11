@@ -11,6 +11,9 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * Clase Utilidades contiene diversos métodos usados en varias áreas de la aplicación
  * <p>
@@ -147,7 +150,7 @@ public class Utilidades {
      * @param password Cadena para comprobar si la contraseña es correcta
      * @return Resultado de la validación
      */
-    public static final boolean isPasswordValida(String password) {
+    public static boolean isPasswordValida(String password) {
         if (TextUtils.isEmpty(password)) {
             return false;
         } else {
@@ -161,11 +164,26 @@ public class Utilidades {
      * @param charSequenceTelefono Cadena para comprobar si el teléfono es correcto
      * @return Resultado de la validación
      */
-    public static final boolean isTelefonoValido(CharSequence charSequenceTelefono) {
+    public static boolean isTelefonoValido(CharSequence charSequenceTelefono) {
         if (TextUtils.isEmpty(charSequenceTelefono)) {
             return false;
         } else {
             return Patterns.PHONE.matcher(charSequenceTelefono).matches();
         }
+    }
+
+    /**
+     * Método convertirMillasKilometros convierte las millas a kilómetros
+     *
+     * @param millas Millas a convertir
+     * @param pasarMetros True si se quiere pasar a metros, false si se deja en kilómetros
+     * @return Kilómetros con dos decimales
+     */
+    public static float convertirMillasKilometros(float millas, boolean pasarMetros) {
+        BigDecimal decimalKilometros = new BigDecimal(millas);
+        decimalKilometros = decimalKilometros.multiply(new BigDecimal(1.609));
+        if (pasarMetros)
+            decimalKilometros = decimalKilometros.multiply(new BigDecimal(1000));
+        return decimalKilometros.setScale(2, RoundingMode.HALF_UP).floatValue();
     }
 }

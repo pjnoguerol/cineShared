@@ -55,17 +55,7 @@ public class AccionesFirebase {
      * Método establecerUsuarioOffline establece al usuario como no conectado en firebase
      */
     public static void establecerUsuarioOffline(FirebaseAuth firebaseAutenticacion, DatabaseReference referenciaBD) {
-        if (firebaseAutenticacion == null) {
-            Log.v("ELENA: accionesOffline", "firebaseAutenticacion nulo");
-        }
-        if (referenciaBD == null) {
-            Log.v("ELENA: accionesOffline", "referenciaBD nulo");
-        }
-        if (firebaseAutenticacion.getCurrentUser() == null) {
-            Log.v("ELENA: accionesOffline", "CurrentUser nulo");
-        }
         if (firebaseAutenticacion != null && referenciaBD != null && firebaseAutenticacion.getCurrentUser() != null) {
-            Log.v("ELENA: accionesOffline", firebaseAutenticacion.getCurrentUser().getUid());
             referenciaBD.child(firebaseAutenticacion.getCurrentUser().getUid()).child(Constantes.CONEXION_USUARIO).setValue(false);
         }
     }
@@ -74,17 +64,7 @@ public class AccionesFirebase {
      * Método establecerUsuarioOnline establece al usuario como conectado en firebase
      */
     public static void establecerUsuarioOnline(FirebaseAuth firebaseAutenticacion, DatabaseReference referenciaBD) {
-        if (firebaseAutenticacion == null) {
-            Log.v("ELENA: accionesOnline", "firebaseAutenticacion nulo");
-        }
-        if (referenciaBD == null) {
-            Log.v("ELENA: accionesOnline", "referenciaBD nulo");
-        }
-        if (firebaseAutenticacion.getCurrentUser() == null) {
-            Log.v("ELENA: accionesOnline", "CurrentUser nulo");
-        }
         if (firebaseAutenticacion != null && referenciaBD != null && firebaseAutenticacion.getCurrentUser() != null) {
-            Log.v("ELENA: accionesOnline", firebaseAutenticacion.getCurrentUser().getUid());
             referenciaBD.child(firebaseAutenticacion.getCurrentUser().getUid()).child(Constantes.CONEXION_USUARIO).setValue(true);
         }
     }

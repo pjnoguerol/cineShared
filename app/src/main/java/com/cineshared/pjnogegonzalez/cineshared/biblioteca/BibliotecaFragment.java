@@ -58,7 +58,7 @@ public class BibliotecaFragment extends Fragment {
         Context contexto = inflater.getContext();
         View vistaRaiz = inflater.inflate(R.layout.recyclerview_activity_radio, container, false);
         // Obtenemos los argumentos presentes para el fragmento y poder cargar los datos
-        usuario = (Usuarios) getArguments().getSerializable("usuarios");
+        usuario = (Usuarios) getArguments().getSerializable(Constantes.USUARIOS);
         final String cadena = getArguments().getString("cadena");
         if (usuario != null) {
             conversionJson.setUsuario(usuario);

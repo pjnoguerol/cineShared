@@ -64,14 +64,16 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".usuario.AreaUsuarioActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:parentActivityName=".acceso.MainActivity" />
         <activity
             android:name=".busqueda.BuscarPeliculasActivity"
             android:label="@string/title_activity_buscar_peliculas"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".acceso.MainActivity" />
-        <activity android:name=".intercambio.AreaIntercambioActivity" />
+        <activity android:name=".intercambio.AreaIntercambioActivity"
+            android:parentActivityName=".acceso.MainActivity" />
         <activity
             android:name=".chat.ChatActivity"
             android:screenOrientation="portrait"

@@ -3,6 +3,7 @@ package com.cineshared.pjnogegonzalez.cineshared.ubicacion;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +22,13 @@ import com.cineshared.pjnogegonzalez.cineshared.acceso.Usuarios;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.ConversionJson;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.HiloGenerico;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -40,11 +46,13 @@ import java.util.concurrent.ExecutionException;
 public class PosicionFragment extends Fragment implements OnMapReadyCallback {
 
     // Definimos las variables
-    private Context context;
-    private SupportMapFragment supportMapFragment;
-    private static GoogleMap googleMap;
-    private MarkerOptions markerOptions;
-    private Marker marker;
+    private Context contexto;
+    private SupportMapFragment soporteMapa;
+    private static GoogleMap mapaGoogle;
+    private MarkerOptions opcionesMarcador;
+    private Marker marcadorMapa;
+    private Circle circuloPosicion;
+    private Usuarios usuario;
 
     /**
      * Iniciamos el fragmento instanciado en la vista del usuario
@@ -57,7 +65,7 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        googleMap = null;
+        mapaGoogle = null;
         return inflater.inflate(R.layout.fragment_posicion, container, false);
     }
 
@@ -69,24 +77,25 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        context = getActivity();
+        contexto = getActivity();
+        usuario = (Usuarios) getArguments().getSerializable(Constantes.USUARIOS);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        supportMapFragment = SupportMapFragment.newInstance();
-        fragmentManager.beginTransaction().replace(R.id.mapaPosicion, supportMapFragment).commit();
-        supportMapFragment.getMapAsync(this);
+        soporteMapa = SupportMapFragment.newInstance();
+        fragmentManager.beginTransaction().replace(R.id.mapaPosicion, soporteMapa).commit();
+        soporteMapa.getMapAsync(this);
     }
 
     /**
      * Médido que se ejecuta cuando el mapa está listo para comprobar que se tienen los permisos necesarios
      * para acceder a la posición del usuario
      *
-     * @param googleMap Google Map a actualizar
+     * @param mapaGoogle Google Map a actualizar
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    public void onMapReady(GoogleMap mapaGoogle) {
+        this.mapaGoogle = mapaGoogle;
+        if (ActivityCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         obtenerMapaConPosiciones();
@@ -96,32 +105,16 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
      * Método obtenerMapaConPosiciones obtiene la posición de los usuarios y los muestra en un mapa
      */
     private void obtenerMapaConPosiciones() {
-        try {
-            String url = Constantes.SERVIDOR + Constantes.RUTA_CLASE_PHP;
-            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            LatLng posicion;
-            if (networkInfo != null && networkInfo.isConnected()) {
-                Uri.Builder builder = new Uri.Builder().appendQueryParameter("liscoord", "");
-                HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
-                hilo.setActivity(getActivity());
-                hilo.setTipoObjeto(Constantes.USUARIOS);
-                hilo.setConversionJson(new ConversionJson<Usuarios>(Constantes.USUARIOS));
-                List<Usuarios> resultado = hilo.execute(new URL(url)).get();
-                for (Usuarios usuario : resultado) {
-                    if (usuario != null) {
-                        posicion = new LatLng(usuario.getLatitud(), usuario.getLongitud());
-                        markerOptions = new MarkerOptions().position(posicion).title(usuario.getUsuario()).snippet(usuario.getUsuario());
-                        marker = googleMap.addMarker(markerOptions);
-                    }
-                }
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        LatLng posicion = new LatLng(usuario.getLatitud(), usuario.getLongitud());
+        opcionesMarcador = new MarkerOptions().position(posicion).title(usuario.getUsuario()).snippet(usuario.getUsuario());
+        marcadorMapa = mapaGoogle.addMarker(opcionesMarcador);
+        circuloPosicion = mapaGoogle.addCircle(new CircleOptions()
+                .center(posicion)
+                .radius(Utilidades.convertirMillasKilometros(usuario.getDistancia(), true) * 1000f)
+                .strokeWidth(10)
+                .strokeColor(R.color.colorPrimaryDark)
+                .fillColor(R.color.colorPrimary)
+                .clickable(false));
+        mapaGoogle.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion, 7f));
     }
 }

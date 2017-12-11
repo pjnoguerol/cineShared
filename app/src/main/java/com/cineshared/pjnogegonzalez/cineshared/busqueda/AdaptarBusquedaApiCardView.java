@@ -132,8 +132,7 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
         busquedaViewHolder.usuarioPelicula.setText(pelicula.getUsuarionombre());
 
         if (pelicula.getDistancia() != 0.0) {
-            BigDecimal decimalDistancia = new BigDecimal(pelicula.getDistancia());
-            decimalDistancia = decimalDistancia.setScale(2, RoundingMode.HALF_UP);
+            float decimalDistancia = Utilidades.convertirMillasKilometros(pelicula.getDistancia(), false);
             busquedaViewHolder.datosPelicula.setText("Distancia= " + decimalDistancia + "");
         }
 
