@@ -15,7 +15,10 @@
             android:id="@+id/nav_historico"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Historico" />
-
+        <item
+            android:id="@+id/nav_localizacion"
+            android:icon="@drawable/ic_localizacion"
+            android:title="Localizacion" />
         <item
             android:id="@+id/nav_chat"
             android:icon="@drawable/ic_menu_send"
