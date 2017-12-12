@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,8 +44,12 @@ import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.ConversionJson;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -175,6 +183,7 @@ public class ConfiguracionFragment extends Fragment {
                         .appendQueryParameter("telactu", telefonoUpdate.getText().toString())
                         .appendQueryParameter("disactu", distanciaUpdate.getText().toString())
                         .appendQueryParameter("imactu", imagen);
+                Log.w("builderconfiguracion ", builder.toString());
                 HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
                 hilo.setActivity(getActivity());
                 hilo.setTipoObjeto(Constantes.USUARIOS);
@@ -261,7 +270,25 @@ public class ConfiguracionFragment extends Fragment {
                             }
                         });
             } else if (requestCode == 2) {
-                // TODO
+                Uri selectedImage = data.getData();
+                String[] filePath = {MediaStore.Images.Media.DATA};
+                Cursor c = getContext().getContentResolver().query(selectedImage, filePath, null, null, null);
+                c.moveToFirst();
+                int columnIndex = c.getColumnIndex(filePath[0]);
+                String picturePath = c.getString(columnIndex);
+                c.close();
+                Bitmap thumbnail = (BitmapFactory.decodeFile(picturePath));
+                file = new File(filePath[0]);
+                OutputStream os = null;
+                try {
+                    os = new BufferedOutputStream(new FileOutputStream(file));
+                    thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, os);
+                    os.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -299,7 +326,7 @@ public class ConfiguracionFragment extends Fragment {
         }
 
         // Mostramos las opciones al usuario para seleccionar su foto de usuario
-        final CharSequence[] opcionesImagen = {"Tomar foto", "Cancelar"};
+        final CharSequence[] opcionesImagen = {"Tomar foto", "Elegir de la galeria" ,"Cancelar"};
         AlertDialog.Builder builderAlertDialog = new AlertDialog.Builder(getContext());
         builderAlertDialog.setTitle("Subir Foto");
         builderAlertDialog.setItems(opcionesImagen, new DialogInterface.OnClickListener() {

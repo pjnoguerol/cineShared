@@ -12,6 +12,7 @@ import com.cineshared.pjnogegonzalez.cineshared.R;
 import com.cineshared.pjnogegonzalez.cineshared.acceso.Usuarios;
 import com.cineshared.pjnogegonzalez.cineshared.biblioteca.AdaptarBibliotecaCardView;
 import com.cineshared.pjnogegonzalez.cineshared.busqueda.AdaptarBusquedaApiCardView;
+import com.cineshared.pjnogegonzalez.cineshared.contactos.AdaptarUsuariosCardView;
 import com.cineshared.pjnogegonzalez.cineshared.historico.AdaptarHistoricoCardView;
 import com.cineshared.pjnogegonzalez.cineshared.peliculas.Peliculas;
 import com.cineshared.pjnogegonzalez.cineshared.peliculas.PeliculasComprobacion;
@@ -248,7 +249,10 @@ public class ConversionJson<T> {
             } else if (Constantes.PELICULAS_CHECK.equals(tipoObjeto)) {
                 List<PeliculasComprobacion> lista = (List<PeliculasComprobacion>) listaConvertir;
                 adaptador = new AdaptarHistoricoCardView(lista.get(0).getPeliculas(), usuario);
+            }else if (Constantes.CONTACTOS.equals(tipoObjeto)) {
+                 adaptador = new AdaptarUsuariosCardView((List<Usuarios>) listaConvertir);
             }
+
         }
         return adaptador;
     }
@@ -287,6 +291,8 @@ public class ConversionJson<T> {
                 elementoConvertido = gson.fromJson(jsonReader, Peliculas.class);
             else if (Constantes.PELICULAS_CHECK.equals(tipoObjeto))
                 elementoConvertido = gson.fromJson(jsonReader, PeliculasComprobacion.class);
+            else if (Constantes.CONTACTOS.equals(tipoObjeto))
+                elementoConvertido = gson.fromJson(jsonReader, Usuarios.class);
 
             listaConvertir.add(elementoConvertido);
         }

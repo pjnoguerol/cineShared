@@ -40,6 +40,7 @@ import com.cineshared.pjnogegonzalez.cineshared.biblioteca.BibliotecaFragment;
 import com.cineshared.pjnogegonzalez.cineshared.busqueda.BuscarPeliculasActivity;
 import com.cineshared.pjnogegonzalez.cineshared.chat.ChatActivity;
 import com.cineshared.pjnogegonzalez.cineshared.configuracion.ConfiguracionFragment;
+import com.cineshared.pjnogegonzalez.cineshared.contactos.ContactosFragment;
 import com.cineshared.pjnogegonzalez.cineshared.historico.FragmentHistoricoIntercambio;
 import com.cineshared.pjnogegonzalez.cineshared.peliculas.PeliculasCoorFragment;
 import com.cineshared.pjnogegonzalez.cineshared.ubicacion.PosicionFragment;
@@ -322,7 +323,11 @@ public class MainActivity extends AppCompatActivity
             establecerFragmeto(Constantes.LOCALIZACION);
             auxFragment = 4;
             fragmentTransaction = true;
-        } else if (identificadorOpcion == R.id.nav_chat) {
+        } else if (identificadorOpcion == R.id.nav_contactos) {
+            establecerFragmeto(Constantes.CONTACTOS);
+            auxFragment = 4;
+            fragmentTransaction = true;
+        }else if (identificadorOpcion == R.id.nav_chat) {
             Intent chatIntent = new Intent(MainActivity.this, ChatActivity.class);
             startActivity(chatIntent);
         }
@@ -435,7 +440,10 @@ public class MainActivity extends AppCompatActivity
             fragment = new ConfiguracionFragment();
         } else if (Constantes.LOCALIZACION.equals(tipo)) {
             fragment = new PosicionFragment();
+        }else if (Constantes.CONTACTOS.equals(tipo)) {
+            fragment = new ContactosFragment();
         }
+
 
         fragment.setArguments(bundle);
     }
