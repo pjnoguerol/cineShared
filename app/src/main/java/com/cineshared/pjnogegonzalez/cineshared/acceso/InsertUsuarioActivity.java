@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -144,7 +146,19 @@ public class InsertUsuarioActivity extends AppCompatActivity {
                             }
                         });
             } else if (requestCode == 2) {
-                // TODO
+                Uri selectedImage = data.getData();
+                //Utilidades.establecerImagenUsuario(getContext(), selectedImage.toString(), subirImagen, false);
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+                ficheroImagen = new File(picturePath);
+
+                //ImageView imageView = (ImageView) getActivity().findViewById(R.id.imgView);
+                subirImagen.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                subirImagen.setRotation(270);
             }
         }
     }

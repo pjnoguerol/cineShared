@@ -271,24 +271,18 @@ public class ConfiguracionFragment extends Fragment {
                         });
             } else if (requestCode == 2) {
                 Uri selectedImage = data.getData();
-                String[] filePath = {MediaStore.Images.Media.DATA};
-                Cursor c = getContext().getContentResolver().query(selectedImage, filePath, null, null, null);
-                c.moveToFirst();
-                int columnIndex = c.getColumnIndex(filePath[0]);
-                String picturePath = c.getString(columnIndex);
-                c.close();
-                Bitmap thumbnail = (BitmapFactory.decodeFile(picturePath));
-                file = new File(filePath[0]);
-                OutputStream os = null;
-                try {
-                    os = new BufferedOutputStream(new FileOutputStream(file));
-                    thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, os);
-                    os.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                //Utilidades.establecerImagenUsuario(getContext(), selectedImage.toString(), subirImagen, false);
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage,filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+                file = new File(picturePath);
+
+                //ImageView imageView = (ImageView) getActivity().findViewById(R.id.imgView);
+                subirImagen.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                subirImagen.setRotation(270);
             }
         }
     }

@@ -3,7 +3,9 @@ package com.cineshared.pjnogegonzalez.cineshared.ubicacion;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -22,16 +24,20 @@ import com.cineshared.pjnogegonzalez.cineshared.acceso.Usuarios;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.ConversionJson;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.HiloGenerico;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.TransformacionCirculo;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -53,6 +59,88 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
     private Marker marcadorMapa;
     private Circle circuloPosicion;
     private Usuarios usuario;
+
+    private void insertarUsuarios() {
+        try {
+
+
+
+            String url = Constantes.SERVIDOR + Constantes.RUTA_CLASE_PHP;
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+           // LatLng posicion;
+            if (networkInfo != null && networkInfo.isConnected()) {
+
+                Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("usuacoord", usuario.getUsuario() );
+                Log.w("usuariocoord", builder.toString());
+                HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
+                hilo.setActivity(getActivity());
+                hilo.setTipoObjeto(Constantes.USUARIOS);
+                hilo.setConversionJson(new ConversionJson<Usuarios>(Constantes.USUARIOS));
+                List<Usuarios> resultado = hilo.execute(new URL(url)).get();
+
+                    if (usuario!=null)
+                    {
+                        //urlImagen = Constantes.RUTA_IMAGEN + urlImagen;
+                       final LatLng posicion = new LatLng(usuario.getLatitud(), usuario.getLongitud());
+
+
+
+
+
+
+                       //Target picassoMarker = new PicassoMarker(opcionesMarcador);
+                       Picasso.with(getActivity()).load(Constantes.RUTA_IMAGEN+usuario.getImagen()).transform(new TransformacionCirculo()). resize(100, 100).into(new Target() {
+
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                                opcionesMarcador = new MarkerOptions().position(posicion).title(usuario.getUsuario()).snippet(usuario.getUsuario());
+                                opcionesMarcador.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+                                marcadorMapa = mapaGoogle.addMarker(opcionesMarcador);
+                                circuloPosicion = mapaGoogle.addCircle(new CircleOptions()
+                                        .center(posicion)
+                                        .radius(Utilidades.convertirMillasKilometros(usuario.getDistancia(), true) * 1000f)
+                                        .strokeWidth(10)
+                                        .strokeColor(R.color.colorPrimaryDark)
+                                        .fillColor(R.color.colorPrimary)
+                                        .clickable(false));
+                                mapaGoogle.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion, 7f));
+
+
+                            }
+
+                            @Override
+                            public void onBitmapFailed(Drawable errorDrawable) {
+
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                            }
+                        });
+
+
+                        //marker = new MarkerOptions().position(posicion).title(usuario.getUsuario()).snippet(usuario.getUsuario());
+                        //marker =googleMap.addMarker(new MarkerOptions().position(posicion).title(usuario.getUsuario()).snippet(usuario.getUsuario()));
+
+                    }
+
+
+
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     /**
      * Iniciamos el fragmento instanciado en la vista del usuario
@@ -83,6 +171,7 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
         soporteMapa = SupportMapFragment.newInstance();
         fragmentManager.beginTransaction().replace(R.id.mapaPosicion, soporteMapa).commit();
         soporteMapa.getMapAsync(this);
+
     }
 
     /**
@@ -98,7 +187,9 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
                 ActivityCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        obtenerMapaConPosiciones();
+        insertarUsuarios();
+        //obtenerMapaConPosiciones();
+        //insertarUsuarios();
     }
 
     /**
