@@ -59,12 +59,17 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
     private Marker marcadorMapa;
     private Circle circuloPosicion;
     private Usuarios usuario;
+    private Target tar;
+    private LatLng posicion;
 
+    /**
+     * Metodo que carga los usuarios en el maps
+     */
     private void insertarUsuarios() {
         try {
 
 
-
+            //Creamos la peticion POST con los parametros deseados
             String url = Constantes.SERVIDOR + Constantes.RUTA_CLASE_PHP;
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -73,6 +78,7 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
 
                 Uri.Builder builder = new Uri.Builder()
                     .appendQueryParameter("usuacoord", usuario.getUsuario() );
+                //Cargamos el hilo con los parametros paraejecutarlo
                 Log.w("usuariocoord", builder.toString());
                 HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
                 hilo.setActivity(getActivity());
@@ -82,23 +88,26 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
 
                     if (usuario!=null)
                     {
-                        //urlImagen = Constantes.RUTA_IMAGEN + urlImagen;
-                       final LatLng posicion = new LatLng(usuario.getLatitud(), usuario.getLongitud());
 
-
-
-
-
-
+                        final Usuarios user = resultado.get(0);
+                        tar =
                        //Target picassoMarker = new PicassoMarker(opcionesMarcador);
-                       Picasso.with(getActivity()).load(Constantes.RUTA_IMAGEN+usuario.getImagen()).transform(new TransformacionCirculo()). resize(100, 100).into(new Target() {
-
+                       new Target() {
+                           /**
+                            * Cargamos la imagen cuando este lista
+                            * @param bitmap
+                            * @param from
+                            */
                             @Override
                             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                //Captamos las coordenadas del usuario
+                                posicion = new LatLng(user.getLatitud(), user.getLongitud());
 
-                                opcionesMarcador = new MarkerOptions().position(posicion).title(usuario.getUsuario()).snippet(usuario.getUsuario());
+                                //Añadimos los marcadores
+                                opcionesMarcador = new MarkerOptions().position(posicion).title(user.getUsuario()).snippet(user.getUsuario());
                                 opcionesMarcador.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
                                 marcadorMapa = mapaGoogle.addMarker(opcionesMarcador);
+                                //Añadimos el circulo alrededor en funcion de la distancia
                                 circuloPosicion = mapaGoogle.addCircle(new CircleOptions()
                                         .center(posicion)
                                         .radius(Utilidades.convertirMillasKilometros(usuario.getDistancia(), true) * 1000f)
@@ -107,6 +116,7 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
                                         .fillColor(R.color.colorPrimary)
                                         .clickable(false));
                                 mapaGoogle.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion, 7f));
+
 
 
                             }
@@ -120,13 +130,15 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
                             public void onPrepareLoad(Drawable placeHolderDrawable) {
 
                             }
-                        });
-
+                        };
+                        //Añadimos la imagen y los demas datos
+                        Picasso.with(getActivity()).load(Constantes.RUTA_IMAGEN+usuario.getImagen()).transform(new TransformacionCirculo()). resize(100, 100).into(tar);
 
                         //marker = new MarkerOptions().position(posicion).title(usuario.getUsuario()).snippet(usuario.getUsuario());
                         //marker =googleMap.addMarker(new MarkerOptions().position(posicion).title(usuario.getUsuario()).snippet(usuario.getUsuario()));
 
                     }
+
 
 
 
@@ -172,6 +184,7 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
         fragmentManager.beginTransaction().replace(R.id.mapaPosicion, soporteMapa).commit();
         soporteMapa.getMapAsync(this);
 
+
     }
 
     /**
@@ -188,6 +201,8 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
             return;
         }
         insertarUsuarios();
+
+
         //obtenerMapaConPosiciones();
         //insertarUsuarios();
     }
