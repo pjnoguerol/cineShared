@@ -16,6 +16,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -76,6 +77,11 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private FirebaseAuth firebaseAutenticacion;
     private DatabaseReference usuarioBD;
+    private FloatingActionButton buscarAnyadirPeliculaBtn;
+    private Menu menuBarra;
+    private boolean show;
+    private MenuItem menuItem;
+    private MenuItem menuItem1;
 
     // Iniciamos las variables con las que realizaremos las conversiones a Json necesarias
     private ConversionJson<Usuarios> conversionJson = new ConversionJson<>(Constantes.USUARIOS);
@@ -106,7 +112,7 @@ public class MainActivity extends AppCompatActivity
         actionBarDrawerToggle.syncState();
 
         // Botón que permite al usuario buscar y añadir peliculas a su biblioteca
-        FloatingActionButton buscarAnyadirPeliculaBtn = (FloatingActionButton) findViewById(R.id.buscarAnyadirPeliculaBtn);
+        buscarAnyadirPeliculaBtn = (FloatingActionButton) findViewById(R.id.buscarAnyadirPeliculaBtn);
         buscarAnyadirPeliculaBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -235,7 +241,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_configuracion, menu);
-        final MenuItem menuItem = menu.findItem(R.id.busqueda);
+        menuItem = menu.findItem(R.id.busqueda);
+        menuItem1 = menu.findItem(R.id.configuracion);
+        if (!this.show) {
+            menuItem.setVisible(false);
+            menuItem1.setVisible(false);
+        }
+        else {
+            menuItem.setVisible(true);
+            menuItem1.setVisible(true);
+        }
         final SearchView vistaBusqueda = (SearchView) menuItem.getActionView();
         // Establecemos la acción del botón de búsqueda
         vistaBusqueda.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -372,24 +387,52 @@ public class MainActivity extends AppCompatActivity
      * Método mostrarNavegacion habilita los menús de navegación
      */
     private void mostrarNavegacion() {
+        this.show = true;
         Menu menuNavegacion = navigationView.getMenu();
+
         menuNavegacion.findItem(R.id.nav_biblioteca).setVisible(true);
         menuNavegacion.findItem(R.id.nav_trans).setVisible(true);
         menuNavegacion.findItem(R.id.nav_historico).setVisible(true);
         menuNavegacion.findItem(R.id.nav_chat).setVisible(true);
         menuNavegacion.findItem(R.id.nav_localizacion).setVisible(true);
+        menuNavegacion.findItem(R.id.nav_contactos).setVisible(true);
+
+        if (this.menuItem!=null && this.menuItem1!=null) {
+            menuItem.setVisible(true);
+            menuItem1.setVisible(true);
+        }
+
+
+        //menuNavegacion.findItem(R.id.configuracion).setVisible(true);
+        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) buscarAnyadirPeliculaBtn.getLayoutParams();
+        p.setAnchorId(View.NO_ID);
+        buscarAnyadirPeliculaBtn.setLayoutParams(p);
+        buscarAnyadirPeliculaBtn.setVisibility(View.VISIBLE);
     }
 
     /**
      * Método ocultarNavegacion deshabilita los menús de navegación
      */
     private void ocultarNavegacion() {
+        this.show = false;
         Menu menuNavegacion = navigationView.getMenu();
         menuNavegacion.findItem(R.id.nav_biblioteca).setVisible(false);
         menuNavegacion.findItem(R.id.nav_trans).setVisible(false);
         menuNavegacion.findItem(R.id.nav_historico).setVisible(false);
         menuNavegacion.findItem(R.id.nav_chat).setVisible(false);
         menuNavegacion.findItem(R.id.nav_localizacion).setVisible(false);
+        menuNavegacion.findItem(R.id.nav_contactos).setVisible(false);
+        if (this.menuItem!=null && this.menuItem1!=null) {
+            menuItem.setVisible(false);
+            menuItem1.setVisible(false);
+        }
+
+
+        //menuNavegacion.findItem(R.id.configuracion).setVisible(false);
+        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) buscarAnyadirPeliculaBtn.getLayoutParams();
+        p.setAnchorId(View.NO_ID);
+        buscarAnyadirPeliculaBtn.setLayoutParams(p);
+        buscarAnyadirPeliculaBtn.setVisibility(View.GONE);
     }
 
     /**
