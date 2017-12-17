@@ -1,5 +1,6 @@
 package com.cineshared.pjnogegonzalez.cineshared.contactos;
 
+import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,14 +9,26 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cineshared.pjnogegonzalez.cineshared.R;
+import com.cineshared.pjnogegonzalez.cineshared.acceso.Usuarios;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
-import com.cineshared.pjnogegonzalez.cineshared.acceso.*;
+
 /**
  * Clase AdaptarUsuariosCardView adapta una lista de usuarios a un CardView para poder visualizarlo
  * correctamente
+ * <p>
+ * Creada por Pablo Noguerol y Elena González
  */
 public class AdaptarUsuariosCardView extends RecyclerView.Adapter<AdaptarUsuariosCardView.UsuarioViewHolder> {
+
+    private DatabaseReference referenciaBDUsuarios;
+    // Lista de usuarios a transformar
+    private List<Usuarios> listaUsuarios;
+    private Context contexto;
 
     /**
      * Inner class que contiene todos los datos del usuario
@@ -38,16 +51,15 @@ public class AdaptarUsuariosCardView extends RecyclerView.Adapter<AdaptarUsuario
         }
     }
 
-    // Lista de usuarios a transformar
-    List<Usuarios> listaUsuarios;
-
     /**
      * Constructor de la clase
      *
      * @param listaUsuarios Lista de usuarios que se desean adaptar a un CardView
      */
-    public AdaptarUsuariosCardView(List<Usuarios> listaUsuarios) {
+    public AdaptarUsuariosCardView(List<Usuarios> listaUsuarios, Context contexto) {
         this.listaUsuarios = listaUsuarios;
+        this.contexto = contexto;
+        referenciaBDUsuarios = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE);
     }
 
     /**
@@ -68,8 +80,16 @@ public class AdaptarUsuariosCardView extends RecyclerView.Adapter<AdaptarUsuario
      * @return ViewHolder con los datos de la nueva vista
      */
     @Override
-    public UsuarioViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_usuarios, viewGroup, false);
+    public UsuarioViewHolder onCreateViewHolder(final ViewGroup viewGroup, int viewType) {
+        final View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_usuario_contacto, viewGroup, false);
+        final UsuarioViewHolder usuarioViewHolder = new UsuarioViewHolder(view);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View vistaOnClick) {
+                Utilidades.iniciarChat(referenciaBDUsuarios, usuarioViewHolder.nombreUsuario.getText().toString(),
+                        viewGroup.getContext());
+            }
+        });
         return new UsuarioViewHolder(view);
     }
 
@@ -81,7 +101,7 @@ public class AdaptarUsuariosCardView extends RecyclerView.Adapter<AdaptarUsuario
      * @param posicion          Posición donde debe ser mostrada
      */
     @Override
-    public void onBindViewHolder(final UsuarioViewHolder usuarioViewHolder, int posicion) {
+    public void onBindViewHolder(final UsuarioViewHolder usuarioViewHolder, final int posicion) {
         usuarioViewHolder.nombreUsuario.setText(listaUsuarios.get(posicion).getUsuario());
         usuarioViewHolder.telefonoUsuario.setText(listaUsuarios.get(posicion).getTelefono());
     }

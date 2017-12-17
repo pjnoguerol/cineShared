@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.cineshared.pjnogegonzalez.cineshared.R;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
-import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.UtilidadesImagenes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -121,7 +121,7 @@ public class ConversacionActivity extends AppCompatActivity {
                             conexionUsuario = dataSnapshot.child(Constantes.CONEXION_USUARIO).getValue().toString();
                         }
                         String imagen = dataSnapshot.child(Constantes.IMAGEN_USUARIO).getValue().toString();
-                        Utilidades.establecerImagenUsuario(ConversacionActivity.this, imagen, imagenUsuarioBarra, true);
+                        UtilidadesImagenes.establecerImagenUsuario(ConversacionActivity.this, imagen, imagenUsuarioBarra, true);
                         if (conexionUsuario.equals("true")) {
                             conexionUsuarioBarra.setText("Conectado");
                         } else {

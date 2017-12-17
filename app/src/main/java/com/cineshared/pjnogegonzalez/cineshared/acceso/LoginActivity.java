@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String PREFS_NAME = "Preferencias";
 
     private FirebaseAuth autenticacionFirebase;
-    private DatabaseReference referenciaBD;
+    private DatabaseReference referenciaBDUsuarios;
 
     /**
      * Método onCreate controla las acciones del formulario de login
@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         autenticacionFirebase = FirebaseAuth.getInstance();
-        referenciaBD = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE);
+        referenciaBDUsuarios = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE);
 
         // Si venimos de dar de alta al usuario y nos viene la información para loguearnos, no mostramos
         // el formulario de login se autentica al usuario y se le redirige al MainActivity
@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD);
+        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBDUsuarios);
     }
 
     /**
@@ -113,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD);
+        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBDUsuarios);
     }
 
     /**
@@ -196,8 +196,8 @@ public class LoginActivity extends AppCompatActivity {
                         .appendQueryParameter(Constantes.PASSWORD, password);
                 new LoginJsonTask(builderUri).execute(new URL(Constantes.SERVIDOR + Constantes.RUTA_CLASE_PHP));
                 // Autenticamos también al usuario en firebase para que pueda acceder al chat
-                if (autenticacionFirebase != null && referenciaBD != null)
-                    AccionesFirebase.loginUserFirebase(autenticacionFirebase, referenciaBD,
+                if (autenticacionFirebase != null && referenciaBDUsuarios != null)
+                    AccionesFirebase.loginUserFirebase(autenticacionFirebase, referenciaBDUsuarios,
                             usuario + Constantes.EMAIL_FIREBASE, password, LoginActivity.this);
             } else {
                 Toast.makeText(LoginActivity.this, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();

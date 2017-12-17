@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.cineshared.pjnogegonzalez.cineshared.R;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
-import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.UtilidadesImagenes;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -203,7 +203,7 @@ public class ChatActivity extends AppCompatActivity {
         // Setter de la imagen de cada usuario o de la de por defecto si no tiene una
         public void setImagenUsuarioChat(final String imagen, final Context contexto) {
             final ImageView imagenUsuarioChat = (ImageView) vistaChat.findViewById(R.id.imagenUsuarioChat);
-            Utilidades.establecerImagenUsuario(vistaChat.getContext(), imagen, imagenUsuarioChat, false);
+            UtilidadesImagenes.establecerImagenUsuario(vistaChat.getContext(), imagen, imagenUsuarioChat, false);
         }
 
         // Setter que nos permite conocer si el usuario se encuentra conectado a la aplicación

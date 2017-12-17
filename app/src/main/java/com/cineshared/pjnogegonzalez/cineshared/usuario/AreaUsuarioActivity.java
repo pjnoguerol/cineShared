@@ -13,17 +13,14 @@ import android.widget.Toast;
 import com.cineshared.pjnogegonzalez.cineshared.R;
 import com.cineshared.pjnogegonzalez.cineshared.acceso.MainActivity;
 import com.cineshared.pjnogegonzalez.cineshared.acceso.Usuarios;
-import com.cineshared.pjnogegonzalez.cineshared.chat.ConversacionActivity;
 import com.cineshared.pjnogegonzalez.cineshared.peliculas.Peliculas;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.ConversionJson;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.HiloGenerico;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.UtilidadesImagenes;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -50,7 +47,7 @@ public class AreaUsuarioActivity extends AppCompatActivity {
 
     // Variables para poder determinar si el usuario está conectado a la aplicación o no
     private FirebaseAuth firebaseAutenticacion;
-    private DatabaseReference referenciaBD;
+    private DatabaseReference referenciaBDUsuarios;
 
     /**
      * Método onCreate controla las acciones del área del usuario con el que se desea hacer intercambio
@@ -67,12 +64,12 @@ public class AreaUsuarioActivity extends AppCompatActivity {
         botonAceptar = (Button) findViewById(R.id.acepIntercambioBtn);
         botonChat = (Button) findViewById(R.id.iniciarChatBtn);
         firebaseAutenticacion = FirebaseAuth.getInstance();
-        referenciaBD = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE);
+        referenciaBDUsuarios = FirebaseDatabase.getInstance().getReference().child(Constantes.USUARIOS_FIREBASE);
         pelicula = (Peliculas) getIntent().getSerializableExtra(Constantes.PELICULAS);
 
         usuario = (Usuarios) getIntent().getSerializableExtra(Constantes.USUARIO);
-        Utilidades.establecerImagenUsuario(this, usuario.getImagen(), imagenUsuario, false);
-        String mensaje = "Desear compartir tu pelicula " + Utilidades.auxPelicula + " con la pelicula " + pelicula.getTitle() + " del usuario:  " + usuario.getUsuario() + "?";
+        UtilidadesImagenes.establecerImagenUsuario(this, usuario.getImagen(), imagenUsuario, false);
+        String mensaje = "¿Deseas compartir tu pelicula " + Utilidades.auxPelicula + " con la pelicula " + pelicula.getTitle() + " del usuario:  " + usuario.getUsuario() + "?";
         sinopsisPelicula.setText(mensaje);
         nombreUsuario.setText(usuario.getUsuario());
         botonAceptar.setOnClickListener(new View.OnClickListener() {
@@ -85,36 +82,7 @@ public class AreaUsuarioActivity extends AppCompatActivity {
         botonChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                referenciaBD.orderByChild(Constantes.NOMBRE_USUARIO).equalTo(usuario.getUsuario())
-                        .addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                if (dataSnapshot != null) {
-                                    Intent conversacionIntent = new Intent(AreaUsuarioActivity.this, ConversacionActivity.class);
-                                    conversacionIntent.putExtra("identificadorUsuarioDestinatario", dataSnapshot.getKey().toString());
-                                    conversacionIntent.putExtra("nombreUsuario", usuario.getUsuario());
-                                    startActivity(conversacionIntent);
-                                } else {
-                                    Toast.makeText(AreaUsuarioActivity.this, "Se ha producido un error al inicar Chat con esta persona", Toast.LENGTH_SHORT);
-                                }
-                            }
-
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                            }
-
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                            }
-
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
+                Utilidades.iniciarChat(referenciaBDUsuarios, usuario.getUsuario(), AreaUsuarioActivity.this);
             }
         });
     }
@@ -125,7 +93,7 @@ public class AreaUsuarioActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        AccionesFirebase.establecerUsuarioOnline(firebaseAutenticacion, referenciaBD);
+        AccionesFirebase.establecerUsuarioOnline(firebaseAutenticacion, referenciaBDUsuarios);
     }
 
     /**
@@ -134,7 +102,7 @@ public class AreaUsuarioActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        AccionesFirebase.establecerUsuarioOffline(firebaseAutenticacion, referenciaBD);
+        AccionesFirebase.establecerUsuarioOffline(firebaseAutenticacion, referenciaBDUsuarios);
     }
 
     /**

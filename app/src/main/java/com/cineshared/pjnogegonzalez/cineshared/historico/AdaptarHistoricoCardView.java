@@ -13,6 +13,7 @@ import com.cineshared.pjnogegonzalez.cineshared.acceso.Usuarios;
 import com.cineshared.pjnogegonzalez.cineshared.peliculas.Peliculas;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.UtilidadesImagenes;
 
 import java.util.List;
 
@@ -116,7 +117,7 @@ public class AdaptarHistoricoCardView extends RecyclerView.Adapter<AdaptarHistor
             peliculaViewHolder.fechaFin.setText("Acuerdo Cerrado= " + pelicula.getFechafin());
         }
 
-        Utilidades.establecerImagen(peliculaViewHolder.itemView.getContext(), Constantes.IMAGENES
+        UtilidadesImagenes.establecerImagen(peliculaViewHolder.itemView.getContext(), Constantes.IMAGENES
                 + pelicula.getPoster_path(), peliculaViewHolder.imagenPelicula);
     }
 

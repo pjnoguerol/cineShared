@@ -21,4 +21,11 @@
     <string name="resumen_peliculas_a_intercambiar">Resumen peliculas a intercambiar</string>
     <string name="aceptar">ACEPTAR</string>
     <string name="chat">Chat</string>
+    <string name="bienvenido_a_cineshared">Bienvenido a CineShared</string>
+    <string name="despliega_el_menu">Despliega el menú y descubre tus opciones!</string>
+    <string name="busqueda_externa">Busqueda Externa</string>
+    <string name="buscar">Buscar</string>
+    <string name="titulo_busqueda">Título búsqueda</string>
+    <string name="login">LOGIN</string>
+    <string name="insertar_usuario">INSERTAR USUARIO</string>
 </resources>

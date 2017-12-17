@@ -66,8 +66,10 @@
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="LOGIN"
+                android:layout_margin="15dp"
+                android:background="@color/colorAccent"
+                android:text="@string/login"
+                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
             <Button
@@ -75,9 +77,13 @@
                 style="?android:textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="100sp"
+                android:layout_marginLeft="60dp"
                 android:layout_marginTop="50sp"
-                android:text="INSERTAR USUARIO"
+                android:background="@color/colorAccent"
+                android:paddingEnd="50dp"
+                android:paddingStart="50dp"
+                android:text="@string/insertar_usuario"
+                android:textColor="@android:color/white"
                 android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>

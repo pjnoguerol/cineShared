@@ -48,6 +48,7 @@ public class ConversionJson<T> {
     private Usuarios usuario;
     private int mode;
     private int historico;
+    private Context contexto;
 
     /**
      * Constructor de la clase con todos los parámetros
@@ -94,9 +95,10 @@ public class ConversionJson<T> {
      */
     public RecyclerView onCreateView(Context context, View rootView, Resources resources) {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-        int mNoOfColumns = Utilidades.calcularNumeroColumnas(context);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, mNoOfColumns);
+        int numeroColumnas = Utilidades.calcularNumeroColumnas(context);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(context, numeroColumnas);
         recyclerView.setLayoutManager(layoutManager);
+        this.contexto = context;
         return recyclerView;
     }
 
@@ -180,7 +182,6 @@ public class ConversionJson<T> {
             if (statusCode == HttpsURLConnection.HTTP_OK) {
                 InputStream inputStream = new BufferedInputStream(conexion.getInputStream());
                 listaConvertir = parsearJson(inputStream);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -239,20 +240,16 @@ public class ConversionJson<T> {
                     adaptador = new AdaptarBusquedaApiCardView((List<Peliculas>) listaConvertir, 1, usuario);
             } else if ((Constantes.PELICULAS.equals(tipoObjeto))) {
                 if (usuario != null)
-
                     adaptador = new AdaptarBusquedaApiCardView((List<Peliculas>) listaConvertir, mode, usuario);
             } else if ((Constantes.INTERCAMBIO.equals(tipoObjeto))) {
-
                 if (usuario != null)
-
                     adaptador = new AdaptarHistoricoCardView((List<Peliculas>) listaConvertir, usuario);
             } else if (Constantes.PELICULAS_CHECK.equals(tipoObjeto)) {
                 List<PeliculasComprobacion> lista = (List<PeliculasComprobacion>) listaConvertir;
                 adaptador = new AdaptarHistoricoCardView(lista.get(0).getPeliculas(), usuario);
-            }else if (Constantes.CONTACTOS.equals(tipoObjeto)) {
-                 adaptador = new AdaptarUsuariosCardView((List<Usuarios>) listaConvertir);
+            } else if (Constantes.CONTACTOS.equals(tipoObjeto)) {
+                adaptador = new AdaptarUsuariosCardView((List<Usuarios>) listaConvertir, contexto);
             }
-
         }
         return adaptador;
     }

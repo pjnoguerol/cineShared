@@ -92,11 +92,16 @@
                     android:id="@+id/imagenSubir"
                     android:layout_width="150dp"
                     android:layout_height="150dp" />
+
                 <Button
                     android:id="@+id/botonSubir"
                     android:layout_width="150dp"
                     android:layout_height="50dp"
-                    android:text="Subir Imagen"/>
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/colorAccent"
+                    android:text="Subir Imagen"
+                    android:textColor="@android:color/white" />
 
             </LinearLayout>
 
@@ -106,8 +111,10 @@
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_margin="15dp"
+                android:background="@color/colorAccent"
                 android:text="Editar Usuario"
+                android:textColor="@android:color/white"
                 android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>

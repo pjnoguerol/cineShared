@@ -1,15 +1,18 @@
 package com.cineshared.pjnogegonzalez.cineshared.utilidades;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Patterns;
-import android.widget.ImageView;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import com.cineshared.pjnogegonzalez.cineshared.R;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.cineshared.pjnogegonzalez.cineshared.chat.ConversacionActivity;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -77,57 +80,41 @@ public class Utilidades {
     }
 
     /**
-     * Método establecerImagenUsuario establece la imagen del usuario con la librería Picasso y le da
-     * formato circular. Además, establece el color de fondo dependiendo de si la imagen está informada o no.
+     * Método comprobarCamposUsuario comprueba si todos los datos obligatorios se han introducido
+     * correctamente antes de dar de alta o modificar al usuario en la base de datos
      *
-     * @param contexto        Contexto del activity donde se cargará la imagen
-     * @param imagenUrl       URL de la imagen que se cargará
-     * @param imagenViewField Campo donde se realiza la visualización de la imagen
+     * @param usuarioTxt   EditText donde está el nombre del usuario, será null si estamos modificandolo
+     * @param passwordTxt  EditText donde está la contraseña del usuario
+     * @param emailTxt     EditText donde está el email del usuario
+     * @param telefonoTxt  EditText donde está el teléfono del usuario
+     * @param distanciaTxt EditText donde está la distancia máxima del usuario
+     * @param esInsert     true si es alta de usuario, false si es modificación
+     * @return Booleano con el resultado de la validación
      */
-    public static void establecerImagenUsuario(final Context contexto, final String imagenUrl,
-                                               final ImageView imagenViewField, boolean cambiarFondo) {
-        String urlImagen = imagenUrl;
-        if (!imagenUrl.contains("http"))
-            urlImagen = Constantes.RUTA_IMAGEN + urlImagen;
-
-        Picasso.with(contexto).load(urlImagen)
-                .networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.ic_chat_img_defecto)
-                .transform(new TransformacionCirculo()).fit().centerCrop().rotate(270f)
-                .into(imagenViewField, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                    }
-
-                    @Override
-                    public void onError() {
-                        Picasso.with(contexto).load(Constantes.RUTA_IMAGEN + imagenUrl)
-                                .placeholder(R.drawable.ic_chat_img_defecto)
-                                .transform(new TransformacionCirculo()).fit().centerCrop().rotate(270f).into(imagenViewField);
-                    }
-                });
-        if (cambiarFondo) {
-            if (!"null".equals(imagenUrl) && !"default".equals(imagenUrl)) {
-                imagenViewField.setBackgroundResource(R.color.colorPrimary);
-            } else {
-                imagenViewField.setBackgroundResource(R.color.colorBlanco);
-            }
+    public static boolean comprobarCamposUsuario(EditText usuarioTxt, EditText passwordTxt, EditText emailTxt,
+                                                 EditText telefonoTxt, EditText distanciaTxt, boolean esInsert) {
+        boolean resultadoValidacion = true;
+        if (esInsert && usuarioTxt != null && Constantes.CADENA_VACIA.equals(usuarioTxt.getText().toString().trim())) {
+            usuarioTxt.setError("El usuario es obligatorio");
+            resultadoValidacion = false;
         }
-    }
-
-    /**
-     * Método establecerImagen establece la imagen del usuario con la librería Picasso y establece el color de
-     * fondo dependiendo de si la imagen está informada o no.
-     *
-     * @param contexto        Contexto del activity donde se cargará la imagen
-     * @param imagenUrl       URL de la imagen que se cargará
-     * @param imagenViewField Campo donde se realiza la visualización de la imagen
-     */
-    public static void establecerImagen(final Context contexto, final String imagenUrl, final ImageView imagenViewField) {
-        String urlImagen = imagenUrl;
-        if (!imagenUrl.contains("http"))
-            urlImagen = Constantes.RUTA_IMAGEN + urlImagen;
-
-        Picasso.with(contexto).load(urlImagen).networkPolicy(NetworkPolicy.OFFLINE).into(imagenViewField);
+        if (!Utilidades.isPasswordValida(passwordTxt.getText().toString().trim())) {
+            passwordTxt.setError("La contraseña debe contener letras y números. Longitud minima de 6");
+            resultadoValidacion = false;
+        }
+        if (!Utilidades.isEmailValido(emailTxt.getText().toString().trim())) {
+            emailTxt.setError("Email incorrecto");
+            resultadoValidacion = false;
+        }
+        if (!Utilidades.isTelefonoValido(telefonoTxt.getText().toString().trim())) {
+            telefonoTxt.setError("Teléfono con formato válido");
+            resultadoValidacion = false;
+        }
+        if (Constantes.CADENA_VACIA.equals(distanciaTxt.getText().toString().trim())) {
+            distanciaTxt.setError("Distancia máxima es obligatoria");
+            resultadoValidacion = false;
+        }
+        return resultadoValidacion;
     }
 
     /**
@@ -175,7 +162,7 @@ public class Utilidades {
     /**
      * Método convertirMillasKilometros convierte las millas a kilómetros
      *
-     * @param millas Millas a convertir
+     * @param millas      Millas a convertir
      * @param pasarMetros True si se quiere pasar a metros, false si se deja en kilómetros
      * @return Kilómetros con dos decimales
      */
@@ -185,5 +172,38 @@ public class Utilidades {
         if (pasarMetros)
             decimalKilometros = decimalKilometros.multiply(new BigDecimal(1000));
         return decimalKilometros.setScale(2, RoundingMode.HALF_UP).floatValue();
+    }
+
+    public static void iniciarChat(DatabaseReference referenciaBDUsuarios, final String nombreUsuario, final Context contexto) {
+        referenciaBDUsuarios.orderByChild(Constantes.NOMBRE_USUARIO).equalTo(nombreUsuario)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if (dataSnapshot != null) {
+                            Intent conversacionIntent = new Intent(contexto, ConversacionActivity.class);
+                            conversacionIntent.putExtra("identificadorUsuarioDestinatario", dataSnapshot.getKey().toString());
+                            conversacionIntent.putExtra("nombreUsuario", nombreUsuario);
+                            contexto.startActivity(conversacionIntent);
+                        } else {
+                            Toast.makeText(contexto, "Se ha producido un error al inicar Chat con esta persona", Toast.LENGTH_SHORT);
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
     }
 }

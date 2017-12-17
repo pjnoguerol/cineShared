@@ -21,7 +21,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/camposFormularioLogin"
+        android:id="@+id/camposFormularioBusqueda"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -30,19 +30,20 @@
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
 
             <EditText
                 android:id="@+id/userBusqueda"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Busqueda"
+                android:hint="@string/titulo_busqueda"
                 android:inputType="text"
                 android:maxLines="1" />
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
@@ -51,8 +52,14 @@
                 style="?android:textAppearanceSmall"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="10dp"
                 android:layout_weight="1"
-                android:text="Busqueda Externa"
+                android:background="@color/colorAccent"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:text="@string/busqueda_externa"
+                android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -61,8 +68,14 @@
                 style="?android:textAppearanceSmall"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="120dp"
+                android:layout_marginTop="10dp"
                 android:layout_weight="1"
-                android:text="Buscar"
+                android:background="@color/colorAccent"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:text="@string/buscar"
+                android:textColor="@android:color/white"
                 android:textStyle="bold" />
         </LinearLayout>
 

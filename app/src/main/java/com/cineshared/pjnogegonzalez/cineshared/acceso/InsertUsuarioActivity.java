@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -34,9 +33,9 @@ import com.cineshared.pjnogegonzalez.cineshared.BuildConfig;
 import com.cineshared.pjnogegonzalez.cineshared.R;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.ConversionJson;
-import com.cineshared.pjnogegonzalez.cineshared.utilidades.UtilitidadFtp;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.HiloGenerico;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.UtilidadesImagenes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -45,14 +44,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -103,7 +99,8 @@ public class InsertUsuarioActivity extends AppCompatActivity {
         btInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (comprobarCamposNuevoUsuario()) {
+                if (Utilidades.comprobarCamposUsuario(usuarioInsert, passwordInsert, emailInsert,
+                        telefonoInsert, distanciaInsert, true)) {
                     insertarNuevoUsuario();
                 }
             }
@@ -137,7 +134,7 @@ public class InsertUsuarioActivity extends AppCompatActivity {
                 // Opción: Tomar Foto
                 Uri imageUri = Uri.parse(rutaFotoActual);
                 ficheroImagen = new File(imageUri.getPath());
-                Picasso.with(InsertUsuarioActivity.this).load(imageUri.toString()).into(subirImagen);
+                subirImagen.setImageBitmap(BitmapFactory.decodeFile(imageUri.getPath()));
                 // Scan fichero para que aparezca en la galería
                 MediaScannerConnection.scanFile(InsertUsuarioActivity.this,
                         new String[]{imageUri.getPath()}, null,
@@ -147,51 +144,16 @@ public class InsertUsuarioActivity extends AppCompatActivity {
                         });
             } else if (requestCode == 2) {
                 Uri selectedImage = data.getData();
-                //Utilidades.establecerImagenUsuario(getContext(), selectedImage.toString(), subirImagen, false);
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 String picturePath = cursor.getString(columnIndex);
                 cursor.close();
                 ficheroImagen = new File(picturePath);
-
-                //ImageView imageView = (ImageView) getActivity().findViewById(R.id.imgView);
                 subirImagen.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-                subirImagen.setRotation(270);
             }
         }
-    }
-
-    /**
-     * Método comprobarCamposNuevoUsuario comprueba si todos los datos obligatorios se han introducido
-     * correctamente antes de dar de alta al usuario en la base de datos
-     *
-     * @return Booleano con el resultado de la validación
-     */
-    private boolean comprobarCamposNuevoUsuario() {
-        boolean resultadoValidacion = true;
-        if (Constantes.CADENA_VACIA.equals(usuarioInsert.getText().toString().trim())) {
-            usuarioInsert.setError("El usuario es obligatorio");
-            resultadoValidacion = false;
-        }
-        if (!Utilidades.isPasswordValida(passwordInsert.getText().toString().trim())) {
-            passwordInsert.setError("La contraseña debe contener letras y números. Longitud minima de 6");
-            resultadoValidacion = false;
-        }
-        if (!Utilidades.isEmailValido(emailInsert.getText().toString().trim())) {
-            emailInsert.setError("Email incorrecto");
-            resultadoValidacion = false;
-        }
-        if (!Utilidades.isTelefonoValido(telefonoInsert.getText().toString().trim())) {
-            telefonoInsert.setError("Teléfono con formato válido");
-            resultadoValidacion = false;
-        }
-        if (Constantes.CADENA_VACIA.equals(distanciaInsert.getText().toString().trim())) {
-            distanciaInsert.setError("Distancia máxima es obligatoria");
-            resultadoValidacion = false;
-        }
-        return resultadoValidacion;
     }
 
     /**
@@ -209,7 +171,7 @@ public class InsertUsuarioActivity extends AppCompatActivity {
         }
 
         // Mostramos las opciones al usuario para seleccionar su foto de usuario
-        final CharSequence[] opcionesImagen = {"Tomar foto", "Cancelar"};
+        final CharSequence[] opcionesImagen = {"Tomar foto", "Elegir de la galeria", "Cancelar"};
         AlertDialog.Builder builderAlertDialog = new AlertDialog.Builder(this);
         builderAlertDialog.setTitle("Subir Foto");
         builderAlertDialog.setItems(opcionesImagen, new DialogInterface.OnClickListener() {
@@ -220,7 +182,8 @@ public class InsertUsuarioActivity extends AppCompatActivity {
                     Intent tomarFotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     File fotoPerfilUsuario = null;
                     try {
-                        fotoPerfilUsuario = crearFicheroImagen();
+                        fotoPerfilUsuario = UtilidadesImagenes.crearFicheroImagen();
+                        rutaFotoActual = fotoPerfilUsuario.getAbsolutePath();
                     } catch (IOException ex) {
                         Toast.makeText(InsertUsuarioActivity.this, "Error creando la imagen de usuario", Toast.LENGTH_SHORT).show();
                         return;
@@ -241,24 +204,6 @@ public class InsertUsuarioActivity extends AppCompatActivity {
             }
         });
         builderAlertDialog.show();
-    }
-
-    /**
-     * Método crearFicheroImagen crea un fichero con la imagen del usuario seleccionada para su perfil
-     *
-     * @return Fichero creado
-     * @throws IOException Excepción en caso de problemas
-     */
-    private File crearFicheroImagen() throws IOException {
-        // Creamos el nombre del fichero de Imagen
-        String horaActual = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String nombreImagenUsuario = "JPEG_" + horaActual + "_";
-        File directorioAlmacenamiento = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DCIM), "Camera");
-        File imagenPerfil = File.createTempFile(nombreImagenUsuario, ".jpg", directorioAlmacenamiento);
-        //  Devolvemos la imagen con el nombre Generado
-        rutaFotoActual = "file:" + imagenPerfil.getAbsolutePath();
-        return imagenPerfil;
     }
 
     /**
@@ -319,7 +264,7 @@ public class InsertUsuarioActivity extends AppCompatActivity {
          */
         @Override
         protected String doInBackground(File... file) {
-            return UtilitidadFtp.subirArchivo(file[0]);
+            return UtilidadesImagenes.subirArchivoFtp(file[0]);
         }
 
         /**
@@ -338,8 +283,8 @@ public class InsertUsuarioActivity extends AppCompatActivity {
      * Método crearUsuarioFirebaseChat crea al usuario en firebase para que de esa forma tenga acceso
      * a la funcionalidad del chat.
      *
-     * @param usuario Nombre del usuario a crear
-     * @param email Email del usuario a crear
+     * @param usuario  Nombre del usuario a crear
+     * @param email    Email del usuario a crear
      * @param password Contraseña del usuario a crear
      */
     private void crearUsuarioFirebaseChat(final String usuario, final String email, final String password) {

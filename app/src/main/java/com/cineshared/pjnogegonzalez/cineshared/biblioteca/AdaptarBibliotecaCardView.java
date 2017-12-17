@@ -16,6 +16,7 @@ import com.cineshared.pjnogegonzalez.cineshared.peliculas.Peliculas;
 import com.cineshared.pjnogegonzalez.cineshared.usuario.AreaUsuarioActivity;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.UtilidadesImagenes;
 
 import java.util.List;
 
@@ -120,15 +121,15 @@ public class AdaptarBibliotecaCardView extends RecyclerView.Adapter<AdaptarBibli
 
         if (pelicula.getEstado() == 0) {
             if (pelicula.getAlert() > 0)
-                Utilidades.establecerImagen(peliculaViewHolder.itemView.getContext(), Constantes.RUTA_IMAGEN
+                UtilidadesImagenes.establecerImagen(peliculaViewHolder.itemView.getContext(), Constantes.RUTA_IMAGEN
                         + "alert.png", peliculaViewHolder.imagenIcon);
         } else {
-            Utilidades.establecerImagen(peliculaViewHolder.itemView.getContext(), Constantes.RUTA_IMAGEN
+            UtilidadesImagenes.establecerImagen(peliculaViewHolder.itemView.getContext(), Constantes.RUTA_IMAGEN
                     + "candado.png", peliculaViewHolder.imagenIcon);
         }
 
         // Mostramos las imágenes del listado de películas y establecemos las acciones al hacer click sobre ellas
-        Utilidades.establecerImagen(peliculaViewHolder.itemView.getContext(), Constantes.IMAGENES
+        UtilidadesImagenes.establecerImagen(peliculaViewHolder.itemView.getContext(), Constantes.IMAGENES
                 + pelicula.getPoster_path(), peliculaViewHolder.imagenPelicula);
         peliculaViewHolder.imagenPelicula.setOnClickListener(new View.OnClickListener() {
             @Override

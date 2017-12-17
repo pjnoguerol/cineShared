@@ -3,7 +3,7 @@ package com.cineshared.pjnogegonzalez.cineshared.utilidades;
 import java.io.Serializable;
 
 /**
- * Clase MensajeChat con todos los atributos de un resultado y los métodos getter y setter
+ * Clase Resultado con todos los atributos de un resultado y los métodos getter y setter
  * <p>
  * Creada por Pablo Noguerol y Elena González
  */

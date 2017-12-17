@@ -9,15 +9,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.cineshared.pjnogegonzalez.cineshared.peliculas.Peliculas;
 import com.cineshared.pjnogegonzalez.cineshared.R;
 import com.cineshared.pjnogegonzalez.cineshared.acceso.Usuarios;
+import com.cineshared.pjnogegonzalez.cineshared.peliculas.Peliculas;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.ConversionJson;
 
@@ -46,10 +45,10 @@ public class FragmentIntercambioBiblioteca extends Fragment {
     /**
      * Método onCreateView se ejecuta al inicializarse el fragmento
      *
-     * @param inflater Layout
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater           Layout donde se cargará el fragmento
+     * @param container          Contenedor de dicho layout
+     * @param savedInstanceState Si no es nulo, es porque el fragmento existía con anterioridad
+     * @return Vista con el fragmento
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,7 +61,7 @@ public class FragmentIntercambioBiblioteca extends Fragment {
         recyclerView = conversionJson.onCreateViewScroll(context, rootView, getResources());
         String url = "";
         conversionJson.setMode(5);
-        url = Constantes.RUTA_BIBLIOTECA+usuario.getId_usua()+"&estadobiblo=3";
+        url = Constantes.RUTA_BIBLIOTECA + usuario.getId_usua() + "&estadobiblo=3";
         try {
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -77,15 +76,16 @@ public class FragmentIntercambioBiblioteca extends Fragment {
         }
         return rootView;
     }
+
     /**
-     * Inner class que parsea la Biblioteca a una CardView
+     * Inner class que parsea los intercambios a una CardView
      */
     public class PeliculasJsonTask extends AsyncTask<URL, Void, List<Peliculas>> {
 
         private List<Peliculas> listaPelicula;
 
         /**
-         * Método que llama al parseo de biblioteca para obtener la lista a mostrar
+         * Método que llama al parseo de intercambios para obtener la lista a mostrar
          *
          * @return Biblioteca
          */
@@ -105,5 +105,4 @@ public class FragmentIntercambioBiblioteca extends Fragment {
             recyclerView.setAdapter(conversionJson.onPostExecute(listaPelicula));
         }
     }
-
 }

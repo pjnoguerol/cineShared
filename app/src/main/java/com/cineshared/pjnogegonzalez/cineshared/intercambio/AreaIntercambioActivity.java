@@ -212,7 +212,6 @@ public class AreaIntercambioActivity extends AppCompatActivity {
                 Uri.Builder builder = new Uri.Builder()
                         .appendQueryParameter("peliresumen", idPelicula + "")
                         .appendQueryParameter("usuaresumen", idUsuario + "");
-                Log.w("builder", builder.toString());
                 HiloGenerico<PeliculasComprobacion> hilo = new HiloGenerico<>(builder);
                 hilo.setActivity(this);
                 hilo.setTipoObjeto(Constantes.PELICULAS_CHECK);
@@ -244,7 +243,7 @@ public class AreaIntercambioActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD);
+        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
     }
 
     /**
@@ -253,6 +252,6 @@ public class AreaIntercambioActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD);
+        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
     }
 }

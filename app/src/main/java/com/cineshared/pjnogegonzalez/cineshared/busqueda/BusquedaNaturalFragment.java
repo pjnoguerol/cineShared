@@ -25,8 +25,8 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * Clase BusquedaFragment contiene las acciones relativas a la búsqueda
- * BusquedaNaturalFragment
+ * Clase BusquedaNaturalFragment contiene las acciones relativas a la búsqueda
+ * <p>
  * Creada por Pablo Noguerol y Elena González
  */
 public class BusquedaNaturalFragment extends Fragment {
@@ -37,7 +37,7 @@ public class BusquedaNaturalFragment extends Fragment {
     private String cadenaBusqueda;
     private Usuarios usuario;
 
-    // Constructorvacío
+    // Constructor vacío
     public BusquedaNaturalFragment() {
     }
 

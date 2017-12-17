@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +57,7 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
     private Marker marcadorMapa;
     private Circle circuloPosicion;
     private Usuarios usuario;
-    private Target tar;
+    private Target target;
     private LatLng posicion;
 
     /**
@@ -67,81 +65,60 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
      */
     private void insertarUsuarios() {
         try {
-
-
-            //Creamos la peticion POST con los parametros deseados
             String url = Constantes.SERVIDOR + Constantes.RUTA_CLASE_PHP;
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-           // LatLng posicion;
             if (networkInfo != null && networkInfo.isConnected()) {
 
                 Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("usuacoord", usuario.getUsuario() );
+                        .appendQueryParameter("usuacoord", usuario.getUsuario());
                 //Cargamos el hilo con los parametros paraejecutarlo
-                Log.w("usuariocoord", builder.toString());
                 HiloGenerico<Usuarios> hilo = new HiloGenerico<>(builder);
                 hilo.setActivity(getActivity());
                 hilo.setTipoObjeto(Constantes.USUARIOS);
                 hilo.setConversionJson(new ConversionJson<Usuarios>(Constantes.USUARIOS));
                 List<Usuarios> resultado = hilo.execute(new URL(url)).get();
 
-                    if (usuario!=null)
-                    {
+                if (usuario != null) {
 
-                        final Usuarios user = resultado.get(0);
-                        tar =
-                       //Target picassoMarker = new PicassoMarker(opcionesMarcador);
-                       new Target() {
-                           /**
-                            * Cargamos la imagen cuando este lista
-                            * @param bitmap
-                            * @param from
-                            */
-                            @Override
-                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                //Captamos las coordenadas del usuario
-                                posicion = new LatLng(user.getLatitud(), user.getLongitud());
+                    final Usuarios user = resultado.get(0);
+                    target = new Target() {
+                        /**
+                         * Cargamos la imagen del usuario cuando este lista
+                         * @param bitmap Bitmap de la imagen
+                         * @param from Dónde cargar dicha imagen
+                         */
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            //Captamos las coordenadas del usuario
+                            posicion = new LatLng(user.getLatitud(), user.getLongitud());
+                            //Añadimos los marcadores
+                            opcionesMarcador = new MarkerOptions().position(posicion).title(user.getUsuario()).snippet(user.getUsuario());
+                            opcionesMarcador.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+                            marcadorMapa = mapaGoogle.addMarker(opcionesMarcador);
+                            //Añadimos el circulo alrededor en funcion de la distancia
+                            circuloPosicion = mapaGoogle.addCircle(new CircleOptions()
+                                    .center(posicion)
+                                    .radius(usuario.getDistancia() * 1000f)
+                                    .strokeWidth(10)
+                                    .strokeColor(R.color.colorPrimary)
+                                    .fillColor(R.color.colorAccent)
+                                    .clickable(false));
+                            mapaGoogle.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion, 5f));
+                        }
 
-                                //Añadimos los marcadores
-                                opcionesMarcador = new MarkerOptions().position(posicion).title(user.getUsuario()).snippet(user.getUsuario());
-                                opcionesMarcador.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                                marcadorMapa = mapaGoogle.addMarker(opcionesMarcador);
-                                //Añadimos el circulo alrededor en funcion de la distancia
-                                circuloPosicion = mapaGoogle.addCircle(new CircleOptions()
-                                        .center(posicion)
-                                        .radius(Utilidades.convertirMillasKilometros(usuario.getDistancia(), true) * 1000f)
-                                        .strokeWidth(10)
-                                        .strokeColor(R.color.colorPrimaryDark)
-                                        .fillColor(R.color.colorPrimary)
-                                        .clickable(false));
-                                mapaGoogle.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion, 7f));
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                        }
 
-
-
-                            }
-
-                            @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-
-                            }
-
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                            }
-                        };
-                        //Añadimos la imagen y los demas datos
-                        Picasso.with(getActivity()).load(Constantes.RUTA_IMAGEN+usuario.getImagen()).transform(new TransformacionCirculo()). resize(100, 100).into(tar);
-
-                        //marker = new MarkerOptions().position(posicion).title(usuario.getUsuario()).snippet(usuario.getUsuario());
-                        //marker =googleMap.addMarker(new MarkerOptions().position(posicion).title(usuario.getUsuario()).snippet(usuario.getUsuario()));
-
-                    }
-
-
-
-
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        }
+                    };
+                    //Añadimos la imagen y los demas datos
+                    Picasso.with(getActivity()).load(Constantes.RUTA_IMAGEN + usuario.getImagen())
+                            .transform(new TransformacionCirculo()).resize(100, 100).into(target);
+                }
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -151,7 +128,6 @@ public class PosicionFragment extends Fragment implements OnMapReadyCallback {
             e.printStackTrace();
         }
     }
-
 
 
     /**

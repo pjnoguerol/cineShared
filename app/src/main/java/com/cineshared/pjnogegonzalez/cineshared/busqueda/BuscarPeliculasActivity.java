@@ -103,7 +103,7 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD);
+        AccionesFirebase.establecerUsuarioOnline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
     }
 
     /**
@@ -112,6 +112,6 @@ public class BuscarPeliculasActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD);
+        AccionesFirebase.establecerUsuarioOffline(autenticacionFirebase, referenciaBD.child(Constantes.USUARIOS_FIREBASE));
     }
 }

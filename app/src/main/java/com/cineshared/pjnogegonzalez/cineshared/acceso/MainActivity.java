@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -48,7 +49,8 @@ import com.cineshared.pjnogegonzalez.cineshared.ubicacion.PosicionFragment;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.AccionesFirebase;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.ConversionJson;
-import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.Resultado;
+import com.cineshared.pjnogegonzalez.cineshared.utilidades.UtilidadesImagenes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -78,10 +80,11 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth firebaseAutenticacion;
     private DatabaseReference usuarioBD;
     private FloatingActionButton buscarAnyadirPeliculaBtn;
-    private Menu menuBarra;
     private boolean show;
-    private MenuItem menuItem;
-    private MenuItem menuItem1;
+    private MenuItem lupaBusqueda;
+    private MenuItem menuConfiguracion;
+    private TextView bienvenidoCineShared;
+    private TextView despliegaMenu;
 
     // Iniciamos las variables con las que realizaremos las conversiones a Json necesarias
     private ConversionJson<Usuarios> conversionJson = new ConversionJson<>(Constantes.USUARIOS);
@@ -124,12 +127,18 @@ public class MainActivity extends AppCompatActivity
 
         // Obtenemos los datos del usuario conectado
         usuarioLogeado = (Usuarios) getIntent().getSerializableExtra(Constantes.USUARIOS);
+
         // Información del usuario en cabecera
         View infoCabecera = navigationView.getHeaderView(0);
         navigationView.setNavigationItemSelectedListener(this);
         usuarioLogin = (TextView) infoCabecera.findViewById(R.id.usuarioNombre);
         usuarioEmail = (TextView) infoCabecera.findViewById(R.id.usuarioEmail);
         usuarioImagen = (ImageView) infoCabecera.findViewById(R.id.imagenUsuario);
+        bienvenidoCineShared = (TextView) findViewById(R.id.bienvenidosTxt);
+        ;
+        despliegaMenu = (TextView) findViewById(R.id.despliegaMenuTxt);
+        bienvenidoCineShared.setVisibility(View.VISIBLE);
+        despliegaMenu.setVisibility(View.VISIBLE);
 
         LinearLayout layoutUsuario = (LinearLayout) infoCabecera.findViewById(R.id.layoutUsuario);
         layoutUsuario.setOnClickListener(new View.OnClickListener() {
@@ -229,7 +238,7 @@ public class MainActivity extends AppCompatActivity
         Criteria criterioLocalizacion = new Criteria();
         criterioLocalizacion.setAccuracy(Criteria.ACCURACY_COARSE);
         String localizacionUsuario = locationManager.getBestProvider(criterioLocalizacion, true);
-        locationManager.requestLocationUpdates(localizacionUsuario, 300000, 0, locationListener);
+        locationManager.requestLocationUpdates(localizacionUsuario, 30000, 0, locationListener);
     }
 
     /**
@@ -241,17 +250,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_configuracion, menu);
-        menuItem = menu.findItem(R.id.busqueda);
-        menuItem1 = menu.findItem(R.id.configuracion);
+        lupaBusqueda = menu.findItem(R.id.busqueda);
+        menuConfiguracion = menu.findItem(R.id.configuracion);
         if (!this.show) {
-            menuItem.setVisible(false);
-            menuItem1.setVisible(false);
+            lupaBusqueda.setVisible(false);
+            menuConfiguracion.setVisible(false);
+        } else {
+            lupaBusqueda.setVisible(true);
+            menuConfiguracion.setVisible(true);
         }
-        else {
-            menuItem.setVisible(true);
-            menuItem1.setVisible(true);
-        }
-        final SearchView vistaBusqueda = (SearchView) menuItem.getActionView();
+        final SearchView vistaBusqueda = (SearchView) lupaBusqueda.getActionView();
         // Establecemos la acción del botón de búsqueda
         vistaBusqueda.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -279,7 +287,7 @@ public class MainActivity extends AppCompatActivity
                     if (!vistaBusqueda.isIconified())
                         vistaBusqueda.setIconified(true);
                 }
-                menuItem.collapseActionView();
+                lupaBusqueda.collapseActionView();
                 return false;
             }
 
@@ -342,7 +350,7 @@ public class MainActivity extends AppCompatActivity
             establecerFragmeto(Constantes.CONTACTOS);
             auxFragment = 4;
             fragmentTransaction = true;
-        }else if (identificadorOpcion == R.id.nav_chat) {
+        } else if (identificadorOpcion == R.id.nav_chat) {
             Intent chatIntent = new Intent(MainActivity.this, ChatActivity.class);
             startActivity(chatIntent);
         }
@@ -397,16 +405,14 @@ public class MainActivity extends AppCompatActivity
         menuNavegacion.findItem(R.id.nav_localizacion).setVisible(true);
         menuNavegacion.findItem(R.id.nav_contactos).setVisible(true);
 
-        if (this.menuItem!=null && this.menuItem1!=null) {
-            menuItem.setVisible(true);
-            menuItem1.setVisible(true);
+        if (this.lupaBusqueda != null && this.menuConfiguracion != null) {
+            lupaBusqueda.setVisible(true);
+            menuConfiguracion.setVisible(true);
         }
 
-
-        //menuNavegacion.findItem(R.id.configuracion).setVisible(true);
-        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) buscarAnyadirPeliculaBtn.getLayoutParams();
-        p.setAnchorId(View.NO_ID);
-        buscarAnyadirPeliculaBtn.setLayoutParams(p);
+        CoordinatorLayout.LayoutParams parametrosLayout = (CoordinatorLayout.LayoutParams) buscarAnyadirPeliculaBtn.getLayoutParams();
+        parametrosLayout.setAnchorId(View.NO_ID);
+        buscarAnyadirPeliculaBtn.setLayoutParams(parametrosLayout);
         buscarAnyadirPeliculaBtn.setVisibility(View.VISIBLE);
     }
 
@@ -422,16 +428,14 @@ public class MainActivity extends AppCompatActivity
         menuNavegacion.findItem(R.id.nav_chat).setVisible(false);
         menuNavegacion.findItem(R.id.nav_localizacion).setVisible(false);
         menuNavegacion.findItem(R.id.nav_contactos).setVisible(false);
-        if (this.menuItem!=null && this.menuItem1!=null) {
-            menuItem.setVisible(false);
-            menuItem1.setVisible(false);
+        if (this.lupaBusqueda != null && this.menuConfiguracion != null) {
+            lupaBusqueda.setVisible(false);
+            menuConfiguracion.setVisible(false);
         }
 
-
-        //menuNavegacion.findItem(R.id.configuracion).setVisible(false);
-        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) buscarAnyadirPeliculaBtn.getLayoutParams();
-        p.setAnchorId(View.NO_ID);
-        buscarAnyadirPeliculaBtn.setLayoutParams(p);
+        CoordinatorLayout.LayoutParams parametrosLayout = (CoordinatorLayout.LayoutParams) buscarAnyadirPeliculaBtn.getLayoutParams();
+        parametrosLayout.setAnchorId(View.NO_ID);
+        buscarAnyadirPeliculaBtn.setLayoutParams(parametrosLayout);
         buscarAnyadirPeliculaBtn.setVisibility(View.GONE);
     }
 
@@ -483,11 +487,12 @@ public class MainActivity extends AppCompatActivity
             fragment = new ConfiguracionFragment();
         } else if (Constantes.LOCALIZACION.equals(tipo)) {
             fragment = new PosicionFragment();
-        }else if (Constantes.CONTACTOS.equals(tipo)) {
+        } else if (Constantes.CONTACTOS.equals(tipo)) {
             fragment = new ContactosFragment();
         }
 
-
+        bienvenidoCineShared.setVisibility(View.INVISIBLE);
+        despliegaMenu.setVisibility(View.INVISIBLE);
         fragment.setArguments(bundle);
     }
 
@@ -520,10 +525,9 @@ public class MainActivity extends AppCompatActivity
             if (usuarioTask != null) {
                 if (usuarioTask.isOk()) {
                     usuarioLogeado = usuarioTask;
-                    Toast.makeText(MainActivity.this, Constantes.BIENVENIDO + usuarioLogeado.getUsuario(), Toast.LENGTH_SHORT).show();
                     usuarioLogin.setText(usuarioLogeado.getUsuario());
                     usuarioEmail.setText(usuarioLogeado.getEmail());
-                    Utilidades.establecerImagenUsuario(MainActivity.this, usuarioLogeado.getImagen(), usuarioImagen, true);
+                    UtilidadesImagenes.establecerImagenUsuario(MainActivity.this, usuarioLogeado.getImagen(), usuarioImagen, true);
                     // Si la imagen del FTP y la de firebase no coinciden, se actualiza la de firebase
                     if (usuarioBD != null && firebaseAutenticacion.getCurrentUser() != null
                             && !usuarioLogeado.getImagen().equals(usuarioBD.child(Constantes.IMAGEN_USUARIO)))
@@ -534,6 +538,104 @@ public class MainActivity extends AppCompatActivity
                 }
             } else {
                 Toast.makeText(MainActivity.this, Constantes.ERROR_JSON, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /**
+     * InnerClass LocalizacionListener realiza las comprobaciones necesarias para actualizar la posición del usuario
+     * <p>
+     * Creada por Pablo Noguerol y Elena González
+     */
+    public class LocalizacionListener implements LocationListener {
+
+        // Definimos las variables
+        private Context contexto;
+        private String longitud;
+        private String latitud;
+        private int identificadorUsuario;
+
+        private ConversionJson<Resultado> conversionJson = new ConversionJson<>(Constantes.RESULTADO);
+
+        /**
+         * Constructor de la clase
+         *
+         * @param contexto             Contexto de la actividad que desea localizar al usuario
+         * @param identificadorUsuario Identificador de dicho usuario
+         */
+        public LocalizacionListener(Context contexto, int identificadorUsuario) {
+            this.contexto = contexto;
+            this.identificadorUsuario = identificadorUsuario;
+        }
+
+        /**
+         * Método onLocationChanged actualiza la localización del usuario cuando esta cambia
+         *
+         * @param localizacion Nueva localización del usuario
+         */
+        @Override
+        public void onLocationChanged(Location localizacion) {
+            longitud = String.valueOf(localizacion.getLongitude());
+            latitud = String.valueOf(localizacion.getLatitude());
+
+            try {
+                ConnectivityManager connectivityManager = (ConnectivityManager) contexto.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+
+                    new LocalizacionListener.LocalizacionJsonTask().execute(new URL(Constantes.RUTA_INSERTAR_COORDENADAS
+                            + longitud + "&latitud=" + latitud + "&usuario=" + identificadorUsuario));
+                } else {
+                    Toast.makeText(contexto, Constantes.ERROR_CONEXION, Toast.LENGTH_SHORT).show();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
+        public class LocalizacionJsonTask extends AsyncTask<URL, Void, Resultado> {
+            private Resultado resultado;
+
+            /**
+             * Método que llama al parseo de resultados para conocer el mismo
+             *
+             * @return Biblioteca
+             */
+            @Override
+            protected Resultado doInBackground(URL... urls) {
+                resultado = conversionJson.doInBackground(urls).get(0);
+                return (resultado);
+            }
+
+            /**
+             * Método que comprueba el resultado y muestra una traza en el log
+             *
+             * @param resultado Resultado de la accion
+             */
+            @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+            @Override
+            protected void onPostExecute(Resultado resultado) {
+                if (resultado != null) {
+                    if (resultado.isOk()) {
+                        Log.w("CineSharedLocalizacion", "EL resultado es OK");
+                    } else {
+                        Log.w("CineSharedLocalizacion", "El resultado es NO OK");
+                    }
+                } else {
+                    Log.w("CineSharedLocalizacion", "El resultado es nulo");
+                }
             }
         }
     }

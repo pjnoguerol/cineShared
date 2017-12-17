@@ -8,8 +8,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 
-import com.cineshared.pjnogegonzalez.cineshared.utilidades.ConversionJson;
-
 import java.net.URL;
 import java.util.List;
 
@@ -18,7 +16,7 @@ import java.util.List;
  * <p>
  * Creada por Pablo Noguerol y Elena González
  */
-public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
+public class HiloGenerico<T> extends AsyncTask<URL, Void, List<T>> {
 
     private Activity activity;
     private String tipoObjeto;
@@ -28,14 +26,13 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
     private List<T> listaGenerica;
     private int tipo;
     private ProgressDialog carga;
-    public HiloGenerico(Uri.Builder builder)
-    {
+
+    public HiloGenerico(Uri.Builder builder) {
         this.builder = builder;
     }
 
     // Constructor vacío
-    public HiloGenerico()
-    {
+    public HiloGenerico() {
     }
 
     // Métodos getter y setter
@@ -99,7 +96,7 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
      * Método onPreExecute se ejecuta antes de realizar cualquier otra acción
      */
     @Override
-    protected void onPreExecute(){
+    protected void onPreExecute() {
         super.onPreExecute();
         carga = new ProgressDialog(this.activity);
         carga.setMessage("Cargando...");
@@ -114,7 +111,7 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
      */
     @Override
     protected List<T> doInBackground(URL... url) {
-        return (listaGenerica=conversionJson.doInBackgroundPost(url[0],builder));
+        return (listaGenerica = conversionJson.doInBackgroundPost(url[0], builder));
     }
 
     /**
@@ -127,8 +124,7 @@ public class HiloGenerico <T> extends AsyncTask<URL, Void, List<T>> {
     protected void onPostExecute(List<T> lista) {
 
         carga.dismiss();
-        if (tipo==1)
-        {
+        if (tipo == 1) {
             recyclerView.setAdapter(conversionJson.onPostExecute(lista));
         }
     }

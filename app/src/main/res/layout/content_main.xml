@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,5 +14,28 @@
         android:layout_height="match_parent"
 
         tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp" />
-</android.support.constraint.ConstraintLayout>
+        tools:layout_editor_absoluteY="8dp">
+
+        <TextView
+            android:id="@+id/bienvenidosTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="85dp"
+            android:layout_marginTop="200dp"
+            android:text="@string/bienvenido_a_cineshared"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/despliegaMenuTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="85dp"
+            android:layout_marginStart="85dp"
+            android:layout_marginTop="250dp"
+            android:text="@string/despliega_el_menu"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+    </FrameLayout>
+</RelativeLayout>

@@ -3,7 +3,6 @@ package com.cineshared.pjnogegonzalez.cineshared.utilidades;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,7 +29,7 @@ public class AccionesFirebase {
      * @param contexto              Contexto del activity en el que se mostrará un mensaje en caso de error
      */
     public static void loginUserFirebase(final FirebaseAuth firebaseAutenticacion, final DatabaseReference referenciaBD,
-                                         String email, String password, final Context contexto) {
+                                         final String email, final String password, final Context contexto) {
         if (email != null && password != null) {
             firebaseAutenticacion.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -44,7 +43,7 @@ public class AccionesFirebase {
                                 AccionesFirebase.establecerUsuarioOnline(firebaseAutenticacion, referenciaBD);
                             } else {
                                 String task_result = task.getException().getMessage().toString();
-                                Toast.makeText(contexto, "Error: " + task_result, Toast.LENGTH_SHORT).show();
+                                Log.v("CineSharedFirebase", "Error: " + task_result);
                             }
                         }
                     });

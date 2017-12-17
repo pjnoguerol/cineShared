@@ -26,7 +26,6 @@ import com.cineshared.pjnogegonzalez.cineshared.utilidades.Constantes;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.ConversionJson;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Resultado;
 import com.cineshared.pjnogegonzalez.cineshared.utilidades.Utilidades;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
@@ -132,7 +131,8 @@ public class AdaptarBusquedaApiCardView extends RecyclerView.Adapter<AdaptarBusq
         busquedaViewHolder.usuarioPelicula.setText(pelicula.getUsuarionombre());
 
         if (pelicula.getDistancia() != 0.0) {
-            float decimalDistancia = Utilidades.convertirMillasKilometros(pelicula.getDistancia(), false);
+            BigDecimal decimalKilometros = new BigDecimal(pelicula.getDistancia());
+            float decimalDistancia = decimalKilometros.setScale(2, RoundingMode.HALF_UP).floatValue();
             busquedaViewHolder.datosPelicula.setText("Distancia= " + decimalDistancia + "");
         }
 
